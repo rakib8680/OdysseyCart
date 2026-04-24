@@ -3,6 +3,7 @@ import { MOCK_PRODUCTS } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { notFound } from "next/navigation";
+import ProductCard from "@/components/ProductCard";
 
 export function generateStaticParams() {
   return MOCK_PRODUCTS.map((product) => ({
@@ -111,25 +112,7 @@ export default async function ItemDetailsPage({
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {relatedItems.map((item) => (
-              <Link
-                key={item.id}
-                href={`/items/${item.id}`}
-                className="group block"
-              >
-                <div className="aspect-[4/3] bg-slate-50 rounded-2xl overflow-hidden mb-4 border border-slate-200">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <h3 className="font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
-                  {item.name}
-                </h3>
-                <p className="text-slate-500 text-sm">
-                  ${item.price.toFixed(2)}
-                </p>
-              </Link>
+               <ProductCard key={item.id} product={item} />
             ))}
           </div>
         </div>
