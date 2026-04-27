@@ -1,60 +1,108 @@
-import Link from 'next/link';
+"use client";
 
-export const metadata = { title: 'Register | OdysseyCart' };
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { AuthFormWrapper } from "@/components/form/AuthFormWrapper";
+import { FormInput } from "@/components/form/FormInput";
+import { GoogleLoginButton } from "@/components/form/GoogleLoginButton";
 
 export default function RegisterPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { register } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await register(email, password, name);
+      router.push("/");
+    } catch (err: any) {
+      setError(err.message || "Failed to create account. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="flex-1 flex flex-col justify-center py-24 sm:px-6 lg:px-8 bg-slate-50">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
-          Create an account
-        </h2>
-        <p className="mt-2 text-center text-sm text-slate-600">
-          Already have an account?{' '}
-          <Link href="/login" className="font-medium text-emerald-600 hover:text-emerald-500">
+    <AuthFormWrapper
+      title="Create an account"
+      subtitle={
+        <>
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="font-medium text-emerald-600 hover:text-emerald-500"
+          >
             Sign in here
           </Link>
-        </p>
-      </div>
+        </>
+      }
+    >
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-2xl sm:px-10 border border-slate-200">
-          <form className="space-y-6" action="#" method="POST">
-             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-slate-700">
-                Full Name
-              </label>
-              <div className="mt-1">
-                <input id="name" name="name" type="text" required className="appearance-none block w-full px-3 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm" />
-              </div>
-            </div>
+        <FormInput
+          label="Full Name"
+          id="name"
+          name="name"
+          type="text"
+          required
+          placeholder="John Doe"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700">
-                Email address
-              </label>
-              <div className="mt-1">
-                <input id="email" name="email" type="email" required className="appearance-none block w-full px-3 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm" />
-              </div>
-            </div>
+        <FormInput
+          label="Email address"
+          id="email"
+          name="email"
+          type="email"
+          required
+          placeholder="you@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700">
-                Password
-              </label>
-              <div className="mt-1">
-                <input id="password" name="password" type="password" required className="appearance-none block w-full px-3 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm" />
-              </div>
-            </div>
+        <FormInput
+          label="Password"
+          id="password"
+          name="password"
+          type="password"
+          required
+          placeholder="Min. 6 characters"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-            <div>
-              <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-slate-900 hover:bg-emerald-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
-                Create Account
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-slate-900 hover:bg-emerald-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+        >
+          {loading ? "Creating account..." : "Create Account"}
+        </button>
+      </form>
+
+      <GoogleLoginButton />
+    </AuthFormWrapper>
   );
 }
