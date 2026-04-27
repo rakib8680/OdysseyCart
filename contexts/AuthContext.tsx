@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   //tnis is a listener function, for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("Current User:", currentUser);
+      // console.log("Current User:", currentUser);
       setUser(currentUser);
       setLoading(false);
     });
