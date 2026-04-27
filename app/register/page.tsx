@@ -8,6 +8,7 @@ import { AuthFormWrapper } from "@/components/form/AuthFormWrapper";
 import { FormInput } from "@/components/form/FormInput";
 import { GoogleLoginButton } from "@/components/form/GoogleLoginButton";
 import { Spinner } from "@/components/ui/Spinner";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -31,9 +32,12 @@ export default function RegisterPage() {
 
     try {
       await register(email, password, name);
+      toast.success("Account created successfully!");
       router.push("/");
     } catch (err: any) {
-      setError(err.message || "Failed to create account. Please try again.");
+      const msg = err.message || "Failed to create account. Please try again.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

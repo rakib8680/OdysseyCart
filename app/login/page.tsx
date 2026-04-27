@@ -8,6 +8,7 @@ import { AuthFormWrapper } from "@/components/form/AuthFormWrapper";
 import { FormInput } from "@/components/form/FormInput";
 import { GoogleLoginButton } from "@/components/form/GoogleLoginButton";
 import { Spinner } from "@/components/ui/Spinner";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -24,9 +25,12 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
+      toast.success("Logged in Successfully!");
       router.push("/");
     } catch (err: any) {
-      setError(err.message || "Failed to sign in. Please try again.");
+      const msg = err.message || "Failed to sign in. Please try again.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

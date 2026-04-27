@@ -1,15 +1,20 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 export function GoogleLoginButton() {
   const { loginWithGoogle } = useAuth();
+  const router = useRouter();
 
   const handleGoogleLogin = async () => {
     try {
       await loginWithGoogle();
+      toast.success("Logged in with Google!");
+      router.push("/");
     } catch {
-      // errors can be handled by the parent if needed
+      toast.error("Google sign-in failed. Please try again.");
     }
   };
 
