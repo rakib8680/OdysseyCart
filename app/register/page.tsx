@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { AuthFormWrapper } from "@/components/form/AuthFormWrapper";
 import { FormInput } from "@/components/form/FormInput";
 import { GoogleLoginButton } from "@/components/form/GoogleLoginButton";
+import { Spinner } from "@/components/ui/Spinner";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -98,6 +99,7 @@ export default function RegisterPage() {
           disabled={loading}
           className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-slate-900 hover:bg-emerald-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
+          {loading && <Spinner className="w-4 h-4 mr-2" />}
           {loading ? "Creating account..." : "Create Account"}
         </button>
       </form>
