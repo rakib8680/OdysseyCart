@@ -24,31 +24,31 @@ export function NewsletterCTA() {
   };
 
   return (
-    <section className="relative w-full">
-      {/* Background Split: Top half white, bottom half slate-950 (matches footer) */}
+    <section className="relative w-full pt-60">
+      {/* Background Split: Top half white, bottom half slate-950  */}
       <div className="absolute inset-0 flex flex-col">
-        <div className="h-1/2 w-full bg-white" />
+        <div className="h-1/2 w-full bg-slate-50" />
         <div className="h-1/2 w-full bg-slate-950" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bottom-32">
         {/* The Floating Dark Island */}
         <div className="relative bg-slate-900 rounded-[3rem] p-10 md:p-20 shadow-2xl overflow-hidden isolation-auto">
-          
           {/* Decorative Glowing Spheres */}
           <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none" />
           <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-96 h-96 bg-blue-500/20 rounded-full blur-[100px] pointer-events-none" />
 
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
-            
             {/* Text Content */}
             <div className="max-w-2xl text-center md:text-left">
               <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-6">
                 Join the Odyssey.
               </h2>
               <p className="text-xl text-slate-400 mb-0">
-                Subscribe to our private newsletter to receive early access to new curated drops and <span className="text-emerald-400 font-semibold">10% off</span> your first order.
+                Subscribe to our private newsletter to receive early access to
+                new curated drops and{" "}
+                <span className="text-emerald-400 font-semibold">10% off</span>{" "}
+                your first order.
               </p>
             </div>
 
@@ -82,13 +82,12 @@ export function NewsletterCTA() {
                 </button>
               </form>
               <p className="text-xs text-slate-500 mt-4 text-center md:text-left">
-                By subscribing, you agree to our Terms of Service. No spam, ever.
+                By subscribing, you agree to our Terms of Service. No spam,
+                ever.
               </p>
             </div>
-            
           </div>
         </div>
-        
       </div>
     </section>
   );
