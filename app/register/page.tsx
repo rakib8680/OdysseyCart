@@ -33,7 +33,12 @@ export default function RegisterPage() {
     try {
       await register(email, password, name);
       toast.success("Account created successfully!");
-      router.push("/");
+
+      // Check if there's a redirect parameter in the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectUrl = urlParams.get("redirect") || "/";
+
+      router.push(redirectUrl);
     } catch (err: any) {
       const msg = err.message || "Failed to create account. Please try again.";
       setError(msg);

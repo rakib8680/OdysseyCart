@@ -12,7 +12,12 @@ export function GoogleLoginButton() {
     try {
       await loginWithGoogle();
       toast.success("Logged in with Google!");
-      router.push("/");
+
+      // Check if there's a redirect parameter in the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectUrl = urlParams.get("redirect") || "/";
+
+      router.push(redirectUrl);
     } catch {
       toast.error("Google sign-in failed. Please try again.");
     }

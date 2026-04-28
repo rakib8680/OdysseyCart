@@ -26,7 +26,12 @@ export default function LoginPage() {
     try {
       await login(email, password);
       toast.success("Logged in Successfully!");
-      router.push("/");
+
+      // Check if there's a redirect parameter in the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectUrl = urlParams.get("redirect") || "/";
+
+      router.push(redirectUrl);
     } catch (err: any) {
       const msg = err.message || "Failed to sign in. Please try again.";
       setError(msg);

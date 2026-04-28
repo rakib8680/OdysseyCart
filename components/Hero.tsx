@@ -57,46 +57,51 @@ export function Hero() {
 
           {/* Visual Presentation */}
           <div className="relative w-full aspect-[4/3] flex items-center justify-center">
-            {/* Product Abstract Representation */}
+            {/* Real Product Card Representation */}
             <div className="w-[85%] h-[85%] bg-white border border-slate-200 rounded-2xl shadow-xl shadow-slate-200/50 flex flex-col group hover:border-emerald-200 transition-colors duration-500 z-10 overflow-hidden relative">
-              <div className="flex-1 w-full bg-slate-50 flex items-center justify-center">
-                <div className="w-32 h-32 border-4 border-slate-200 rounded-full group-hover:scale-110 group-hover:border-emerald-100 transition-all duration-700 ease-out flex items-center justify-center relative">
-                  <div className="w-16 h-16 flex items-center justify-center gap-2 transform -rotate-12 group-hover:rotate-45 transition-transform duration-700">
-                    <div className="w-4 h-12 bg-slate-900 rounded-sm"></div>
-                    <div className="w-4 h-12 bg-emerald-600 rounded-sm"></div>
-                  </div>
-                </div>
+              {/* Product Image Region */}
+              <div className="flex-1 w-full bg-slate-100 flex items-center justify-center overflow-hidden relative">
+                <img
+                  src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200&auto=format&fit=crop"
+                  alt="Chronos Smartwatch"
+                  className="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-1000 ease-out"
+                />
               </div>
 
+              {/* Product Details Bar */}
               <div className="bg-white border-t border-slate-100 p-6 flex justify-between items-center group-hover:bg-slate-50 transition-colors">
                 <div>
                   <h3 className="font-bold text-slate-900 text-lg">
-                    Odyssey Concept I
+                    Chronos Series 7
                   </h3>
-                  <p className="text-xs text-slate-400 font-medium">
-                    Limited Edition
+                  <p className="text-xs text-slate-400 font-bold tracking-widest uppercase mt-1">
+                    $299.00 USD
                   </p>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors">
+
+                {/* Add to Cart / Shopping Bag Icon */}
+                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm group-hover:shadow-md">
                   <svg
-                    className="w-5 h-5"
+                    className="w-4 h-4 transform group-hover:scale-110 transition-transform"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 4v16m8-8H4"
-                    ></path>
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <path d="M16 10a4 4 0 0 1-8 0" />
                   </svg>
                 </div>
               </div>
 
               {/* Floating accent elements */}
-              <div className="absolute top-6 left-6 w-8 h-8 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+              <div className="absolute top-6 left-6 px-3 py-1 bg-white/90 backdrop-blur-md rounded-full shadow-sm">
+                <span className="text-[10px] font-bold tracking-widest uppercase text-emerald-600">
+                  Top Seller
+                </span>
               </div>
               <div className="absolute top-8 right-6 text-[10px] font-bold text-slate-400 tracking-widest uppercase [writing-mode:vertical-rl] transform rotate-180">
                 Premium Series

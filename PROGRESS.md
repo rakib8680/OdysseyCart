@@ -2,16 +2,16 @@
 
 Here is an analysis of the current state of the application against the `ASSESSMENT.md` requirements.
 
-## 1. Landing Page (/) : 🟡 Partial
+## 1. Landing Page (/) : 🟢 Complete
 - [x] Navbar: Basic structure exists (Logo, 4 routes, login link, sticky).
 - [x] Navbar (Auth State): Dynamic dropdown showing User Info, Add Product, and Manage Products after login.
-- [x] Hero section: Implemented.
-- [ ] 4 Relevant Sections: Needs full implementation in `Home` page (currently only renders `<Hero />`).
-- [x] Footer: Implemented.
+- [x] Hero section: Implemented with high-end product presentation.
+- [x] 4 Relevant Sections: Completed (Category Grid, Editorial Featured Products, Craftsmanship Split, Bento Value Props, Newsletter Island).
+- [x] Footer: Massive 6-column premium footer implemented.
 
 ## 2. Items Page (/items) : 🟢 Mostly Complete
 - [x] Search bar: Implemented.
-- [x] Filtering: Category filter is implemented (needs to verify if 2 fields are required; currently search + category are active).
+- [x] Filtering: Category filter is implemented.
 - [x] Display min 6 items: Works via mock data.
 - [x] Responsive grid: Implemented.
 - [x] Product Cards: Contains image, title, short desc, price.
@@ -51,7 +51,6 @@ Here is an analysis of the current state of the application against the `ASSESSM
 
 ---
 **Summary for Next Steps:**
-1. Add Route Protection wrapper to lock down `/items/manage` and `/items/add`.
+1. **Implement Route Protection:** Add a wrapper component to lock down `/items/manage` and `/items/add`.
 2. Add the "View Details" button to `ProductCard.tsx`.
-3. Finish building out the 4 sections on the Landing page below the Hero.
-4. Fill out the `README.md` file.
+3. Complete the `README.md` file.
