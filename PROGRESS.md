@@ -9,13 +9,13 @@ Here is an analysis of the current state of the application against the `ASSESSM
 - [x] 4 Relevant Sections: Completed (Category Grid, Editorial Featured Products, Craftsmanship Split, Bento Value Props, Newsletter Island).
 - [x] Footer: Massive 6-column premium footer implemented.
 
-## 2. Items Page (/items) : 🟢 Mostly Complete
+## 2. Items Page (/items) : 🟢 Complete
 - [x] Search bar: Implemented.
 - [x] Filtering: Category filter is implemented.
 - [x] Display min 6 items: Works via mock data.
 - [x] Responsive grid: Implemented.
 - [x] Product Cards: Contains image, title, short desc, price.
-- [ ] Button on Card: Needs to explicitly have "View Details" button.
+- [x] Button on Card: Needs to explicitly have "View Details" button.
 
 ## 3. Item Details Page (/items/[id]) : 🟢 Mostly Complete
 - [x] Dynamic Route: Implemented (`app/items/[id]/page.tsx`).
