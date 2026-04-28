@@ -4,7 +4,7 @@ Here is an analysis of the current state of the application against the `ASSESSM
 
 ## 1. Landing Page (/) : 🟡 Partial
 - [x] Navbar: Basic structure exists (Logo, 4 routes, login link, sticky).
-- [ ] Navbar (Auth State): Needs dynamic dropdown showing User Info, Add Product, and Manage Products after login.
+- [x] Navbar (Auth State): Dynamic dropdown showing User Info, Add Product, and Manage Products after login.
 - [x] Hero section: Implemented.
 - [ ] 4 Relevant Sections: Needs full implementation in `Home` page (currently only renders `<Hero />`).
 - [x] Footer: Implemented.
@@ -26,19 +26,19 @@ Here is an analysis of the current state of the application against the `ASSESSM
 ## 4. About Page (/about) : 🟢 Complete
 - [x] Simple page with Title, Description, and sections implemented.
 
-## 5. Authentication (Firebase) : 🔴 Not Started
-- [ ] Firebase SDK missing: `firebase` package is not in `package.json`.
-- [ ] Email & Password login/register: UI exists (`app/login`, `app/register`), but no Firebase integration.
-- [ ] Google login: UI button exists, no logic.
-- [ ] State management: No context or simple state yet.
-- [ ] Redirect: Not implemented.
+## 5. Authentication (Firebase) : 🟢 Complete
+- [x] Firebase SDK installed and configured.
+- [x] Email & Password login/register: Working with context API and toast notifications.
+- [x] Google login: Implemented successfully.
+- [x] State management: Using `AuthContext` globally.
+- [x] Redirect: Redirects to `/` after login/register correctly.
 
-## 6. Protected Page: Add Items (/items/add) : 🟡 Partial (UI Only)
+## 6. Protected Page: Add Items (/items/add) : 🟡 Partial
 - [ ] Route Protection: Accessible by anyone right now. Needs Redirect if not logged in.
-- [x] Form fields: UI form is built but not connected to Firebase or state.
+- [x] Form fields: UI form is built but not connected to database logic yet.
 - [ ] Submit logic / Toasts: Missing functionality.
 
-## 7. Protected Page: Manage Items (/items/manage) : 🟡 Partial (UI Only)
+## 7. Protected Page: Manage Items (/items/manage) : 🟡 Partial
 - [ ] Route Protection: Needs Redirect if not logged in.
 - [x] List layout: Table UI is built and looks good.
 - [ ] Actions: View/Delete buttons exist visually but do nothing.
@@ -46,13 +46,12 @@ Here is an analysis of the current state of the application against the `ASSESSM
 ## Overall Tech & Submission
 - [x] Next.js App Router: Used everywhere.
 - [x] UI/Design: Responsive, polished layout, TailwindCSS used well.
-- [x] GitHub / Vercel: Pending deployment.
+- [x] GitHub / Vercel: Successfully deployed to Vercel (Firebase authorized domain configured).
 - [ ] README.md: Currently empty.
 
 ---
 **Summary for Next Steps:**
-1. Install `firebase` and setup Authentication logic (Context Provider).
-2. Connect Login/Register UI to Firebase.
-3. Add Route Protection (Hooks or Middleware) to `/items/manage` and `/items/add`.
-4. Update Navbar to reflect logged-in state.
-5. Finish building out the 4 sections on the Landing page.
+1. Add Route Protection wrapper to lock down `/items/manage` and `/items/add`.
+2. Add the "View Details" button to `ProductCard.tsx`.
+3. Finish building out the 4 sections on the Landing page below the Hero.
+4. Fill out the `README.md` file.

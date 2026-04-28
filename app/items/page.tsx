@@ -1,14 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { MOCK_PRODUCTS } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
 
-export default function ItemsPage() {
+function ItemsContent() {
+  const searchParams = useSearchParams();
+  const urlCategory = searchParams.get("category");
+
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
+  // Start with the URL category if it exists, otherwise "All"
+  const [category, setCategory] = useState(urlCategory || "All");
+
+  // If the user navigates directly and the URL changes, update the category state
+  useEffect(() => {
+    if (urlCategory) {
+      setCategory(urlCategory);
+    }
+  }, [urlCategory]);
 
   const categories = [
     "All",
@@ -44,7 +56,7 @@ export default function ItemsPage() {
             onChange={(e) => setSearch(e.target.value)}
           />
           <select
-            className="h-10 px-3 py-2 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+            className="h-10 px-3 py-2 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm cursor-pointer"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
@@ -58,7 +70,7 @@ export default function ItemsPage() {
       </div>
 
       {filteredProducts.length === 0 ? (
-        <div className="text-center py-24 text-slate-500">
+        <div className="text-center py-24 text-slate-500 bg-slate-50 rounded-2xl border border-slate-200">
           No products found matching your criteria.
         </div>
       ) : (
@@ -69,5 +81,19 @@ export default function ItemsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ItemsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center text-slate-500">
+          Loading collection...
+        </div>
+      }
+    >
+      <ItemsContent />
+    </Suspense>
   );
 }
