@@ -1,27 +1,30 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Monitor, Armchair, Watch } from "lucide-react";
 
 const CATEGORIES = [
   {
     name: "Tech Essentials",
     description: "Premium gadgets and gear to elevate your productivity.",
     href: "/items?category=Tech",
-    image:
-      "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=800&auto=format&fit=crop",
+    Icon: Monitor,
+    bgColor: "bg-blue-50/50",
+    iconColor: "text-blue-500",
   },
   {
     name: "Modern Furniture",
     description: "Minimalist pieces designed for comfort and aesthetics.",
     href: "/items?category=Furniture",
-    image:
-      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=800&auto=format&fit=crop",
+    Icon: Armchair,
+    bgColor: "bg-orange-50/50",
+    iconColor: "text-orange-500",
   },
   {
     name: "Daily Accessories",
     description: "Sleek add-ons to complete your everyday carry.",
     href: "/items?category=Accessories",
-    image:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=800&auto=format&fit=crop",
+    Icon: Watch,
+    bgColor: "bg-emerald-50/50",
+    iconColor: "text-emerald-500",
   },
 ];
 
@@ -55,11 +58,13 @@ export function CategorySection() {
               href={category.href}
               className="group flex flex-col bg-white rounded-3xl p-6 border border-slate-200/60 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
-              {/* Image Container */}
-              <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 mb-8 relative">
-                <div
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-                  style={{ backgroundImage: `url(${category.image})` }}
+              {/* Premium Icon Container */}
+              <div
+                className={`w-full aspect-[4/3] rounded-2xl overflow-hidden mb-8 relative flex items-center justify-center transition-colors duration-500 ${category.bgColor} group-hover:bg-slate-50`}
+              >
+                <category.Icon
+                  strokeWidth={1}
+                  className={`w-32 h-32 md:w-40 md:h-40 ${category.iconColor} opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out`}
                 />
               </div>
 
