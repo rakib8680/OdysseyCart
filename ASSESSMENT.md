@@ -1,8 +1,4 @@
-Follow DRY (don't repeat yourself) principle.
-dont make similar components repeatedly.
-always try to make reusable components.
-use organised folder structure.
-dont write all codes and logics and functions in one file.
+
 
 # Odyssey Next.js Assessment Task
 
