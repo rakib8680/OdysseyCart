@@ -1,6 +1,6 @@
 {
-  "name": "Odyssey App",
-  "description": "Next.js App Router application with Firebase Authentication and a polished geometric design.",
+  "name": "OdysseyCart",
+  "description": "A premium e-commerce web application features a high-end, editorial design language with a full product browsing experience, dynamic filtering, and secured protected routes for authenticated users.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }

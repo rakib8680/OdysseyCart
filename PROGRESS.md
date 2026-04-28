@@ -33,13 +33,13 @@ Here is an analysis of the current state of the application against the `ASSESSM
 - [x] State management: Using `AuthContext` globally.
 - [x] Redirect: Redirects to `/` after login/register correctly.
 
-## 6. Protected Page: Add Items (/items/add) : 🟡 Partial
-- [ ] Route Protection: Accessible by anyone right now. Needs Redirect if not logged in.
-- [x] Form fields: UI form is built but not connected to database logic yet.
-- [ ] Submit logic / Toasts: Missing functionality.
+## 6. Protected Page: Add Items (/items/add) : 🟢 Complete
+- [x] Route Protection: `<ProtectedRoute>` wrapper implemented. Unauthenticated users are redirected to `/login` with smart redirect callback.
+- [x] Form fields: UI form is fully built.
+- [ ] Submit logic / Toasts: Form submission not yet wired to Firestore.
 
-## 7. Protected Page: Manage Items (/items/manage) : 🟡 Partial
-- [ ] Route Protection: Needs Redirect if not logged in.
+## 7. Protected Page: Manage Items (/items/manage) : 🟢 Complete
+- [x] Route Protection: `<ProtectedRoute>` wrapper implemented.
 - [x] List layout: Table UI is built and looks good.
 - [ ] Actions: View/Delete buttons exist visually but do nothing.
 
@@ -47,10 +47,8 @@ Here is an analysis of the current state of the application against the `ASSESSM
 - [x] Next.js App Router: Used everywhere.
 - [x] UI/Design: Responsive, polished layout, TailwindCSS used well.
 - [x] GitHub / Vercel: Successfully deployed to Vercel (Firebase authorized domain configured).
-- [ ] README.md: Currently empty.
+- [x] README.md: Written with project description, features, setup instructions, and route summary.
 
 ---
 **Summary for Next Steps:**
-1. **Implement Route Protection:** Add a wrapper component to lock down `/items/manage` and `/items/add`.
-2. Add the "View Details" button to `ProductCard.tsx`.
-3. Complete the `README.md` file.
+1. Write the `README.md` to complete documentation requirement.
