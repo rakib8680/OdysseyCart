@@ -64,7 +64,7 @@ export function NewsletterCTA() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
-                  className="w-full pl-12 pr-36 py-4 bg-white/10 border border-white/20 rounded-full text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all backdrop-blur-md"
+                  className="w-full md:pl-12 md:pr-36 pl-4 pr-12 py-4 bg-white/10 border border-white/20 rounded-full text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all backdrop-blur-md"
                 />
                 <button
                   type="submit"
@@ -75,8 +75,8 @@ export function NewsletterCTA() {
                     <span className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                   ) : (
                     <>
-                      Subscribe
-                      <ArrowRight className="ml-2 w-4 h-4" />
+                      <span className="hidden md:block">Subscribe</span>
+                      <ArrowRight className="md:ml-2 w-4 h-4" />
                     </>
                   )}
                 </button>

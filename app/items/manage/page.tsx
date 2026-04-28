@@ -6,7 +6,7 @@ export const metadata = { title: "Manage Items | OdysseyCart" };
 export default function ManageItemsPage() {
   return (
     <ProtectedRoute>
-      <div className="max-w-6xl mx-auto px-8 py-16">
+      <div className="max-w-6xl mx-auto px-6 md:px-8 py-16 min-h-screen">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-slate-900">

@@ -16,7 +16,7 @@ export function Craftsmanship() {
           </div>
 
           {/* Right Side: The Story */}
-          <div className="flex flex-col justify-center w-full lg:w-1/2 p-12 lg:p-20 xl:p-24">
+          <div className="flex flex-col justify-center w-full lg:w-1/2 px-8 py-12 lg:p-20 xl:p-24">
             <h2 className="text-sm font-bold tracking-[0.2em] text-emerald-600 uppercase mb-6">
               The Process
             </h2>

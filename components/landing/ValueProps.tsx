@@ -15,7 +15,7 @@ export function ValueProps() {
         </div>
 
         {/* Bento Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 ">
           {/* Bento Box 1: Large Horizontal Focus */}
           <div className="md:col-span-2 bg-white rounded-[2rem] p-10 flex flex-col justify-between relative overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-xl transition-all duration-300 group">
             <div className="relative z-10 max-w-md">

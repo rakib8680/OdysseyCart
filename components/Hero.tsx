@@ -4,7 +4,7 @@ export function Hero() {
   return (
     <div className="flex-1">
       {/* Hero Section */}
-      <section className="relative w-full min-h-[calc(100vh-128px)] flex items-center justify-center p-8 lg:p-24 overflow-hidden bg-slate-50">
+      <section className="relative w-full min-h-[calc(100vh-128px)] flex items-center justify-center px-4 py-8 lg:p-24 overflow-hidden bg-slate-50">
         {/* Geometric Background Elements */}
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[600px] h-[600px] rounded-full border border-emerald-100 opacity-50 hidden lg:block"></div>
         <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[400px] h-[400px] rounded-full border border-slate-200 opacity-50 hidden lg:block"></div>
