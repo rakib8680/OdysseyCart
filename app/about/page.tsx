@@ -3,14 +3,14 @@ import { Package, Shield, Zap, Globe } from "lucide-react";
 export const metadata = {
   title: "About | OdysseyCart",
   description:
-    "Learn about OdysseyCart — a premium e-commerce platform built for people who appreciate quality, design, and precision.",
+    "Learn about OdysseyCart — a premium e-commerce destination built for people who appreciate quality, design, and exceptional service.",
 };
 
 const stats = [
-  { value: "6+", label: "Curated Products" },
-  { value: "3", label: "Product Categories" },
-  { value: "100%", label: "Secure Auth" },
-  { value: "Next.js", label: "Powered By" },
+  { value: "50k+", label: "Happy Customers" },
+  { value: "99%", label: "Satisfaction Rate" },
+  { value: "24/7", label: "Support" },
+  { value: "100+", label: "Curated Brands" },
 ];
 
 const values = [
@@ -22,33 +22,22 @@ const values = [
   },
   {
     icon: Shield,
-    title: "Secure by Default",
+    title: "Secure Shopping",
     description:
-      "Firebase-backed authentication ensures your account and data are always protected.",
+      "Your privacy and security are our top priorities. We use industry-leading encryption to protect your data.",
   },
   {
     icon: Zap,
-    title: "Built for Speed",
+    title: "Fast Shipping",
     description:
-      "Next.js App Router with server-side rendering delivers lightning-fast page loads across every device.",
+      "We partner with top-tier logistics providers to ensure your orders arrive quickly and safely, every time.",
   },
   {
     icon: Globe,
-    title: "Modern Stack",
+    title: "Global Reach",
     description:
-      "Tailwind CSS, Shadcn UI, and Lucide icons power a UI that is consistent, accessible, and beautiful.",
+      "We ship to over 50 countries worldwide, bringing premium products to your doorstep no matter where you are.",
   },
-];
-
-const techStack = [
-  { name: "Next.js 15", role: "Framework" },
-  { name: "React 19", role: "UI Library" },
-  { name: "TypeScript", role: "Type Safety" },
-  { name: "Tailwind CSS v4", role: "Styling" },
-  { name: "Firebase v12", role: "Authentication" },
-  { name: "Shadcn UI", role: "Components" },
-  { name: "Sonner", role: "Notifications" },
-  { name: "Vercel", role: "Deployment" },
 ];
 
 export default function AboutPage() {
@@ -67,8 +56,8 @@ export default function AboutPage() {
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl leading-relaxed">
             OdysseyCart is a premium e-commerce platform where precision
-            engineering meets modern life. We curate the very best in tech,
-            furniture, and everyday carry — designed for those who notice the
+            engineering meets modern life. We curate the very best in lifestyle,
+            home, and everyday essentials — designed for those who notice the
             details.
           </p>
         </div>
@@ -109,7 +98,7 @@ export default function AboutPage() {
                 question in mind — would we use this ourselves?
               </p>
               <p className="text-slate-500 text-lg leading-relaxed">
-                From minimalist furniture to precision tech, our curation
+                From minimalist furniture to precision accessories, our curation
                 reflects a deep belief that the things you surround yourself
                 with should be worthy of your attention.
               </p>
@@ -128,7 +117,7 @@ export default function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="border-b border-slate-100 bg-slate-50">
+      <section className="bg-slate-50">
         <div className="max-w-5xl mx-auto px-6 md:px-8 py-20">
           <div className="text-center mb-14">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase text-emerald-600 mb-4">
@@ -152,39 +141,6 @@ export default function AboutPage() {
                 </h3>
                 <p className="text-slate-500 leading-relaxed">
                   {value.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Tech Stack */}
-      <section>
-        <div className="max-w-5xl mx-auto px-6 md:px-8 py-20">
-          <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase text-emerald-600 mb-4">
-              Under the Hood
-            </span>
-            <h2 className="text-4xl font-bold text-slate-900 tracking-tight">
-              Built with the best.
-            </h2>
-            <p className="text-slate-500 mt-4 text-lg max-w-xl mx-auto">
-              OdysseyCart is powered by a modern, production-grade stack
-              designed for performance, scalability, and developer experience.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {techStack.map((tech) => (
-              <div
-                key={tech.name}
-                className="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-center hover:border-emerald-200 hover:bg-emerald-50/30 transition-all duration-300"
-              >
-                <p className="font-bold text-slate-900 text-sm mb-1">
-                  {tech.name}
-                </p>
-                <p className="text-xs text-slate-400 tracking-wide uppercase font-medium">
-                  {tech.role}
                 </p>
               </div>
             ))}
