@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { getProducts } from "@/app/actions/products";
+import ManageTable from "@/components/ManageTable";
 
 export const metadata = { title: "Manage Items | OdysseyCart" };
 
-export default function ManageItemsPage() {
+export default async function ManageItemsPage() {
+  const products = await getProducts();
+
   return (
     <ProtectedRoute>
       <div className="max-w-6xl mx-auto px-6 md:px-8 py-16 min-h-screen">
@@ -37,67 +41,7 @@ export default function ManageItemsPage() {
           </Link>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden text-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-medium tracking-wider uppercase text-xs">
-                <tr>
-                  <th className="p-5">Product Name</th>
-                  <th className="p-5">Category</th>
-                  <th className="p-5">Price</th>
-                  <th className="p-5">Status</th>
-                  <th className="p-5 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
-                {/* Placeholder rows */}
-                <tr className="hover:bg-slate-50 transition-colors">
-                  <td className="p-5 font-medium text-slate-900 border-l-4 border-transparent hover:border-emerald-500">
-                    Odyssey Concept I
-                  </td>
-                  <td className="p-5 text-slate-500">Tech</td>
-                  <td className="p-5">$299.00</td>
-                  <td className="p-5">
-                    <span className="inline-flex bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full text-xs font-semibold border border-emerald-100">
-                      Active
-                    </span>
-                  </td>
-                  <td className="p-5 text-right space-x-3">
-                    <button className="font-semibold text-slate-600 hover:text-emerald-600 transition-colors">
-                      View
-                    </button>
-                    <button className="font-semibold text-red-600 hover:text-red-800 transition-colors">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-                <tr className="hover:bg-slate-50 transition-colors">
-                  <td className="p-5 font-medium text-slate-900 border-l-4 border-transparent hover:border-emerald-500">
-                    Geometric Base
-                  </td>
-                  <td className="p-5 text-slate-500">Furniture</td>
-                  <td className="p-5">$149.00</td>
-                  <td className="p-5">
-                    <span className="inline-flex bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full text-xs font-semibold border border-slate-200">
-                      Draft
-                    </span>
-                  </td>
-                  <td className="p-5 text-right space-x-3">
-                    <button className="font-semibold text-slate-600 hover:text-emerald-600 transition-colors">
-                      View
-                    </button>
-                    <button className="font-semibold text-red-600 hover:text-red-800 transition-colors">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div className="p-4 border-t border-slate-200 bg-slate-50 text-slate-500 text-xs flex justify-between items-center">
-            <span>Showing 2 products</span>
-          </div>
-        </div>
+        <ManageTable products={products} />
       </div>
     </ProtectedRoute>
   );

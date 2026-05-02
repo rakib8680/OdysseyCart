@@ -19,7 +19,7 @@ interface ProductFormData {
   images: string;
 }
 
-// Reusable input styles (DRY)
+// Reusable input styles
 const inputStyles =
   "w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow";
 

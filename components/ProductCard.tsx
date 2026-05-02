@@ -7,15 +7,32 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { type Product } from "@/lib/data";
 
-export default function ProductCard({ product }: { product: Product }) {
+interface ProductCardProps {
+  product: {
+    _id: string;
+    title: string;
+    slug?: string;
+    category: string;
+    price: number;
+    shortDescription: string;
+    images?: string[];
+    stockQuantity?: number;
+  };
+}
+
+export default function ProductCard({ product }: ProductCardProps) {
+  const imageUrl =
+    product.images && product.images.length > 0
+      ? product.images[0]
+      : "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80";
+
   return (
     <Card className="group h-full p-0 gap-0 border border-slate-200 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col bg-white">
       <div className="w-full aspect-[4/3] bg-slate-50 overflow-hidden relative border-b border-slate-100">
         <img
-          src={product.image}
-          alt={product.name}
+          src={imageUrl}
+          alt={product.title}
           className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-700"
         />
       </div>
@@ -31,16 +48,16 @@ export default function ProductCard({ product }: { product: Product }) {
             ${product.price.toFixed(2)}
           </span>
         </div>
-        <CardTitle className="text-xl">{product.name}</CardTitle>
+        <CardTitle className="text-xl">{product.title}</CardTitle>
       </CardHeader>
       <CardContent className="p-5 pt-0 flex-grow">
         <p className="text-sm text-slate-500 line-clamp-2">
-          {product.shortDesc}
+          {product.shortDescription}
         </p>
       </CardContent>
       <CardFooter className="p-5 pt-0 mt-auto border-0 bg-white">
         <Link
-          href={`/items/${product.id}`}
+          href={`/items/${product._id}`}
           className="w-full bg-slate-900 text-white hover:bg-emerald-600 transition-colors h-10 rounded-md flex items-center justify-center text-sm font-medium"
         >
           View Details

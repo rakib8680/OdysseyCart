@@ -1,15 +1,9 @@
 import Link from "next/link";
-import { MOCK_PRODUCTS } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { notFound } from "next/navigation";
+import { getProductById, getProducts } from "@/app/actions/products";
 import ProductCard from "@/components/ProductCard";
-
-export function generateStaticParams() {
-  return MOCK_PRODUCTS.map((product) => ({
-    id: product.id,
-  }));
-}
 
 export default async function ItemDetailsPage({
   params,
@@ -17,15 +11,22 @@ export default async function ItemDetailsPage({
   params: Promise<{ id: string }>;
 }) {
   const resolvedParams = await params;
-  const product = MOCK_PRODUCTS.find((p) => p.id === resolvedParams.id);
+  const product = await getProductById(resolvedParams.id);
 
   if (!product) {
     notFound();
   }
 
-  const relatedItems = MOCK_PRODUCTS.filter(
-    (p) => p.category === product.category && p.id !== product.id,
-  ).slice(0, 3);
+  // Fetch related items (same category, exclude current)
+  const allProducts = await getProducts();
+  const relatedItems = allProducts
+    .filter((p: any) => p.category === product.category && p._id !== product._id)
+    .slice(0, 3);
+
+  const imageUrl =
+    product.images && product.images.length > 0
+      ? product.images[0]
+      : "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80";
 
   return (
     <div className="container max-w-6xl mx-auto px-4 md:px-8 py-16">
@@ -53,8 +54,8 @@ export default async function ItemDetailsPage({
         {/* Gallery */}
         <div className="w-full aspect-square bg-slate-50 rounded-3xl border border-slate-200 overflow-hidden mix-blend-multiply flex items-center justify-center p-8">
           <img
-            src={product.image}
-            alt={product.name}
+            src={imageUrl}
+            alt={product.title}
             className="w-full h-full object-contain rounded-xl mix-blend-multiply max-h-[500px]"
           />
         </div>
@@ -69,14 +70,14 @@ export default async function ItemDetailsPage({
           </Badge>
 
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4">
-            {product.name}
+            {product.title}
           </h1>
           <p className="text-2xl font-medium text-slate-700 mb-6">
             ${product.price.toFixed(2)}
           </p>
 
           <div className="prose prose-slate text-slate-600 mb-8 leading-relaxed">
-            <p>{product.fullDesc}</p>
+            <p>{product.fullDescription}</p>
           </div>
 
           <div className="space-y-4 mb-8 border-y border-slate-100 py-6">
@@ -86,7 +87,9 @@ export default async function ItemDetailsPage({
                 <span className="font-medium text-slate-900">
                   Availability:
                 </span>{" "}
-                {product.status === "Active" ? "In Stock" : "Out of Stock"}
+                {product.stockQuantity > 0
+                  ? `In Stock (${product.stockQuantity})`
+                  : "Out of Stock"}
               </li>
               <li className="flex justify-between">
                 <span className="font-medium text-slate-900">Shipping:</span>{" "}
@@ -111,8 +114,8 @@ export default async function ItemDetailsPage({
             You might also like
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {relatedItems.map((item) => (
-               <ProductCard key={item.id} product={item} />
+            {relatedItems.map((item: any) => (
+              <ProductCard key={item._id} product={item} />
             ))}
           </div>
         </div>
