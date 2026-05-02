@@ -1,13 +1,44 @@
-// MongoDB Connection Singleton
-// ============================
-// This file creates and caches a single MongoDB connection
-// so we don't open a new connection on every request.
-//
-// Steps:
-// 1. Install mongoose: npm install mongoose
-// 2. Add MONGODB_URI to your .env.local
-// 3. Use connectDB() in your server actions/components before any DB operation
-//
-// Example usage:
-//   import { connectDB } from "@/lib/db/mongoose";
-//   await connectDB();
+import mongoose from "mongoose";
+
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  throw new Error(
+    "Please define the MONGODB_URI environment variable inside .env.local",
+  );
+}
+
+// We cache the connection so we don't open a new one on every single request in Next.js
+let cached = (global as any).mongoose;
+
+if (!cached) {
+  cached = (global as any).mongoose = { conn: null, promise: null };
+}
+
+export async function connectDB() {
+  if (cached.conn) {
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+    };
+
+    cached.promise = mongoose
+      .connect(MONGODB_URI as string, opts)
+      .then((mongoose) => {
+        console.log("MongoDB connected successfully");
+        return mongoose;
+      });
+  }
+
+  try {
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    throw e;
+  }
+
+  return cached.conn;
+}
