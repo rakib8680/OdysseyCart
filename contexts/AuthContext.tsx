@@ -18,10 +18,12 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase/config";
+import { syncUser } from "@/app/actions/users";
 
 // ---------- types ----------
 interface AuthContextType {
   user: User | null;
+  dbUser: any | null;
   loading: boolean;
   register: (email: string, password: string, name: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
@@ -35,13 +37,31 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // ---------- provider ----------
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [dbUser, setDbUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
-  //tnis is a listener function, for auth state changes
+  // This is a listener function, for auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      // console.log("Current User:", currentUser);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+
+      if (currentUser) {
+        // Sync with MongoDB to fetch custom roles
+        const result = await syncUser(
+          currentUser.uid,
+          currentUser.email!,
+          currentUser.displayName || undefined,
+        );
+
+        if (result.success) {
+          setDbUser(result.user);
+        } else {
+          setDbUser(null);
+        }
+      } else {
+        setDbUser(null);
+      }
+
       setLoading(false);
     });
     return () => unsubscribe();
@@ -71,7 +91,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, register, login, loginWithGoogle, logout }}
+      value={{
+        user,
+        dbUser,
+        loading,
+        register,
+        login,
+        loginWithGoogle,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

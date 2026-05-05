@@ -1,9 +1,9 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AdminRoute } from "@/components/AdminRoute";
 
 export default function LoadingManageItems() {
   return (
-    <ProtectedRoute>
+    <AdminRoute>
       <div className="max-w-6xl mx-auto px-6 md:px-8 py-16 min-h-screen">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
@@ -32,6 +32,6 @@ export default function LoadingManageItems() {
           ))}
         </div>
       </div>
-    </ProtectedRoute>
+    </AdminRoute>
   );
 }

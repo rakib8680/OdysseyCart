@@ -2,7 +2,17 @@
 
 import { connectDB } from "@/lib/db/mongoose";
 import Product from "@/lib/models/Product";
+import User from "@/lib/models/User";
 import { revalidatePath } from "next/cache";
+
+// Helper function to enforce admin role
+async function requireAdmin(uid?: string) {
+  if (!uid) throw new Error("Unauthorized: No user ID provided");
+  const user = await User.findOne({ firebaseUid: uid });
+  if (!user || user.role !== "admin") {
+    throw new Error("Forbidden: Admin access required");
+  }
+}
 
 // ==========================================
 // CREATE
@@ -10,6 +20,9 @@ import { revalidatePath } from "next/cache";
 export async function createProduct(data: Record<string, any>) {
   try {
     await connectDB();
+    
+    // Check RBAC
+    await requireAdmin(data.createdBy);
 
     // check if product title already exists
     const existingProduct = await Product.findOne({ title: data.title });
@@ -82,9 +95,12 @@ export async function getProductById(id: string) {
 // ==========================================
 // DELETE
 // ==========================================
-export async function deleteProduct(id: string) {
+export async function deleteProduct(id: string, uid: string) {
   try {
     await connectDB();
+
+    // Check RBAC
+    await requireAdmin(uid);
 
     // Check if the product exists
     const product = await Product.findById(id);

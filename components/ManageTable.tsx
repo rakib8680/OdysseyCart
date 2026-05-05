@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { deleteProduct } from "@/app/actions/products";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 import { Loader2, Eye, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -21,6 +22,7 @@ interface ManageTableProps {
 
 export default function ManageTable({ products }: ManageTableProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [productToDelete, setProductToDelete] = useState<{
     id: string;
@@ -35,7 +37,12 @@ export default function ManageTable({ products }: ManageTableProps) {
     const title = productToDelete.title;
 
     try {
-      const result = await deleteProduct(id);
+      if (!user) {
+        toast.error("You must be logged in.");
+        return;
+      }
+
+      const result = await deleteProduct(id, user.uid);
 
       if (result.success) {
         toast.success(`"${title}" deleted successfully.`);
