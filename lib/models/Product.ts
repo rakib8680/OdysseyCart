@@ -38,14 +38,13 @@ const ProductSchema = new Schema<TProduct>(
 );
 
 // 3. Auto-generate slug from title before saving
-ProductSchema.pre("validate", function (next: any) {
+ProductSchema.pre("validate", function () {
   if (this.title && !this.slug) {
     this.slug = this.title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric chars with hyphens
       .replace(/(^-|-$)+/g, ""); // Remove leading/trailing hyphens
   }
-  next();
 });
 
 // 4. Create and export the model safely for Next.js
