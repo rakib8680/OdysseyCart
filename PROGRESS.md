@@ -35,13 +35,13 @@ Here is an analysis of the current state of the application against the `ASSESSM
 
 ## 6. Protected Page: Add Items (/items/add) : 🟢 Complete
 - [x] Route Protection: `<ProtectedRoute>` wrapper implemented. Unauthenticated users are redirected to `/login` with smart redirect callback.
-- [x] Form fields: UI form is fully built.
-- [ ] Submit logic / Toasts: Form submission not yet wired to Firestore.
+- [x] Form fields: UI form is fully built using `react-hook-form`.
+- [x] Submit logic / Toasts: Form submission successfully wired to MongoDB via Next.js Server Actions with proper validation and caching invalidation.
 
 ## 7. Protected Page: Manage Items (/items/manage) : 🟢 Complete
 - [x] Route Protection: `<ProtectedRoute>` wrapper implemented.
-- [x] List layout: Table UI is built and looks good.
-- [ ] Actions: View/Delete buttons exist visually but do nothing.
+- [x] List layout: Upgraded to a professional Shadcn UI Table component.
+- [x] Actions: View details links work. Delete action implemented with a secure, DRY Shadcn `AlertDialog` confirmation and server-side deletion logic.
 
 ## Overall Tech & Submission
 - [x] Next.js App Router: Used everywhere.
@@ -51,4 +51,7 @@ Here is an analysis of the current state of the application against the `ASSESSM
 
 ---
 **Summary for Next Steps:**
-1. Write the `README.md` to complete documentation requirement.
+1. Add a second filter on `/items` page (the assessment requires at least 2 filter fields, e.g., Category + Price Range or Search + Category).
+2. Completely remove the `lib/data.ts` mock file and ensure the entire app uses MongoDB exclusively.
+3. Add "Edit Product" functionality for completeness (optional but recommended).
+4. Polish loading states and ensure the README.md is fully up to date.

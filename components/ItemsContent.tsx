@@ -38,7 +38,7 @@ function ItemsFilter({ products }: ItemsContentProps) {
   });
 
   return (
-    <div className="container max-w-7xl mx-auto px-4 md:px-8 py-16">
+    <div className="container max-w-7xl mx-auto px-4 md:px-8 py-16 min-h-screen  ">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
         <div>
           <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-2">
