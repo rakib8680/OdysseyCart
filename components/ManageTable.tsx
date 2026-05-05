@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { DeleteConfirmModal } from "./DeleteConfirmModal";
 interface ManageTableProps {
   products: any[];
 }
@@ -21,14 +22,17 @@ interface ManageTableProps {
 export default function ManageTable({ products }: ManageTableProps) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [productToDelete, setProductToDelete] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
 
-  const handleDelete = async (id: string, title: string) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${title}"?`,
-    );
-    if (!confirmed) return;
+  const confirmDelete = async () => {
+    if (!productToDelete) return;
 
-    setDeletingId(id);
+    setDeletingId(productToDelete.id);
+    const id = productToDelete.id;
+    const title = productToDelete.title;
 
     try {
       const result = await deleteProduct(id);
@@ -43,6 +47,7 @@ export default function ManageTable({ products }: ManageTableProps) {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setDeletingId(null);
+      setProductToDelete(null);
     }
   };
 
@@ -136,7 +141,12 @@ export default function ManageTable({ products }: ManageTableProps) {
                       <span className="sr-only">View</span>
                     </Link>
                     <button
-                      onClick={() => handleDelete(product._id, product.title)}
+                      onClick={() =>
+                        setProductToDelete({
+                          id: product._id,
+                          title: product.title,
+                        })
+                      }
                       disabled={deletingId === product._id}
                       className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50"
                       title="Delete Product"
@@ -158,6 +168,14 @@ export default function ManageTable({ products }: ManageTableProps) {
       <div className="px-6 py-4 border-t border-slate-200 bg-slate-50 text-slate-500 text-xs flex justify-between items-center">
         <span>Showing {products.length} products</span>
       </div>
+
+      <DeleteConfirmModal
+        isOpen={!!productToDelete}
+        onClose={() => setProductToDelete(null)}
+        onConfirm={confirmDelete}
+        isDeleting={!!deletingId}
+        itemName={productToDelete?.title}
+      />
     </div>
   );
 }
