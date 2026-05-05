@@ -21,7 +21,7 @@ const USER_MENU_ITEMS = [
 export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, loading, logout } = useAuth();
+  const { user, dbUser, loading, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -156,15 +156,16 @@ export function Navbar() {
                     </div>
 
                     {/* Menu Links */}
-                    {USER_MENU_ITEMS.map((item) => (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-emerald-600 transition-colors"
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
+                    {dbUser?.role === "admin" &&
+                      USER_MENU_ITEMS.map((item) => (
+                        <Link
+                          key={item.name}
+                          href={item.href}
+                          className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-emerald-600 transition-colors"
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
 
                     {/* Logout */}
                     <div className="border-t border-slate-100 mt-1 pt-1">
