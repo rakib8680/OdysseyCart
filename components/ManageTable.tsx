@@ -4,9 +4,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { deleteProduct } from "@/app/actions/products";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 interface ManageTableProps {
   products: any[];
 }
@@ -17,7 +24,7 @@ export default function ManageTable({ products }: ManageTableProps) {
 
   const handleDelete = async (id: string, title: string) => {
     const confirmed = window.confirm(
-      `Are you sure you want to delete "${title}"?`
+      `Are you sure you want to delete "${title}"?`,
     );
     if (!confirmed) return;
 
@@ -57,65 +64,98 @@ export default function ManageTable({ products }: ManageTableProps) {
   return (
     <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden text-sm">
       <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-medium tracking-wider uppercase text-xs">
-            <tr>
-              <th className="p-5">Product Name</th>
-              <th className="p-5">Category</th>
-              <th className="p-5">Price</th>
-              <th className="p-5">Stock</th>
-              <th className="p-5 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 text-slate-700">
+        <Table>
+          <TableHeader className="bg-slate-50/50">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="h-11 font-semibold text-slate-500 pl-8"></TableHead>
+              <TableHead className="h-11 font-semibold text-slate-500 pl-8">
+                Product
+              </TableHead>
+              <TableHead className="h-11 font-semibold text-slate-500">
+                Category
+              </TableHead>
+              <TableHead className="h-11 font-semibold text-slate-500">
+                Price
+              </TableHead>
+              <TableHead className="h-11 font-semibold text-slate-500">
+                Status
+              </TableHead>
+              <TableHead className="h-11 font-semibold text-slate-500 text-right pr-8">
+                Actions
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {products.map((product: any) => (
-              <tr
-                key={product._id}
-                className="hover:bg-slate-50 transition-colors"
-              >
-                <td className="p-5 font-medium text-slate-900 border-l-4 border-transparent hover:border-emerald-500">
+              <TableRow key={product._id}>
+                <TableCell className="pl-8">
+                  {product.images && product.images.length > 0 ? (
+                    <img
+                      src={product.images[0]}
+                      alt={product.title}
+                      className="w-14 h-14 object-cover rounded-xl"
+                    />
+                  ) : (
+                    <img
+                      src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+                      alt={product.title}
+                      className="w-16 h-16 rounded-md"
+                    />
+                  )}
+                </TableCell>
+                <TableCell className="font-medium text-slate-900 py-4 pl-8">
                   {product.title}
-                </td>
-                <td className="p-5 text-slate-500">{product.category}</td>
-                <td className="p-5">${product.price.toFixed(2)}</td>
-                <td className="p-5">
+                </TableCell>
+                <TableCell className="text-slate-500 py-4">
+                  {product.category}
+                </TableCell>
+                <TableCell className="text-slate-600 font-medium py-4">
+                  ${product.price.toFixed(2)}
+                </TableCell>
+                <TableCell className="py-4">
                   <span
-                    className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold border ${
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium tracking-wide ${
                       product.stockQuantity > 0
-                        ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                        : "bg-red-50 text-red-700 border-red-100"
+                        ? "bg-emerald-100 text-emerald-800"
+                        : "bg-red-100 text-red-800"
                     }`}
                   >
                     {product.stockQuantity > 0
                       ? `${product.stockQuantity} in stock`
                       : "Out of stock"}
                   </span>
-                </td>
-                <td className="p-5 text-right space-x-3">
-                  <Link
-                    href={`/items/${product._id}`}
-                    className="font-semibold text-slate-600 hover:text-emerald-600 transition-colors"
-                  >
-                    View
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(product._id, product.title)}
-                    disabled={deletingId === product._id}
-                    className="font-semibold text-red-600 hover:text-red-800 transition-colors disabled:opacity-50"
-                  >
-                    {deletingId === product._id ? (
-                      <Loader2 className="w-4 h-4 animate-spin inline" />
-                    ) : (
-                      "Delete"
-                    )}
-                  </button>
-                </td>
-              </tr>
+                </TableCell>
+                <TableCell className="text-right py-4 pr-8">
+                  <div className="flex justify-end gap-3 transition-opacity">
+                    <Link
+                      href={`/items/${product._id}`}
+                      className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors"
+                      title="View Product"
+                    >
+                      <Eye className="w-4 h-4" />
+                      <span className="sr-only">View</span>
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(product._id, product.title)}
+                      disabled={deletingId === product._id}
+                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50"
+                      title="Delete Product"
+                    >
+                      {deletingId === product._id ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
+                      <span className="sr-only">Delete</span>
+                    </button>
+                  </div>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
-      <div className="p-4 border-t border-slate-200 bg-slate-50 text-slate-500 text-xs flex justify-between items-center">
+      <div className="px-6 py-4 border-t border-slate-200 bg-slate-50 text-slate-500 text-xs flex justify-between items-center">
         <span>Showing {products.length} products</span>
       </div>
     </div>

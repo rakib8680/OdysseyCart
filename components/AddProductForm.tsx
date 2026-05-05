@@ -63,6 +63,7 @@ export default function AddProductForm() {
       if (result.success) {
         toast.success("Product created successfully!");
         reset();
+        router.refresh(); // Forces Next.js to refresh the client-side router cache
         router.push("/items/manage");
       } else {
         toast.error(result.error || "Failed to create product.");
