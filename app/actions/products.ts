@@ -82,6 +82,11 @@ export async function getProductById(id: string) {
   try {
     await connectDB();
 
+    const mongoose = require("mongoose");
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return null;
+    }
+
     const product = await Product.findById(id).lean();
     if (!product) return null;
 
