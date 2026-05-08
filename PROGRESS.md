@@ -10,12 +10,13 @@ Here is an analysis of the current state of the application against the `ASSESSM
 - [x] Footer: Massive 6-column premium footer implemented.
 
 ## 2. Items Page (/items) : 🟢 Complete
-- [x] Search bar: Implemented.
-- [x] Filtering: Category filter is implemented.
-- [x] Display min 6 items: Works via mock data.
+- [x] Search bar: Implemented with 🔍 icon.
+- [x] Filtering: Multi-layered filtering (Category, Price Range, and 6-way Sorting) implemented to satisfy 2+ filter requirements.
+- [x] Performance: Optimized using `useMemo` for heavy calculations.
+- [x] Code Quality: Refactored into a clean, modular structure (`components/items/`) with custom hooks and separated UI components.
+- [x] Display min 6 items: Works via MongoDB.
 - [x] Responsive grid: Implemented.
-- [x] Product Cards: Contains image, title, short desc, price.
-- [x] Button on Card: Needs to explicitly have "View Details" button.
+- [x] Product Cards: Contains image, title, short desc, price, and "View Details" button.
 
 ## 3. Item Details Page (/items/[id]) : 🟢 Mostly Complete
 - [x] Dynamic Route: Implemented (`app/items/[id]/page.tsx`).
@@ -51,7 +52,6 @@ Here is an analysis of the current state of the application against the `ASSESSM
 
 ---
 **Summary for Next Steps:**
-1. Add a second filter on `/items` page (the assessment requires at least 2 filter fields, e.g., Category + Price Range or Search + Category).
-2. Completely remove the `lib/data.ts` mock file and ensure the entire app uses MongoDB exclusively.
-3. Add "Edit Product" functionality for completeness (optional but recommended).
-4. Polish loading states and ensure the README.md is fully up to date.
+1. Completely remove the `lib/data.ts` mock file and ensure the entire app uses MongoDB exclusively.
+2. Add "Edit Product" functionality for completeness (optional but recommended).
+3. Polish loading states and ensure the README.md is fully up to date.
