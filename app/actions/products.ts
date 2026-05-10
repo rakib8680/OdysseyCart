@@ -71,6 +71,60 @@ export async function createProduct(data: Record<string, any>) {
 }
 
 // ==========================================
+// UPDATE
+// ==========================================
+export async function updateProduct(id: string, data: Record<string, any>) {
+  try {
+    // 1. Validate data structure with Zod
+    const validatedData = ProductValidationSchema.parse(data);
+
+    await connectDB();
+    
+    // 2. Check RBAC using the validated UID
+    await requireAdmin(validatedData.createdBy);
+
+    // check if product exists
+    const existingProduct = await Product.findById(id);
+    if (!existingProduct) {
+      return { success: false, error: "Product not found" };
+    }
+
+    // check if title is taken by ANOTHER product
+    const titleConflict = await Product.findOne({
+      title: validatedData.title,
+      _id: { $ne: id }
+    });
+    
+    if (titleConflict) {
+      return { success: false, error: "Another product with this title already exists" };
+    }
+
+    // 3. Update using the clean, validated data
+    // Zod does not include slug, which is good. The pre-save hook will NOT regenerate slug 
+    // automatically unless title changes, but Mongoose updateOne doesn't run pre-save hooks by default.
+    // Instead we will use findByIdAndUpdate to just update fields, or find and save.
+    
+    // Mongoose findByIdAndUpdate is cleaner here. We'll manually update slug if title changed.
+    const newSlug = validatedData.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+
+    await Product.findByIdAndUpdate(id, {
+      ...validatedData,
+      slug: newSlug
+    });
+
+    revalidatePath("/items");
+    revalidatePath("/items/manage");
+    revalidatePath(`/items/${newSlug}`);
+    revalidatePath(`/items/${existingProduct.slug}`);
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error updating product:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+// ==========================================
 // READ ALL
 // ==========================================
 export async function getProducts() {

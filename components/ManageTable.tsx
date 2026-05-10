@@ -5,7 +5,7 @@ import Link from "next/link";
 import { deleteProduct } from "@/app/actions/products";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
-import { Loader2, Eye, Trash2 } from "lucide-react";
+import { Loader2, Eye, Trash2, Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -146,6 +146,14 @@ export default function ManageTable({ products }: ManageTableProps) {
                     >
                       <Eye className="w-4 h-4" />
                       <span className="sr-only">View</span>
+                    </Link>
+                    <Link
+                      href={`/items/edit/${product._id}`}
+                      className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                      title="Edit Product"
+                    >
+                      <Pencil className="w-4 h-4" />
+                      <span className="sr-only">Edit</span>
                     </Link>
                     <button
                       onClick={() =>

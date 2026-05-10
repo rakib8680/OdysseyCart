@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/contexts/AuthContext";
-import { createProduct } from "@/app/actions/products";
+import { createProduct, updateProduct } from "@/app/actions/products";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -23,17 +23,35 @@ interface ProductFormData {
 const inputStyles =
   "w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow";
 
-export default function AddProductForm() {
+interface ProductFormProps {
+  initialData?: any;
+}
+
+export default function AddProductForm({ initialData }: ProductFormProps) {
   const { user } = useAuth();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isEditing = !!initialData;
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ProductFormData>();
+  } = useForm<ProductFormData>({
+    defaultValues: initialData
+      ? {
+          title: initialData.title,
+          shortDescription: initialData.shortDescription,
+          fullDescription: initialData.fullDescription,
+          price: initialData.price,
+          category: initialData.category,
+          stockQuantity: initialData.stockQuantity,
+          images: initialData.images?.join(", "),
+        }
+      : undefined,
+  });
 
   const onSubmit = async (data: ProductFormData) => {
     if (!user) {
@@ -58,15 +76,17 @@ export default function AddProductForm() {
         createdBy: user.uid,
       };
 
-      const result = await createProduct(productData);
+      const result = isEditing
+        ? await updateProduct(initialData._id, productData)
+        : await createProduct(productData);
 
       if (result.success) {
-        toast.success("Product created successfully!");
+        toast.success(`Product ${isEditing ? "updated" : "created"} successfully!`);
         reset();
         router.refresh(); // Forces Next.js to refresh the client-side router cache
         router.push("/items/manage");
       } else {
-        toast.error(result.error || "Failed to create product.");
+        toast.error(result.error || `Failed to ${isEditing ? "update" : "create"} product.`);
       }
     } catch {
       toast.error("Something went wrong. Please try again.");
@@ -225,7 +245,7 @@ export default function AddProductForm() {
           className="px-6 py-3 bg-slate-900 text-white rounded-lg font-bold hover:bg-emerald-600 transition-colors shadow-lg hover:shadow-emerald-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
-          {isSubmitting ? "Publishing..." : "Publish Product"}
+          {isSubmitting ? (isEditing ? "Updating..." : "Publishing...") : (isEditing ? "Update Product" : "Publish Product")}
         </button>
       </div>
     </form>
