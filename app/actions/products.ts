@@ -4,6 +4,25 @@ import { connectDB } from "@/lib/db/mongoose";
 import Product from "@/lib/models/Product";
 import User from "@/lib/models/User";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+// Zod schema for product validation
+const ProductValidationSchema = z.object({
+  title: z.string().min(1, "Title is required").max(100, "Title is too long"),
+  shortDescription: z
+    .string()
+    .min(1, "Short description is required")
+    .max(200, "Short description is too long"),
+  fullDescription: z.string().min(1, "Full description is required"),
+  price: z.coerce.number().positive("Price must be a positive number"),
+  category: z.string().min(1, "Category is required"),
+  images: z.array(z.string()).default([]),
+  stockQuantity: z.coerce
+    .number()
+    .min(0, "Stock quantity cannot be negative")
+    .default(0),
+  createdBy: z.string().min(1, "Creator ID is required"),
+});
 
 // Helper function to enforce admin role
 async function requireAdmin(uid?: string) {
@@ -19,13 +38,18 @@ async function requireAdmin(uid?: string) {
 // ==========================================
 export async function createProduct(data: Record<string, any>) {
   try {
+    // 1. Validate data structure with Zod
+    const validatedData = ProductValidationSchema.parse(data);
+
     await connectDB();
-    
-    // Check RBAC
-    await requireAdmin(data.createdBy);
+
+    // 2. Check RBAC using the validated UID
+    await requireAdmin(validatedData.createdBy);
 
     // check if product title already exists
-    const existingProduct = await Product.findOne({ title: data.title });
+    const existingProduct = await Product.findOne({
+      title: validatedData.title,
+    });
     if (existingProduct) {
       return {
         success: false,
@@ -33,7 +57,8 @@ export async function createProduct(data: Record<string, any>) {
       };
     }
 
-    await Product.create(data);
+    // 3. Create using the clean, validated data
+    await Product.create(validatedData);
 
     revalidatePath("/items");
     revalidatePath("/items/manage");
