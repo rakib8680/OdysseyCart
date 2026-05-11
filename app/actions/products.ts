@@ -219,3 +219,23 @@ export async function deleteProduct(id: string, uid: string) {
     return { success: false, error: error.message };
   }
 }
+
+// ==========================================
+// READ FEATURED (for landing page)
+// ==========================================
+export async function getFeaturedProducts(limit = 3) {
+  try {
+    await connectDB();
+
+    const products = await Product.find({ isFeatured: true })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+
+    return JSON.parse(JSON.stringify(products));
+  } catch (error: any) {
+    console.error("Error getting featured products:", error);
+    return [];
+  }
+}
+

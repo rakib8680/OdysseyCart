@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { MOCK_PRODUCTS } from "@/lib/data";
 import { EditorialCard } from "./EditorialCard";
+import { getFeaturedProducts } from "@/app/actions/products";
 
-export function FeaturedProducts() {
-  const featured = MOCK_PRODUCTS.slice(0, 3);
+export async function FeaturedProducts() {
+  const featured = await getFeaturedProducts(3);
+
+  // Don't render the section if there are no featured products
+  if (!featured || featured.length === 0) return null;
 
   return (
     <section className="py-24 bg-white">
@@ -33,10 +36,12 @@ export function FeaturedProducts() {
           </div>
 
           {/* Side Stacked Products (Spans 4 columns) */}
-          <div className="md:col-span-4 flex flex-col gap-12">
-            <EditorialCard product={featured[1]} />
-            <EditorialCard product={featured[2]} />
-          </div>
+          {featured.length > 1 && (
+            <div className="md:col-span-4 flex flex-col gap-12">
+              {featured[1] && <EditorialCard product={featured[1]} />}
+              {featured[2] && <EditorialCard product={featured[2]} />}
+            </div>
+          )}
         </div>
 
         {/* Mobile View All */}

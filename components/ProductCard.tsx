@@ -19,7 +19,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       ? product.images[0]
       : "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80";
 
-  const hasDiscount = product.discount && product.discount > 0;
+  const hasDiscount = product.discount > 0;
   const discountedPrice = hasDiscount
     ? product.price * (1 - product.discount! / 100)
     : product.price;

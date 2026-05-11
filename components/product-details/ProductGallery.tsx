@@ -13,7 +13,7 @@ export default function ProductGallery({ product }: ProductGalleryProps) {
       ? product.images[0]
       : "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80";
 
-  const hasDiscount = product.discount && product.discount > 0;
+  const hasDiscount = product.discount > 0;
 
   return (
     <div className="sticky top-24">

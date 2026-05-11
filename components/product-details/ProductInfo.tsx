@@ -8,7 +8,7 @@ interface ProductInfoProps {
 }
 
 export default function ProductInfo({ product }: ProductInfoProps) {
-  const hasDiscount = product.discount && product.discount > 0;
+  const hasDiscount = product.discount > 0;
   const discountedPrice = hasDiscount
     ? product.price * (1 - product.discount / 100)
     : product.price;

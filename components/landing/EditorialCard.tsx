@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { type Product } from "@/lib/data";
+import { type Product } from "@/lib/types/product";
 
 interface EditorialCardProps {
   product: Product;
@@ -10,7 +10,7 @@ interface EditorialCardProps {
 export function EditorialCard({ product, isLarge }: EditorialCardProps) {
   return (
     <Link
-      href={`/items/${product.id}`}
+      href={`/items/${product._id}`}
       className="group flex flex-col h-full w-full"
     >
       {/* Image Container - Borderless and clean */}
@@ -20,8 +20,8 @@ export function EditorialCard({ product, isLarge }: EditorialCardProps) {
         } bg-slate-100 rounded-2xl overflow-hidden mb-6`}
       >
         <img
-          src={product.image}
-          alt={product.name}
+          src={product.images?.[0] || "/placeholder.png"}
+          alt={product.title}
           className="absolute inset-0 w-full h-full object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105"
         />
         {/* Subtle inner shadow for depth */}
@@ -42,7 +42,7 @@ export function EditorialCard({ product, isLarge }: EditorialCardProps) {
               isLarge ? "text-2xl md:text-3xl" : "text-xl"
             }`}
           >
-            {product.name}
+            {product.title}
           </h3>
           <span
             className={`font-medium text-slate-500 ${
@@ -55,7 +55,7 @@ export function EditorialCard({ product, isLarge }: EditorialCardProps) {
 
         {isLarge && (
           <p className="text-slate-500 text-base md:text-lg max-w-2xl mb-6 line-clamp-2">
-            {product.shortDesc}
+            {product.shortDescription}
           </p>
         )}
 
