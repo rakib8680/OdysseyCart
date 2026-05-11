@@ -13,6 +13,20 @@ export interface TProduct extends Document {
   averageRating: number;
   numReviews: number;
   createdBy: string;
+  brand: string;
+  tags: string[];
+  specs: Map<string, string>;
+  discount: number;
+  isFeatured: boolean;
+  warranty: string;
+  shippingInfo: string;
+  weight: number;
+  dimensions: {
+    length: number;
+    width: number;
+    height: number;
+  };
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,6 +45,19 @@ const ProductSchema = new Schema<TProduct>(
     averageRating: { type: Number, default: 0 },
     numReviews: { type: Number, default: 0 },
     createdBy: { type: String, required: true }, // Firebase UID
+    brand: { type: String, default: "" },
+    tags: { type: [String], default: [] },
+    specs: { type: Map, of: String, default: {} },
+    discount: { type: Number, default: 0, min: 0, max: 100 },
+    isFeatured: { type: Boolean, default: false },
+    warranty: { type: String, default: "" },
+    shippingInfo: { type: String, default: "Free Standard Shipping" },
+    weight: { type: Number, default: 0 },
+    dimensions: {
+      length: { type: Number, default: 0 },
+      width: { type: Number, default: 0 },
+      height: { type: Number, default: 0 },
+    },
   },
   {
     timestamps: true,

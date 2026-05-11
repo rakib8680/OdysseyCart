@@ -18,6 +18,8 @@ interface ProductCardProps {
     shortDescription: string;
     images?: string[];
     stockQuantity?: number;
+    brand?: string;
+    discount?: number;
   };
 }
 
@@ -27,9 +29,19 @@ export default function ProductCard({ product }: ProductCardProps) {
       ? product.images[0]
       : "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80";
 
+  const hasDiscount = product.discount && product.discount > 0;
+  const discountedPrice = hasDiscount
+    ? product.price * (1 - product.discount! / 100)
+    : product.price;
+
   return (
     <Card className="group h-full p-0 gap-0 border border-slate-200 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col bg-white">
       <div className="w-full aspect-[4/3] bg-slate-50 overflow-hidden relative border-b border-slate-100">
+        {hasDiscount && (
+          <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full z-10">
+            -{product.discount}%
+          </div>
+        )}
         <img
           src={imageUrl}
           alt={product.title}
@@ -44,10 +56,22 @@ export default function ProductCard({ product }: ProductCardProps) {
           >
             {product.category}
           </Badge>
-          <span className="font-semibold text-lg text-slate-900">
-            ${product.price.toFixed(2)}
-          </span>
+          <div className="text-right">
+            <span className="font-semibold text-lg text-slate-900">
+              ${discountedPrice.toFixed(2)}
+            </span>
+            {hasDiscount && (
+              <span className="block text-xs text-slate-400 line-through">
+                ${product.price.toFixed(2)}
+              </span>
+            )}
+          </div>
         </div>
+        {product.brand && (
+          <p className="text-xs text-slate-400 font-medium mb-1">
+            {product.brand}
+          </p>
+        )}
         <CardTitle className="text-xl">{product.title}</CardTitle>
       </CardHeader>
       <CardContent className="p-5 pt-0 flex-grow">

@@ -35,14 +35,17 @@ Here is an analysis of the current state of the application against the `ASSESSM
 - [x] Redirect: Redirects to `/` after login/register correctly.
 
 ## 6. Protected Page: Add Items (/items/add) : 🟢 Complete
-- [x] Route Protection: `<ProtectedRoute>` wrapper implemented. Unauthenticated users are redirected to `/login` with smart redirect callback.
-- [x] Form fields: UI form is fully built using `react-hook-form`.
-- [x] Submit logic / Toasts: Form submission successfully wired to MongoDB via Next.js Server Actions with proper validation and caching invalidation.
+- [x] Route Protection: `<AdminRoute>` wrapper implemented. Unauthenticated users are redirected to `/login`.
+- [x] Form fields: UI form is fully built using `react-hook-form` and reusable for editing.
+- [x] Submit logic / Toasts: Form submission wired to MongoDB via Next.js Server Actions.
+- [x] Security: Implemented strict Zod schema validation and RBAC checking on the server side.
 
 ## 7. Protected Page: Manage Items (/items/manage) : 🟢 Complete
-- [x] Route Protection: `<ProtectedRoute>` wrapper implemented.
-- [x] List layout: Upgraded to a professional Shadcn UI Table component.
-- [x] Actions: View details links work. Delete action implemented with a secure, DRY Shadcn `AlertDialog` confirmation and server-side deletion logic.
+- [x] Route Protection: `<AdminRoute>` wrapper implemented.
+- [x] List layout: Professional Shadcn UI Table component.
+- [x] Actions: View, Edit, and Delete actions implemented.
+- [x] Edit Feature: Added `/items/edit/[id]` route, pre-filled form, and secure `updateProduct` server action.
+- [x] Delete Feature: Secure, DRY Shadcn `AlertDialog` confirmation and server-side deletion logic.
 
 ## Overall Tech & Submission
 - [x] Next.js App Router: Used everywhere.
@@ -51,7 +54,9 @@ Here is an analysis of the current state of the application against the `ASSESSM
 - [x] README.md: Written with project description, features, setup instructions, and route summary.
 
 ---
-**Summary for Next Steps:**
-1. Completely remove the `lib/data.ts` mock file and ensure the entire app uses MongoDB exclusively.
-2. Add "Edit Product" functionality for completeness (optional but recommended).
-3. Polish loading states and ensure the README.md is fully up to date.
+**Summary for Next Steps (Future Plans):**
+1. **Cart Persistence**: Implement saving cart data to MongoDB for authenticated users.
+2. **Checkout Flow**: Build a multi-step checkout and order history tracking.
+3. **Admin Dashboard**: Create an admin dashboard for sales metrics and user management.
+4. **Mock Data Removal**: Completely remove the `lib/data.ts` mock file and ensure the entire app uses MongoDB exclusively.
+5. **Polishing**: Add loading states (skeletons) and ensure the README.md is fully up to date.
