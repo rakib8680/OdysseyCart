@@ -1,10 +1,9 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { Product, SortOption } from "./types";
+import { Product, SortOption } from "@/lib/types/product";
 
 /**
  * Custom hook that encapsulates all product filtering and sorting logic.
- * Keeps the UI components free of business logic.
  */
 export function useProductFilters(products: Product[]) {
   const searchParams = useSearchParams();

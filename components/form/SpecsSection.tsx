@@ -20,9 +20,9 @@ export default function SpecsSection({
         </span>
         Specifications & Details
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Specs */}
-        <div className="md:col-span-2">
+      <div className="space-y-6">
+        {/* Specs Textarea */}
+        <div>
           <label className={labelStyles}>
             Specifications (one per line, Key: Value)
           </label>
@@ -38,26 +38,28 @@ export default function SpecsSection({
           </p>
         </div>
 
-        {/* Weight */}
+        {/* Weight + Dimensions — single row */}
         <div>
-          <label className={labelStyles}>Weight (kg)</label>
-          <input
-            type="number"
-            step="0.1"
-            className={inputStyles}
-            placeholder="0.00"
-            {...register("weight", {
-              min: { value: 0, message: "Cannot be negative" },
-            })}
-          />
-        </div>
-
-        {/* Dimensions */}
-        <div>
-          <label className={labelStyles}>Dimensions (cm)</label>
-          <div className="grid grid-cols-3 gap-3">
+          <label className={labelStyles}>Weight & Dimensions</label>
+          <div className="grid grid-cols-4 gap-3">
             <div>
-              <span className="text-xs text-slate-400 mb-1 block">Length</span>
+              <span className="text-xs text-slate-400 mb-1 block">
+                Weight (kg)
+              </span>
+              <input
+                type="number"
+                step="0.1"
+                className={inputStyles}
+                placeholder="0.0"
+                {...register("weight", {
+                  min: { value: 0, message: "Cannot be negative" },
+                })}
+              />
+            </div>
+            <div>
+              <span className="text-xs text-slate-400 mb-1 block">
+                Length (cm)
+              </span>
               <input
                 type="number"
                 step="0.1"
@@ -69,7 +71,9 @@ export default function SpecsSection({
               />
             </div>
             <div>
-              <span className="text-xs text-slate-400 mb-1 block">Width</span>
+              <span className="text-xs text-slate-400 mb-1 block">
+                Width (cm)
+              </span>
               <input
                 type="number"
                 step="0.1"
@@ -81,7 +85,9 @@ export default function SpecsSection({
               />
             </div>
             <div>
-              <span className="text-xs text-slate-400 mb-1 block">Height</span>
+              <span className="text-xs text-slate-400 mb-1 block">
+                Height (cm)
+              </span>
               <input
                 type="number"
                 step="0.1"
@@ -95,26 +101,26 @@ export default function SpecsSection({
           </div>
         </div>
 
-        {/* Warranty */}
-        <div>
-          <label className={labelStyles}>Warranty</label>
-          <input
-            type="text"
-            className={inputStyles}
-            placeholder="e.g., 2 Year Manufacturer Warranty"
-            {...register("warranty")}
-          />
-        </div>
-
-        {/* Shipping Info */}
-        <div>
-          <label className={labelStyles}>Shipping Info</label>
-          <input
-            type="text"
-            className={inputStyles}
-            placeholder="e.g., Ships in 2-3 business days"
-            {...register("shippingInfo")}
-          />
+        {/* Warranty + Shipping — side by side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className={labelStyles}>Warranty</label>
+            <input
+              type="text"
+              className={inputStyles}
+              placeholder="e.g., 2 Year Manufacturer Warranty"
+              {...register("warranty")}
+            />
+          </div>
+          <div>
+            <label className={labelStyles}>Shipping Info</label>
+            <input
+              type="text"
+              className={inputStyles}
+              placeholder="e.g., Ships in 2-3 business days"
+              {...register("shippingInfo")}
+            />
+          </div>
         </div>
       </div>
     </div>

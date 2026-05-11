@@ -42,7 +42,7 @@ export default function BasicInfoSection({
           <label className={labelStyles}>Brand</label>
           <input
             type="text"
-            className={inputStyles}
+            className={`${inputStyles} bg-white h-[52px]`}
             placeholder="e.g., Apple, Sony, Nike"
             {...register("brand")}
           />
@@ -52,7 +52,7 @@ export default function BasicInfoSection({
         <div>
           <label className={labelStyles}>Category</label>
           <select
-            className={inputStyles}
+            className={`${inputStyles} bg-white h-[52px]`}
             {...register("category", { required: "Category is required" })}
           >
             <option value="">Select Category</option>

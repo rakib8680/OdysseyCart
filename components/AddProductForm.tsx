@@ -183,7 +183,7 @@ export default function AddProductForm({ initialData }: ProductFormProps) {
             />
           </div>
 
-          <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm md:mt-13">
             <SpecsSection
               register={register}
               inputStyles={inputStyles}

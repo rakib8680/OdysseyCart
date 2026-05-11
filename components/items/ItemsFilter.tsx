@@ -4,7 +4,7 @@ import { useProductFilters } from "./useProductFilters";
 import { SearchBar } from "./SearchBar";
 import { FilterPanel } from "./FilterPanel";
 import { ProductGrid } from "./ProductGrid";
-import { Product } from "./types";
+import { Product } from "@/lib/types/product";
 
 interface ItemsFilterProps {
   products: Product[];

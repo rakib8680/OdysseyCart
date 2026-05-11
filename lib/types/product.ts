@@ -30,3 +30,21 @@ export interface Product {
   createdAt: string;
   updatedAt: string;
 }
+
+// Shared types for the Items page
+export type SortOption =
+  | "newest"
+  | "oldest"
+  | "price-low"
+  | "price-high"
+  | "name-az"
+  | "name-za";
+
+export interface FilterState {
+  search: string;
+  category: string;
+  minPrice: string;
+  maxPrice: string;
+  sortBy: SortOption;
+  showFilters: boolean;
+}
