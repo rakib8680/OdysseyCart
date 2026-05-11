@@ -6,14 +6,15 @@ export const metadata = { title: "Add Item | OdysseyCart" };
 export default function AddItemPage() {
   return (
     <AdminRoute>
-      <div className="max-w-3xl mx-auto px-6 md:px-8 py-16 min-h-screen">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-8">
+      <div className="max-w-6xl mx-auto px-6 md:px-10 py-16 min-h-screen">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">
           Add New Product
         </h1>
+        <p className="text-slate-500 mb-10">
+          Fill in the details below to list a new product in the store.
+        </p>
 
-        <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
-          <AddProductForm />
-        </div>
+        <AddProductForm />
       </div>
     </AdminRoute>
   );

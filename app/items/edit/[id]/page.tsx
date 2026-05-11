@@ -19,14 +19,15 @@ export default async function EditItemPage({
 
   return (
     <AdminRoute>
-      <div className="max-w-3xl mx-auto px-6 md:px-8 py-16 min-h-screen">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-8">
+      <div className="max-w-6xl mx-auto px-6 md:px-10 py-16 min-h-screen">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">
           Edit Product: {product.title}
         </h1>
+        <p className="text-slate-500 mb-10">
+          Update the product details below.
+        </p>
 
-        <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
-          <AddProductForm initialData={product} />
-        </div>
+        <AddProductForm initialData={product} />
       </div>
     </AdminRoute>
   );

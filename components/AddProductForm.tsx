@@ -136,59 +136,76 @@ export default function AddProductForm({ initialData }: ProductFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      <BasicInfoSection
-        register={register}
-        errors={errors}
-        inputStyles={inputStyles}
-        labelStyles={labelStyles}
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+      {/* Two-column layout on desktop */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Left Column */}
+        <div className="space-y-10">
+          <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+            <BasicInfoSection
+              register={register}
+              errors={errors}
+              inputStyles={inputStyles}
+              labelStyles={labelStyles}
+            />
+          </div>
 
-      <PricingSection
-        register={register}
-        errors={errors}
-        inputStyles={inputStyles}
-        labelStyles={labelStyles}
-      />
+          {/* Media Section */}
+          <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+            <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <span className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">
+                4
+              </span>
+              Media
+            </h2>
+            <div>
+              <label className={labelStyles}>
+                Image URLs (comma separated)
+              </label>
+              <input
+                type="text"
+                className={inputStyles}
+                placeholder="https://example.com/img1.jpg, https://..."
+                {...register("images")}
+              />
+            </div>
+          </div>
+        </div>
 
-      <SpecsSection
-        register={register}
-        inputStyles={inputStyles}
-        labelStyles={labelStyles}
-      />
+        {/* Right Column */}
+        <div className="space-y-10">
+          <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+            <PricingSection
+              register={register}
+              errors={errors}
+              inputStyles={inputStyles}
+              labelStyles={labelStyles}
+            />
+          </div>
 
-      {/* Media Section */}
-      <div>
-        <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-          <span className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">
-            4
-          </span>
-          Media
-        </h2>
-        <div>
-          <label className={labelStyles}>Image URLs (comma separated)</label>
-          <input
-            type="text"
-            className={inputStyles}
-            placeholder="https://example.com/img1.jpg, https://..."
-            {...register("images")}
-          />
+          <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+            <SpecsSection
+              register={register}
+              inputStyles={inputStyles}
+              labelStyles={labelStyles}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="pt-4 border-t border-slate-100 flex justify-end gap-4">
+      {/* Actions — full width */}
+      <div className="flex justify-end gap-4 pt-2">
         <button
           type="button"
           onClick={() => router.back()}
-          className="px-6 py-3 border border-slate-300 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition-colors"
+          className="px-8 py-3 border border-slate-300 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-6 py-3 bg-slate-900 text-white rounded-lg font-bold hover:bg-emerald-600 transition-colors shadow-lg hover:shadow-emerald-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-emerald-600 transition-colors shadow-lg hover:shadow-emerald-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
           {isSubmitting

@@ -16,7 +16,7 @@ export default function BasicInfoSection({
 }: BasicInfoSectionProps) {
   return (
     <div>
-      <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+      <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
         <span className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">
           1
         </span>

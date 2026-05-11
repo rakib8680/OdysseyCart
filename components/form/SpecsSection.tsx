@@ -14,7 +14,7 @@ export default function SpecsSection({
 }: SpecsSectionProps) {
   return (
     <div>
-      <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+      <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
         <span className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">
           3
         </span>
@@ -43,7 +43,7 @@ export default function SpecsSection({
           <label className={labelStyles}>Weight (kg)</label>
           <input
             type="number"
-            step="0.01"
+            step="0.1"
             className={inputStyles}
             placeholder="0.00"
             {...register("weight", {
@@ -56,33 +56,42 @@ export default function SpecsSection({
         <div>
           <label className={labelStyles}>Dimensions (cm)</label>
           <div className="grid grid-cols-3 gap-3">
-            <input
-              type="number"
-              step="0.1"
-              className={inputStyles}
-              placeholder="L"
-              {...register("dimensionLength", {
-                min: { value: 0, message: "Cannot be negative" },
-              })}
-            />
-            <input
-              type="number"
-              step="0.1"
-              className={inputStyles}
-              placeholder="W"
-              {...register("dimensionWidth", {
-                min: { value: 0, message: "Cannot be negative" },
-              })}
-            />
-            <input
-              type="number"
-              step="0.1"
-              className={inputStyles}
-              placeholder="H"
-              {...register("dimensionHeight", {
-                min: { value: 0, message: "Cannot be negative" },
-              })}
-            />
+            <div>
+              <span className="text-xs text-slate-400 mb-1 block">Length</span>
+              <input
+                type="number"
+                step="0.1"
+                className={inputStyles}
+                placeholder="L"
+                {...register("dimensionLength", {
+                  min: { value: 0, message: "Cannot be negative" },
+                })}
+              />
+            </div>
+            <div>
+              <span className="text-xs text-slate-400 mb-1 block">Width</span>
+              <input
+                type="number"
+                step="0.1"
+                className={inputStyles}
+                placeholder="W"
+                {...register("dimensionWidth", {
+                  min: { value: 0, message: "Cannot be negative" },
+                })}
+              />
+            </div>
+            <div>
+              <span className="text-xs text-slate-400 mb-1 block">Height</span>
+              <input
+                type="number"
+                step="0.1"
+                className={inputStyles}
+                placeholder="H"
+                {...register("dimensionHeight", {
+                  min: { value: 0, message: "Cannot be negative" },
+                })}
+              />
+            </div>
           </div>
         </div>
 

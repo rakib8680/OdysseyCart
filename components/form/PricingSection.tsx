@@ -16,13 +16,13 @@ export default function PricingSection({
 }: PricingSectionProps) {
   return (
     <div>
-      <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+      <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
         <span className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">
           2
         </span>
         Pricing & Inventory
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Price */}
         <div>
           <label className={labelStyles}>Price ($)</label>
@@ -82,7 +82,7 @@ export default function PricingSection({
         </div>
 
         {/* Featured Toggle */}
-        <div className="md:col-span-3 flex items-center gap-3">
+        <div className="md:col-span-2 flex items-center gap-3 pt-2 border-t border-slate-100">
           <input
             type="checkbox"
             id="isFeatured"
