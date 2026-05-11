@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
+import { SortOption } from "@/lib/types/product";
 import { X } from "lucide-react";
-import { SortOption } from "./types";
 
 const SELECT_STYLES =
   "h-10 px-3 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm cursor-pointer";
