@@ -7,20 +7,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Product } from "@/lib/types/product";
 
 interface ProductCardProps {
-  product: {
-    _id: string;
-    title: string;
-    slug?: string;
-    category: string;
-    price: number;
-    shortDescription: string;
-    images?: string[];
-    stockQuantity?: number;
-    brand?: string;
-    discount?: number;
-  };
+  product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
