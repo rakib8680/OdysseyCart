@@ -7,7 +7,7 @@ import ProductInfo from "@/components/product-details/ProductInfo";
 import KeyInformation from "@/components/product-details/KeyInformation";
 import ProductSpecs from "@/components/product-details/ProductSpecs";
 import RelatedProducts from "@/components/product-details/RelatedProducts";
-import AddToCartSection from "@/components/product-details/AddToCartSection";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
 
 export default async function ItemDetailsPage({
   params,
@@ -59,7 +59,10 @@ export default async function ItemDetailsPage({
           <KeyInformation product={product} />
           <ProductSpecs specs={product.specs || {}} />
 
-          <AddToCartSection product={product} />
+          <AddToCartButton
+            product={product}
+            className="w-full rounded-xl text-md h-14 mt-8 shadow-lg hover:shadow-emerald-600/20"
+          />
         </div>
       </div>
 
