@@ -203,7 +203,6 @@ export async function mergeCart(userId: string, localItems: CartItem[]) {
       MergeCartSchema.parse({ userId, localItems });
 
     if (!validLocalItems || validLocalItems.length === 0) {
-      // Nothing to merge — just return the existing DB cart
       return getCart(validUserId);
     }
 
