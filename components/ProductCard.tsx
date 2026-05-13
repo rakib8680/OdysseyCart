@@ -1,4 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { ShoppingCart, Loader2 } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 import {
   Card,
   CardContent,
@@ -14,6 +19,9 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { addItem } = useCart();
+  const [isAdding, setIsAdding] = useState(false);
+
   const imageUrl =
     product.images && product.images.length > 0
       ? product.images[0]
@@ -23,6 +31,21 @@ export default function ProductCard({ product }: ProductCardProps) {
   const discountedPrice = hasDiscount
     ? product.price * (1 - product.discount! / 100)
     : product.price;
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsAdding(true);
+    await addItem(
+      {
+        productId: product._id,
+        title: product.title,
+        price: discountedPrice,
+        image: imageUrl,
+      },
+      1,
+    );
+    setIsAdding(false);
+  };
 
   return (
     <Card className="group h-full p-0 gap-0 border border-slate-200 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col bg-white">
@@ -69,10 +92,26 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.shortDescription}
         </p>
       </CardContent>
-      <CardFooter className="p-5 pt-0 mt-auto border-0 bg-white">
+      <CardFooter className="p-5 pt-0 mt-auto border-0 bg-white flex flex-col gap-2">
+        <button
+          onClick={handleAddToCart}
+          disabled={isAdding || product.stockQuantity === 0}
+          className="w-full bg-slate-900 text-white hover:bg-emerald-600 transition-colors h-10 rounded-md flex items-center justify-center text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed shadow-sm group/btn"
+        >
+          {isAdding ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : product.stockQuantity === 0 ? (
+            "Out of Stock"
+          ) : (
+            <>
+              <ShoppingCart className="w-4 h-4 mr-2 group-hover/btn:-translate-y-0.5 transition-transform" />
+              Add to Cart
+            </>
+          )}
+        </button>
         <Link
           href={`/items/${product._id}`}
-          className="w-full bg-slate-900 text-white hover:bg-emerald-600 transition-colors h-10 rounded-md flex items-center justify-center text-sm font-medium"
+          className="w-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors h-10 rounded-md flex items-center justify-center text-sm font-medium"
         >
           View Details
         </Link>
