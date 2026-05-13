@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, ReactNode, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { AddToCartInput, CartItem } from "@/lib/types/cart";
 import { useCartPersistence } from "@/hooks/cart/useCartPersistence";
@@ -16,6 +16,11 @@ interface CartContextType {
   itemCount: number;
   totalPrice: number;
   isLoading: boolean;
+  // UI State
+  isCartOpen: boolean;
+  setIsCartOpen: (isOpen: boolean) => void;
+  openCart: () => void;
+  closeCart: () => void;
 }
 
 // ---------- context API ----------
@@ -24,6 +29,10 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 // ---------- provider ----------
 export function CartProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const openCart = () => setIsCartOpen(true);
+  const closeCart = () => setIsCartOpen(false);
 
   // Persistence: loading, saving, merging
   const { items, setItems, isLoading } = useCartPersistence(user);
@@ -53,6 +62,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         itemCount,
         totalPrice,
         isLoading,
+        isCartOpen,
+        setIsCartOpen,
+        openCart,
+        closeCart,
       }}
     >
       {children}

@@ -24,7 +24,7 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, dbUser, loading, logout } = useAuth();
-  const { itemCount } = useCart();
+  const { itemCount, openCart } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -108,7 +108,11 @@ export function Navbar() {
           {/* Right Side */}
           <div className="flex items-center space-x-4">
             {/* Cart Button */}
-            <button className="relative p-2 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer mr-2">
+            <button 
+              onClick={openCart}
+              className="relative p-2 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer mr-2"
+              aria-label="Open cart"
+            >
               <ShoppingCart className="w-6 h-6" />
               {itemCount > 0 && (
                 <span className="absolute top-0 right-0 inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[11px] font-bold text-white bg-red-500 border-2 border-white rounded-full -translate-y-1 translate-x-1">
