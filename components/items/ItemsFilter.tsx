@@ -1,6 +1,6 @@
 "use client";
 
-import { useProductFilters } from "./useProductFilters";
+import { useProductFilters } from "@/hooks/products/useProductFilters";
 import { SearchBar } from "./SearchBar";
 import { FilterPanel } from "./FilterPanel";
 import { ProductGrid } from "./ProductGrid";
