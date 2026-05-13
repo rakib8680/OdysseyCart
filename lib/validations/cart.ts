@@ -17,10 +17,10 @@ export const MergeCartSchema = z.object({
       price: z.number(),
       image: z.string().default(""),
       quantity: z.number().int().min(1),
-    })
+    }),
   ),
 });
 
-// Infer TypeScript types directly from Zod (DRY)
+// Infer TypeScript types directly from Zod
 export type CartActionInput = z.infer<typeof CartActionSchema>;
 export type MergeCartInput = z.infer<typeof MergeCartSchema>;
