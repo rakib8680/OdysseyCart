@@ -17,3 +17,6 @@ export interface Cart {
   createdAt: string;
   updatedAt: string;
 }
+
+// Input shape for adding items to cart (quantity is passed separately)
+export type AddToCartInput = Omit<CartItem, "quantity">;
