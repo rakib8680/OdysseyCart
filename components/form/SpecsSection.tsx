@@ -48,7 +48,7 @@ export default function SpecsSection({
               </span>
               <input
                 type="number"
-                step="0.1"
+                step="0.01"
                 className={inputStyles}
                 placeholder="0.0"
                 {...register("weight", {
