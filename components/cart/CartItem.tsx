@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
+import { motion } from "framer-motion";
 import { CartItem as CartItemType } from "@/lib/types/cart";
 
 interface CartItemProps {
@@ -20,7 +21,22 @@ export function CartItem({
   const productHref = `/items/${item.productId}`;
 
   return (
-    <div className="bg-white border border-slate-100 p-2 sm:p-4 rounded-xl sm:rounded-2xl shadow-sm group">
+    <motion.div
+      initial={{ opacity: 0, x: 30, scale: 0.95 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{
+        opacity: 0,
+        scale: 0.95,
+        height: 0,
+        paddingTop: 0,
+        paddingBottom: 0,
+        marginBottom: 0,
+        borderWidth: 0,
+        overflow: "hidden",
+      }}
+      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      className="bg-white border border-slate-100 p-2 sm:p-4 rounded-xl sm:rounded-2xl shadow-sm group mb-2 sm:mb-4"
+    >
       {/* Top row: Thumbnail + Info + Delete */}
       <div className="flex gap-2 sm:gap-4 items-start">
         {/* Clickable Thumbnail */}
@@ -88,6 +104,6 @@ export function CartItem({
           ${(item.price * item.quantity).toFixed(2)}
         </span>
       </div>
-    </div>
+    </motion.div>
   );
 }

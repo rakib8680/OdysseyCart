@@ -9,6 +9,7 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 import { ShoppingCart, ArrowRight } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 import { CartItem } from "./CartItem";
 import { ShippingProgress } from "./ShippingProgress";
 
@@ -40,7 +41,7 @@ export function CartDrawer() {
         </SheetHeader>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-2 py-3 sm:p-6 flex flex-col gap-2 sm:gap-4">
+        <div className="flex-1 overflow-y-auto px-2 py-3 sm:p-6 flex flex-col">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-slate-500 space-y-4">
               <ShoppingCart className="w-12 h-12 sm:w-16 sm:h-16 text-slate-200" />
@@ -57,18 +58,22 @@ export function CartDrawer() {
           ) : (
             <>
               {/* Free Shipping Progress */}
-              <ShippingProgress subtotal={totalPrice} />
+              <div className="mb-2 sm:mb-4">
+                <ShippingProgress subtotal={totalPrice} />
+              </div>
 
               {/* Cart Items */}
-              {items.map((item) => (
-                <CartItem
-                  key={item.productId}
-                  item={item}
-                  onUpdateQuantity={updateQuantity}
-                  onRemove={removeItem}
-                  onNavigate={closeCart}
-                />
-              ))}
+              <AnimatePresence>
+                {items.map((item) => (
+                  <CartItem
+                    key={item.productId}
+                    item={item}
+                    onUpdateQuantity={updateQuantity}
+                    onRemove={removeItem}
+                    onNavigate={closeCart}
+                  />
+                ))}
+              </AnimatePresence>
             </>
           )}
         </div>
