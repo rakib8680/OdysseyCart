@@ -18,9 +18,10 @@ Here is an analysis of the current state of the application against the `ASSESSM
 - [x] Responsive grid: Implemented.
 - [x] Product Cards: Contains image, title, short desc, price, and "View Details" button.
 
-## 3. Item Details Page (/items/[id]) : 🟢 Mostly Complete
+## 3. Item Details Page (/items/[id]) : 🟢 Complete
 - [x] Dynamic Route: Implemented (`app/items/[id]/page.tsx`).
 - [x] Content: Displays Title, Image, Full Desc, Info (price/category/status).
+- [x] Interactivity: Clickable image thumbnails and DRY AddToCartButton integration.
 - [x] Related items: Implemented.
 - [x] Back button: Implemented.
 
@@ -47,6 +48,12 @@ Here is an analysis of the current state of the application against the `ASSESSM
 - [x] Edit Feature: Added `/items/edit/[id]` route, pre-filled form, and secure `updateProduct` server action.
 - [x] Delete Feature: Secure, DRY Shadcn `AlertDialog` confirmation and server-side deletion logic.
 
+## 8. Cart System : 🟢 Complete
+- [x] Hybrid Persistence: Context merges Guest data (LocalStorage) with Authenticated User data (MongoDB) on login.
+- [x] Action Hooks: Cleanly separated `useCartPersistence` and `useCartActions` hooks.
+- [x] Global UI: Implemented an accessible, slide-out Cart Drawer using Shadcn `Sheet`.
+- [x] DRY Architecture: Centralized Add-to-Cart logic into a reusable `AddToCartButton` used across Product Cards and Details pages.
+
 ## Overall Tech & Submission
 - [x] Next.js App Router: Used everywhere.
 - [x] UI/Design: Responsive, polished layout, TailwindCSS used well.
@@ -55,8 +62,8 @@ Here is an analysis of the current state of the application against the `ASSESSM
 
 ---
 **Summary for Next Steps (Future Plans):**
-1. **Cart Persistence**: Implement saving cart data to MongoDB for authenticated users.
-2. **Checkout Flow**: Build a multi-step checkout and order history tracking.
+1. **Checkout Flow**: Build a multi-step checkout system (Shipping, Payment, Confirmation).
+2. **Order Management**: Implement order history tracking for users and fulfillment tracking for admins.
 3. **Admin Dashboard**: Create an admin dashboard for sales metrics and user management.
 4. **Mock Data Removal**: Completely remove the `lib/data.ts` mock file and ensure the entire app uses MongoDB exclusively.
 5. **Polishing**: Add loading states (skeletons) and ensure the README.md is fully up to date.
