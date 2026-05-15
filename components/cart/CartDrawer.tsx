@@ -22,6 +22,7 @@ export function CartDrawer() {
     removeItem,
     totalPrice,
     closeCart,
+    busyItems,
   } = useCart();
 
   return (
@@ -68,6 +69,7 @@ export function CartDrawer() {
                   <CartItem
                     key={item.productId}
                     item={item}
+                    isBusy={busyItems.has(item.productId)}
                     onUpdateQuantity={updateQuantity}
                     onRemove={removeItem}
                     onNavigate={closeCart}

@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { CartItem as CartItemType } from "@/lib/types/cart";
 
 interface CartItemProps {
   item: CartItemType;
+  isBusy: boolean;
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemove: (productId: string) => void;
   onNavigate: () => void;
@@ -14,6 +15,7 @@ interface CartItemProps {
 
 export function CartItem({
   item,
+  isBusy,
   onUpdateQuantity,
   onRemove,
   onNavigate,
@@ -35,7 +37,7 @@ export function CartItem({
         overflow: "hidden",
       }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="bg-white border border-slate-100 p-2 sm:p-4 rounded-xl sm:rounded-2xl shadow-sm group mb-2 sm:mb-4"
+      className={`bg-white border border-slate-100 p-2 sm:p-4 rounded-xl sm:rounded-2xl shadow-sm group mb-2 sm:mb-4 transition-opacity ${isBusy ? "opacity-60 pointer-events-none" : ""}`}
     >
       {/* Top row: Thumbnail + Info + Delete */}
       <div className="flex gap-2 sm:gap-4 items-start">
@@ -71,10 +73,15 @@ export function CartItem({
         {/* Delete button */}
         <button
           onClick={() => onRemove(item.productId)}
-          className="p-1 sm:p-1.5 text-slate-300 hover:text-red-500 transition-colors cursor-pointer shrink-0"
+          disabled={isBusy}
+          className="p-1 sm:p-1.5 text-slate-300 hover:text-red-500 transition-colors cursor-pointer shrink-0 disabled:cursor-not-allowed"
           aria-label={`Remove ${item.title} from cart`}
         >
-          <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          {isBusy ? (
+            <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
+          ) : (
+            <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          )}
         </button>
       </div>
 
@@ -83,7 +90,8 @@ export function CartItem({
         <div className="flex items-center bg-slate-50 rounded-md sm:rounded-lg p-0.5 sm:p-1 border border-slate-200">
           <button
             onClick={() => onUpdateQuantity(item.productId, item.quantity - 1)}
-            className="p-1 sm:p-1.5 hover:bg-white rounded transition-colors cursor-pointer text-slate-600"
+            disabled={isBusy}
+            className="p-1 sm:p-1.5 hover:bg-white rounded transition-colors cursor-pointer text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed"
             aria-label="Decrease quantity"
           >
             <Minus className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
@@ -93,7 +101,8 @@ export function CartItem({
           </span>
           <button
             onClick={() => onUpdateQuantity(item.productId, item.quantity + 1)}
-            className="p-1 sm:p-1.5 hover:bg-white rounded transition-colors cursor-pointer text-slate-600"
+            disabled={isBusy}
+            className="p-1 sm:p-1.5 hover:bg-white rounded transition-colors cursor-pointer text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed"
             aria-label="Increase quantity"
           >
             <Plus className="w-3 h-3 sm:w-3.5 sm:h-3.5" />

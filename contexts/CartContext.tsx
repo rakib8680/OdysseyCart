@@ -16,6 +16,7 @@ interface CartContextType {
   itemCount: number;
   totalPrice: number;
   isLoading: boolean;
+  busyItems: Set<string>;
   // UI State
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
@@ -38,11 +39,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { items, setItems, isLoading } = useCartPersistence(user);
 
   // Actions: add, update, remove, clear
-  const { addItem, updateQuantity, removeItem, clearCart } = useCartActions(
-    user,
-    items,
-    setItems,
-  );
+  const { addItem, updateQuantity, removeItem, clearCart, busyItems } =
+    useCartActions(user, items, setItems);
 
   // Derived values
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
@@ -62,6 +60,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         itemCount,
         totalPrice,
         isLoading,
+        busyItems,
         isCartOpen,
         setIsCartOpen,
         openCart,
