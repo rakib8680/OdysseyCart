@@ -9,7 +9,7 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 import Link from "next/link";
-import { ShoppingCart, ArrowRight, ShoppingBag } from "lucide-react";
+import { ShoppingCart, ArrowRight, ShoppingBag, Lock } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import { CartItem } from "./CartItem";
 import { ShippingProgress, FREE_SHIPPING_THRESHOLD } from "./ShippingProgress";
@@ -117,6 +117,20 @@ export function CartDrawer() {
               Proceed to Checkout
               <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-1 transition-transform" />
             </button>
+            <div className="flex flex-col items-center gap-2 mt-1 sm:mt-2">
+              <div className="flex items-center gap-1.5 text-slate-400">
+                <Lock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <span className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">
+                  Secure Encrypted Checkout
+                </span>
+              </div>
+              <button
+                onClick={closeCart}
+                className="text-xs sm:text-sm text-slate-500 hover:text-slate-800 font-medium transition-colors underline underline-offset-4 decoration-slate-200 hover:decoration-slate-400"
+              >
+                or Continue Shopping
+              </button>
+            </div>
           </SheetFooter>
         )}
       </SheetContent>

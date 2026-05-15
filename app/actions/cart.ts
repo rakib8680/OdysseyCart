@@ -1,6 +1,6 @@
 "use server";
 
-import { connectDB, serialize, toObjectId } from "@/lib/db/mongoose";
+import { connectDB, toObjectId } from "@/lib/db/mongoose";
 import Cart from "@/lib/models/Cart";
 import Product from "@/lib/models/Product";
 import { CartItem } from "@/lib/types/cart";
@@ -9,6 +9,38 @@ import {
   MergeCartSchema,
   UserIdSchema,
 } from "@/lib/validations/cart";
+
+// Helper to inject live stockQuantity from the Products collection
+async function getPopulatedItems(cart: any) {
+  if (!cart || !cart.items || cart.items.length === 0) return [];
+
+  await Cart.populate(cart, {
+    path: "items.productId",
+    select: "stockQuantity",
+    model: Product,
+  });
+
+  return cart.items.map((item: any) => {
+    // Safely extract stock if populated, else default to 0
+    const stockQuantity =
+      item.productId && typeof item.productId === "object"
+        ? item.productId.stockQuantity
+        : 0;
+    const productId =
+      item.productId && item.productId._id
+        ? item.productId._id.toString()
+        : item.productId.toString();
+
+    return {
+      productId,
+      title: item.title,
+      price: item.price,
+      image: item.image,
+      quantity: item.quantity,
+      stockQuantity,
+    };
+  });
+}
 
 // ==========================================
 // GET CART
@@ -24,7 +56,8 @@ export async function getCart(userId: string) {
     // Return empty items array if no cart exists yet
     if (!cart) return { success: true, items: [] as CartItem[] };
 
-    return { success: true, items: serialize(cart.items) as CartItem[] };
+    const items = await getPopulatedItems(cart);
+    return { success: true, items };
   } catch (error: any) {
     console.error("Error getting cart:", error);
     return { success: false, error: error.message };
@@ -75,7 +108,8 @@ export async function addToCart(
         ],
       });
 
-      return { success: true, items: serialize(cart.items) as CartItem[] };
+      const items = await getPopulatedItems(cart);
+      return { success: true, items };
     }
 
     // Check if the product already exists in the cart
@@ -84,6 +118,16 @@ export async function addToCart(
     );
 
     if (existingIndex > -1) {
+      // Check if combined quantity exceeds stock
+      if (
+        cart.items[existingIndex].quantity + validQuantity >
+        product.stockQuantity
+      ) {
+        return {
+          success: false,
+          error: "Cannot add more than available stock",
+        };
+      }
       // Product exists — increase quantity
       cart.items[existingIndex].quantity += validQuantity;
     } else {
@@ -99,7 +143,8 @@ export async function addToCart(
 
     await cart.save();
 
-    return { success: true, items: serialize(cart.items) as CartItem[] };
+    const items = await getPopulatedItems(cart);
+    return { success: true, items };
   } catch (error: any) {
     console.error("Error adding to cart:", error);
     return { success: false, error: error.message };
@@ -143,7 +188,8 @@ export async function updateCartItemQuantity(
 
     await cart.save();
 
-    return { success: true, items: serialize(cart.items) as CartItem[] };
+    const items = await getPopulatedItems(cart);
+    return { success: true, items };
   } catch (error: any) {
     console.error("Error updating cart item:", error);
     return { success: false, error: error.message };
@@ -169,7 +215,8 @@ export async function removeFromCart(userId: string, productId: string) {
 
     await cart.save();
 
-    return { success: true, items: serialize(cart.items) as CartItem[] };
+    const items = await getPopulatedItems(cart);
+    return { success: true, items };
   } catch (error: any) {
     console.error("Error removing from cart:", error);
     return { success: false, error: error.message };
@@ -220,7 +267,8 @@ export async function mergeCart(userId: string, localItems: CartItem[]) {
         quantity: item.quantity,
       }));
       cart = await Cart.create({ userId: validUserId, items: mappedItems });
-      return { success: true, items: serialize(cart.items) as CartItem[] };
+      const items = await getPopulatedItems(cart);
+      return { success: true, items };
     }
 
     // Merge strategy: local items take priority for quantity
@@ -249,7 +297,8 @@ export async function mergeCart(userId: string, localItems: CartItem[]) {
 
     await cart.save();
 
-    return { success: true, items: serialize(cart.items) as CartItem[] };
+    const items = await getPopulatedItems(cart);
+    return { success: true, items };
   } catch (error: any) {
     console.error("Error merging cart:", error);
     return { success: false, error: error.message };

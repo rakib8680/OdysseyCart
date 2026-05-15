@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-
 import Link from "next/link";
 import { Minus, Plus, Trash2, Loader2, ImageOff } from "lucide-react";
 import { motion } from "framer-motion";
@@ -109,7 +108,11 @@ export function CartItem({
           </span>
           <button
             onClick={() => onUpdateQuantity(item.productId, item.quantity + 1)}
-            disabled={isBusy}
+            disabled={
+              isBusy ||
+              (item.stockQuantity !== undefined &&
+                item.quantity >= item.stockQuantity)
+            }
             className="p-1 sm:p-1.5 hover:bg-white rounded transition-colors cursor-pointer text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed"
             aria-label="Increase quantity"
           >
