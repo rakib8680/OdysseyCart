@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import { ShoppingCart, ArrowRight } from "lucide-react";
 import { CartItem } from "./CartItem";
+import { ShippingProgress } from "./ShippingProgress";
 
 export function CartDrawer() {
   const {
@@ -54,15 +55,21 @@ export function CartDrawer() {
               </button>
             </div>
           ) : (
-            items.map((item) => (
-              <CartItem
-                key={item.productId}
-                item={item}
-                onUpdateQuantity={updateQuantity}
-                onRemove={removeItem}
-                onNavigate={closeCart}
-              />
-            ))
+            <>
+              {/* Free Shipping Progress */}
+              <ShippingProgress subtotal={totalPrice} />
+
+              {/* Cart Items */}
+              {items.map((item) => (
+                <CartItem
+                  key={item.productId}
+                  item={item}
+                  onUpdateQuantity={updateQuantity}
+                  onRemove={removeItem}
+                  onNavigate={closeCart}
+                />
+              ))}
+            </>
           )}
         </div>
 
