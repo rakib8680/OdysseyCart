@@ -8,10 +8,11 @@ import {
   SheetTitle,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { ShoppingCart, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { ShoppingCart, ArrowRight, ShoppingBag } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import { CartItem } from "./CartItem";
-import { ShippingProgress } from "./ShippingProgress";
+import { ShippingProgress, FREE_SHIPPING_THRESHOLD } from "./ShippingProgress";
 
 export function CartDrawer() {
   const {
@@ -44,17 +45,27 @@ export function CartDrawer() {
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-2 py-3 sm:p-6 flex flex-col">
           {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-slate-500 space-y-4">
-              <ShoppingCart className="w-12 h-12 sm:w-16 sm:h-16 text-slate-200" />
-              <p className="text-sm sm:text-lg font-medium">
-                Your cart is empty.
-              </p>
-              <button
+            <div className="flex flex-col items-center justify-center h-full text-center px-4 space-y-6">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-slate-50 rounded-full flex items-center justify-center mb-2">
+                <ShoppingBag className="w-10 h-10 sm:w-12 sm:h-12 text-slate-300" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900">
+                  Your cart is lonely
+                </h3>
+                <p className="text-sm sm:text-base text-slate-500 max-w-[250px]">
+                  Looks like you haven't added anything yet. Let's find some
+                  favorites!
+                </p>
+              </div>
+              <Link
+                href="/items"
                 onClick={closeCart}
-                className="px-4 py-2 sm:px-6 bg-emerald-50 text-emerald-600 rounded-full text-sm sm:text-base font-semibold hover:bg-emerald-100 transition-colors"
+                className="mt-4 px-6 py-3 sm:px-8 sm:py-3.5 bg-slate-900 text-white rounded-full text-sm sm:text-base font-bold hover:bg-emerald-600 transition-colors shadow-lg hover:shadow-emerald-600/20 flex items-center gap-2 group/btn"
               >
-                Continue Shopping
-              </button>
+                Shop New Arrivals
+                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+              </Link>
             </div>
           ) : (
             <>
@@ -87,8 +98,14 @@ export function CartDrawer() {
               <span>Subtotal</span>
               <span>${totalPrice.toFixed(2)}</span>
             </div>
-            <p className="text-[10px] sm:text-xs text-slate-500 text-center">
-              Shipping, taxes, and discounts calculated at checkout.
+            {totalPrice >= FREE_SHIPPING_THRESHOLD && (
+              <div className="flex justify-between items-center text-sm font-medium text-emerald-600 w-full -mt-1 sm:-mt-2">
+                <span>Shipping</span>
+                <span className="uppercase">Free</span>
+              </div>
+            )}
+            <p className="text-[10px] sm:text-xs text-slate-500 text-center mt-1">
+              Taxes and discounts calculated at checkout.
             </p>
             <button
               onClick={() => {

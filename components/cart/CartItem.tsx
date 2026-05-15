@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
+
 import Link from "next/link";
-import { Minus, Plus, Trash2, Loader2 } from "lucide-react";
+import { Minus, Plus, Trash2, Loader2, ImageOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { CartItem as CartItemType } from "@/lib/types/cart";
 
@@ -20,6 +22,7 @@ export function CartItem({
   onRemove,
   onNavigate,
 }: CartItemProps) {
+  const [imgError, setImgError] = useState(false);
   const productHref = `/items/${item.productId}`;
 
   return (
@@ -45,13 +48,18 @@ export function CartItem({
         <Link
           href={productHref}
           onClick={onNavigate}
-          className="w-12 h-12 sm:w-20 sm:h-20 bg-slate-50 rounded-lg sm:rounded-xl overflow-hidden shrink-0 border border-slate-100 hover:border-slate-300 transition-all hover:shadow-md"
+          className="w-12 h-12 sm:w-20 sm:h-20 bg-slate-50 rounded-lg sm:rounded-xl overflow-hidden shrink-0 border border-slate-100 hover:border-slate-300 transition-all hover:shadow-md flex items-center justify-center"
         >
-          <img
-            src={item.image}
-            alt={item.title}
-            className="w-full h-full object-cover mix-blend-multiply transition-transform duration-200 hover:scale-110"
-          />
+          {imgError ? (
+            <ImageOff className="w-6 h-6 sm:w-8 sm:h-8 text-slate-300" />
+          ) : (
+            <img
+              src={item.image}
+              alt={item.title}
+              onError={() => setImgError(true)}
+              className="w-full h-full object-cover mix-blend-multiply transition-transform duration-200 hover:scale-110"
+            />
+          )}
         </Link>
 
         {/* Details with clickable title */}

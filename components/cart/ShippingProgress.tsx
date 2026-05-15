@@ -2,7 +2,7 @@
 
 import { Truck, PartyPopper } from "lucide-react";
 
-const FREE_SHIPPING_THRESHOLD = 1000;
+export const FREE_SHIPPING_THRESHOLD = 1000;
 
 interface ShippingProgressProps {
   subtotal: number;
