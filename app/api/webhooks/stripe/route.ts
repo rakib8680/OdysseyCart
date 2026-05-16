@@ -4,10 +4,6 @@ import { connectDB } from "@/lib/db/mongoose";
 import Order from "@/lib/models/Order";
 import Product from "@/lib/models/Product";
 
-// Stripe sends raw body — we must disable Next.js body parsing
-export const config = {
-  api: { bodyParser: false },
-};
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
