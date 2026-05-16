@@ -59,3 +59,26 @@ export async function getCheckoutCart(
     return { success: false, items: [], error: error.message };
   }
 }
+
+// ==========================================
+// CLEAR CART (After successful payment)
+// ==========================================
+/**
+ * Empties the user's cart after a successful payment.
+ * Called from the Success page, NOT from the webhook,
+ * so the user gets immediate visual feedback.
+ */
+export async function clearCart(
+  userId: string,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await connectDB();
+
+    await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error clearing cart:", error);
+    return { success: false, error: error.message };
+  }
+}
