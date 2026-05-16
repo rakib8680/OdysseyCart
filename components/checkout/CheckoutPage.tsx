@@ -143,7 +143,11 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
               isCompleted={false}
               onEdit={() => {}}
             >
-              <ReviewStep />
+              <ReviewStep
+                shippingData={shippingData!}
+                cartItems={cartItems}
+                totals={totals}
+              />
             </AccordionStep>
           </Elements>
         ) : (

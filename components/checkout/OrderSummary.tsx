@@ -73,7 +73,7 @@ export function OrderSummary({ items, totals }: OrderSummaryProps) {
 // ==========================================
 
 /** Single item row in the summary list */
-function SummaryItem({ item }: { item: CartItem }) {
+export function SummaryItem({ item }: { item: CartItem }) {
   const [imgError, setImgError] = useState(false);
 
   return (
@@ -109,7 +109,7 @@ function SummaryItem({ item }: { item: CartItem }) {
 }
 
 /** Reusable price breakdown line */
-function PriceLine({
+export function PriceLine({
   label,
   value,
   isFree = false,
