@@ -14,6 +14,8 @@ import { getStripe } from "@/lib/stripe/client";
 import { createOrUpdatePaymentIntent } from "@/app/actions/payment";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { PaymentForm } from "./PaymentForm";
+import { ReviewStep } from "./ReviewStep";
 
 // ==========================================
 // TYPES
@@ -130,20 +132,7 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
               isCompleted={activeStep > 2}
               onEdit={() => activeStep > 2 && setActiveStep(2)}
             >
-              <div className="py-8 text-center text-slate-500">
-                <p className="font-medium">
-                  Stripe Payment Element will go here.
-                </p>
-                <p className="text-sm mt-1">
-                  This will be wired up in Step 5d.
-                </p>
-                <button
-                  onClick={() => setActiveStep(3)}
-                  className="mt-4 px-6 h-12 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-colors cursor-pointer"
-                >
-                  Continue to Review →
-                </button>
-              </div>
+              <PaymentForm onContinue={() => setActiveStep(3)} />
             </AccordionStep>
 
             {/* Step 3 — Review */}
@@ -154,14 +143,7 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
               isCompleted={false}
               onEdit={() => {}}
             >
-              <div className="py-8 text-center text-slate-500">
-                <p className="font-medium">
-                  Order review and Place Order button will go here.
-                </p>
-                <p className="text-sm mt-1">
-                  This will be wired up in Step 5d.
-                </p>
-              </div>
+              <ReviewStep />
             </AccordionStep>
           </Elements>
         ) : (

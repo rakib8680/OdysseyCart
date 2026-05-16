@@ -61,12 +61,12 @@ export function AccordionStep({
         )}
       </div>
 
-      {/* Body — only visible when active */}
-      {isActive && (
-        <div className="px-6 pb-6 border-t border-slate-100 pt-5">
-          {children}
-        </div>
-      )}
+      {/* Body — always rendered to preserve state, but visually hidden if inactive */}
+      <div
+        className={`px-6 border-slate-100 ${isActive ? "pb-6 pt-5 border-t block" : "hidden"}`}
+      >
+        {children}
+      </div>
     </div>
   );
 }
