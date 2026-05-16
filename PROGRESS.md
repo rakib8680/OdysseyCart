@@ -51,8 +51,20 @@ Here is an analysis of the current state of the application against the `ASSESSM
 ## 8. Cart System : 🟢 Complete
 - [x] Hybrid Persistence: Context merges Guest data (LocalStorage) with Authenticated User data (MongoDB) on login.
 - [x] Action Hooks: Cleanly separated `useCartPersistence` and `useCartActions` hooks.
-- [x] Global UI: Implemented an accessible, slide-out Cart Drawer using Shadcn `Sheet`.
-- [x] DRY Architecture: Centralized Add-to-Cart logic into a reusable `AddToCartButton` used across Product Cards and Details pages.
+- [x] Global UI: Slide-out Cart Drawer using Shadcn `Sheet`.
+- [x] DRY Architecture: Centralized `AddToCartButton` used across Product Cards and Details pages.
+
+## 9. Cart Drawer UX Polish : 🟢 Complete *(May 15)*
+- [x] Mobile-friendly layout (~75% width, two-row card design).
+- [x] Framer Motion animations (enter/exit with smooth collapse on remove).
+- [x] Optimistic updates with snapshot-rollback pattern.
+- [x] Per-item busy states (spinner on delete, disabled controls during server sync).
+- [x] `ShippingProgress` bar ($1000 free shipping threshold with gamification).
+- [x] Image fallback (`onError` → `ImageOff` icon for broken URLs).
+- [x] Empty state with engaging copy + "Shop New Arrivals" link to `/items`.
+- [x] Footer: "Shipping: FREE" line, trust badge (🔒 Secure Encrypted Checkout), "Continue Shopping" link.
+- [x] Stock limits: Live `stockQuantity` via Mongoose `.populate()` — `+` button disabled at limit.
+- [x] `AddToCartButton` shows "Max Limit in Cart" when stock reached. Backend rejects over-stock.
 
 ## Overall Tech & Submission
 - [x] Next.js App Router: Used everywhere.
@@ -61,9 +73,8 @@ Here is an analysis of the current state of the application against the `ASSESSM
 - [x] README.md: Written with project description, features, setup instructions, and route summary.
 
 ---
-**Summary for Next Steps (Future Plans):**
-1. **Checkout Flow**: Build a multi-step checkout system (Shipping, Payment, Confirmation).
-2. **Order Management**: Implement order history tracking for users and fulfillment tracking for admins.
-3. **Admin Dashboard**: Create an admin dashboard for sales metrics and user management.
-4. **Mock Data Removal**: Completely remove the `lib/data.ts` mock file and ensure the entire app uses MongoDB exclusively.
-5. **Polishing**: Add loading states (skeletons) and ensure the README.md is fully up to date.
+**Next Up:**
+1. **Checkout Flow (Stripe)**: Single-page accordion checkout with Stripe Elements (Shipping → Payment → Review). Distraction-free layout.
+2. **Order Management**: MongoDB `Order` schema, Stripe webhook for payment verification, stock decrement, order confirmation page.
+3. **Admin Dashboard**: Sales metrics, order fulfillment tracking.
+
