@@ -1,8 +1,10 @@
 "use client";
 
 import { Truck, PartyPopper } from "lucide-react";
+import { SHIPPING_THRESHOLD } from "@/lib/utils/pricing";
 
-export const FREE_SHIPPING_THRESHOLD = 1000;
+// Re-export for backward compatibility (CartDrawer imports this)
+export const FREE_SHIPPING_THRESHOLD = SHIPPING_THRESHOLD;
 
 interface ShippingProgressProps {
   subtotal: number;

@@ -26,6 +26,8 @@ export interface TOrder extends Document {
   subtotal: number;
   tax: number;
   shippingCost: number;
+  discount: number;
+  couponCode?: string;
   total: number;
   status: "pending" | "paid" | "failed" | "shipped" | "delivered";
   createdAt: Date;
@@ -65,6 +67,8 @@ const OrderSchema = new Schema<TOrder>(
     subtotal: { type: Number, required: true },
     tax: { type: Number, required: true },
     shippingCost: { type: Number, required: true },
+    discount: { type: Number, default: 0 },
+    couponCode: { type: String },
     total: { type: Number, required: true },
     status: {
       type: String,

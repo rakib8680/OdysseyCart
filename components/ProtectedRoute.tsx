@@ -3,7 +3,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { toast } from "sonner";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -20,16 +20,8 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     }
   }, [user, loading, router, pathname]);
 
-  // Firebase auth check takes a fraction of a second. Show a nice loader instead of blank screen.
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4 w-full">
-        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
-        <p className="text-sm font-bold tracking-widest text-slate-400 uppercase">
-          Authenticating...
-        </p>
-      </div>
-    );
+    return <PageLoader message="Authenticating..." />;
   }
 
   // Prevent layout shifts/flashes of private content right before the router pushes to /login

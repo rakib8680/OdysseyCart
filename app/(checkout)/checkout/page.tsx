@@ -1,15 +1,58 @@
-export const metadata = {
-  title: "Checkout | OdysseyCart",
-};
+"use client";
 
-export default function CheckoutPage() {
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { PageLoader } from "@/components/ui/PageLoader";
+import { CheckoutPage } from "@/components/checkout/CheckoutPage";
+import { getCheckoutCart } from "@/app/actions/checkout";
+import { CartItem } from "@/lib/types/cart";
+
+export default function CheckoutRoute() {
   return (
-    <div className="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
-      <h1 className="text-2xl font-bold text-slate-900 mb-4">Checkout</h1>
-      <p className="text-slate-600">
-        Checkout placeholder. The accordion components (Shipping, Payment,
-        Review) will go here.
-      </p>
-    </div>
+    <ProtectedRoute>
+      <CheckoutContent />
+    </ProtectedRoute>
   );
+}
+
+/** Inner component — only renders after auth is confirmed by ProtectedRoute */
+function CheckoutContent() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  const [serverItems, setServerItems] = useState<CartItem[] | null>(null);
+  const [fetchingCart, setFetchingCart] = useState(true);
+
+  // Fetch server-verified cart data once authenticated
+  useEffect(() => {
+    async function fetchCart() {
+      if (!user) return;
+
+      setFetchingCart(true);
+      const result = await getCheckoutCart(user.uid);
+
+      if (result.success && result.items.length > 0) {
+        setServerItems(result.items);
+      } else if (result.success && result.items.length === 0) {
+        toast.error("Your cart is empty. Add some items first!");
+        router.push("/items");
+      }
+      setFetchingCart(false);
+    }
+
+    fetchCart();
+  }, [user, router]);
+
+  if (fetchingCart) {
+    return <PageLoader message="Preparing checkout..." />;
+  }
+
+  if (!serverItems) {
+    return null;
+  }
+
+  return <CheckoutPage cartItems={serverItems} />;
 }

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import Link from "next/link";
 import { ShoppingCart, ArrowRight, ShoppingBag, Lock } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { CartItem } from "./CartItem";
 import { ShippingProgress, FREE_SHIPPING_THRESHOLD } from "./ShippingProgress";
@@ -25,6 +26,7 @@ export function CartDrawer() {
     closeCart,
     busyItems,
   } = useCart();
+  const router = useRouter();
 
   return (
     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
@@ -110,7 +112,7 @@ export function CartDrawer() {
             <button
               onClick={() => {
                 closeCart();
-                // We'll wire up checkout later!
+                router.push("/checkout");
               }}
               className="w-full h-10 sm:h-12 bg-slate-900 text-white rounded-lg sm:rounded-xl text-sm sm:text-base font-bold hover:bg-emerald-600 transition-colors shadow-lg hover:shadow-emerald-600/20 flex items-center justify-center gap-2 group/btn cursor-pointer"
             >

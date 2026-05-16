@@ -3,7 +3,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { toast } from "sonner";
 
 export function AdminRoute({ children }: { children: React.ReactNode }) {
@@ -26,14 +26,7 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
 
   // Loading state covering both Firebase SDK and MongoDB fetch
   if (loading || (user && !dbUser)) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4 w-full">
-        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
-        <p className="text-sm font-bold tracking-widest text-slate-400 uppercase">
-          Verifying Permissions...
-        </p>
-      </div>
-    );
+    return <PageLoader message="Verifying Permissions..." />;
   }
 
   // Double check before rendering
