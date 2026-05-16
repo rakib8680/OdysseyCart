@@ -8,6 +8,12 @@ import { OrderSummary } from "./OrderSummary";
 import { ShippingForm } from "./ShippingForm";
 import { StepIndicator } from "./StepIndicator";
 import { AccordionStep } from "./AccordionStep";
+import { useAuth } from "@/contexts/AuthContext";
+import { Elements } from "@stripe/react-stripe-js";
+import { getStripe } from "@/lib/stripe/client";
+import { createOrUpdatePaymentIntent } from "@/app/actions/payment";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 // ==========================================
 // TYPES
@@ -27,15 +33,46 @@ const STEPS = [
 // CHECKOUT PAGE ORCHESTRATOR
 // ==========================================
 export function CheckoutPage({ cartItems }: CheckoutPageProps) {
+  const { user } = useAuth();
   const [activeStep, setActiveStep] = useState(1);
   const [shippingData, setShippingData] = useState<TShippingForm | null>(null);
+
+  // Stripe State
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
+  const [isInitializingPayment, setIsInitializingPayment] = useState(false);
 
   const totals = calculateOrderTotals(cartItems);
 
   // Handler: Shipping form completed
-  const handleShippingComplete = (data: TShippingForm) => {
+  const handleShippingComplete = async (data: TShippingForm) => {
+    if (!user) {
+      toast.error("You must be logged in to checkout.");
+      return;
+    }
+
     setShippingData(data);
-    setActiveStep(2);
+    setIsInitializingPayment(true);
+
+    try {
+      const response = await createOrUpdatePaymentIntent(
+        user.uid,
+        data,
+        orderId,
+      );
+
+      if (response.success && response.clientSecret) {
+        setClientSecret(response.clientSecret);
+        setOrderId(response.orderId || null);
+        setActiveStep(2);
+      } else {
+        toast.error(response.error || "Failed to initialize payment.");
+      }
+    } catch (error: any) {
+      toast.error("An unexpected error occurred.");
+    } finally {
+      setIsInitializingPayment(false);
+    }
   };
 
   return (
@@ -69,47 +106,88 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
               : undefined
           }
         >
-          <ShippingForm
-            defaultValues={shippingData || undefined}
-            onComplete={handleShippingComplete}
-          />
+          {isInitializingPayment ? (
+            <div className="py-12 flex flex-col items-center justify-center text-slate-500">
+              <Loader2 className="w-8 h-8 animate-spin text-emerald-600 mb-4" />
+              <p>Initializing secure payment...</p>
+            </div>
+          ) : (
+            <ShippingForm
+              defaultValues={shippingData || undefined}
+              onComplete={handleShippingComplete}
+            />
+          )}
         </AccordionStep>
 
-        {/* Step 2 — Payment (Placeholder for now) */}
-        <AccordionStep
-          stepNumber={2}
-          title="Payment Method"
-          isActive={activeStep === 2}
-          isCompleted={activeStep > 2}
-          onEdit={() => activeStep > 2 && setActiveStep(2)}
-        >
-          <div className="py-8 text-center text-slate-500">
-            <p className="font-medium">Stripe Payment Element will go here.</p>
-            <p className="text-sm mt-1">This will be wired up in Step 5.</p>
-            <button
-              onClick={() => setActiveStep(3)}
-              className="mt-4 px-6 h-12 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-colors cursor-pointer"
+        {/* The Secret Stripe Wrapper */}
+        {clientSecret ? (
+          <Elements stripe={getStripe()} options={{ clientSecret }}>
+            {/* Step 2 — Payment */}
+            <AccordionStep
+              stepNumber={2}
+              title="Payment Method"
+              isActive={activeStep === 2}
+              isCompleted={activeStep > 2}
+              onEdit={() => activeStep > 2 && setActiveStep(2)}
             >
-              Continue to Review →
-            </button>
-          </div>
-        </AccordionStep>
+              <div className="py-8 text-center text-slate-500">
+                <p className="font-medium">
+                  Stripe Payment Element will go here.
+                </p>
+                <p className="text-sm mt-1">
+                  This will be wired up in Step 5d.
+                </p>
+                <button
+                  onClick={() => setActiveStep(3)}
+                  className="mt-4 px-6 h-12 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-colors cursor-pointer"
+                >
+                  Continue to Review →
+                </button>
+              </div>
+            </AccordionStep>
 
-        {/* Step 3 — Review (Placeholder for now) */}
-        <AccordionStep
-          stepNumber={3}
-          title="Review & Place Order"
-          isActive={activeStep === 3}
-          isCompleted={false}
-          onEdit={() => {}}
-        >
-          <div className="py-8 text-center text-slate-500">
-            <p className="font-medium">
-              Order review and Place Order button will go here.
-            </p>
-            <p className="text-sm mt-1">This will be wired up in Step 5.</p>
-          </div>
-        </AccordionStep>
+            {/* Step 3 — Review */}
+            <AccordionStep
+              stepNumber={3}
+              title="Review & Place Order"
+              isActive={activeStep === 3}
+              isCompleted={false}
+              onEdit={() => {}}
+            >
+              <div className="py-8 text-center text-slate-500">
+                <p className="font-medium">
+                  Order review and Place Order button will go here.
+                </p>
+                <p className="text-sm mt-1">
+                  This will be wired up in Step 5d.
+                </p>
+              </div>
+            </AccordionStep>
+          </Elements>
+        ) : (
+          <>
+            {/* Disabled Placeholders */}
+            <AccordionStep
+              stepNumber={2}
+              title="Payment Method"
+              isActive={false}
+              isCompleted={false}
+              onEdit={() => {}}
+            >
+              <div />
+            </AccordionStep>
+
+            <AccordionStep
+              stepNumber={3}
+              title="Review & Place Order"
+              isActive={false}
+              isCompleted={false}
+              onEdit={() => {}}
+            >
+              <div />
+            </AccordionStep>
+          </>
+        )}
       </div>
 
       {/* Right Column — Order Summary */}
