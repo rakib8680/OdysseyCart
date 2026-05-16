@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { clearCart as clearServerCart } from "@/app/actions/checkout";
 import { useCart } from "@/contexts/CartContext";
 import { CheckCircle, Package, ArrowRight, ShoppingBag } from "lucide-react";
@@ -10,6 +10,14 @@ import Link from "next/link";
 import { PageLoader } from "@/components/ui/PageLoader";
 
 export default function CheckoutSuccessPage() {
+  return (
+    <Suspense fallback={<PageLoader message="Loading..." />}>
+      <SuccessContent />
+    </Suspense>
+  );
+}
+
+function SuccessContent() {
   const { user } = useAuth();
   const { clearCart: clearClientCart } = useCart();
   const searchParams = useSearchParams();
