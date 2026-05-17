@@ -35,7 +35,7 @@ function SuccessContent() {
 
       if (redirectStatus === "succeeded") {
         await clearServerCart(user.uid); // Clear MongoDB cart
-        await clearClientCart();          // Sync React state (Navbar badge)
+        await clearClientCart(); // Sync React state (Navbar badge)
       }
       setIsClearing(false);
     }

@@ -90,4 +90,3 @@ Here is an analysis of the current state of the application against the `ASSESSM
 2. **Order Management**: MongoDB `Order` schema, Stripe webhook for payment verification, stock decrement, order confirmation page.
 3. **Admin Dashboard**: Sales metrics, order fulfillment tracking.
 
-//mongodb orders says pending
