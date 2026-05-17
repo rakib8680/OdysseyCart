@@ -3,6 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { connectDB } from "@/lib/db/mongoose";
 import Order from "@/lib/models/Order";
 import Product from "@/lib/models/Product";
+import Coupon from "@/lib/models/Coupon";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -79,6 +80,14 @@ export async function POST(req: NextRequest) {
 
       if (bulkOps.length > 0) {
         await Product.bulkWrite(bulkOps);
+      }
+
+      // 5. Update Coupon usage count if a coupon was used
+      if (order.couponCode) {
+        await Coupon.updateOne(
+          { code: order.couponCode },
+          { $inc: { usedCount: 1 } },
+        );
       }
 
       console.log(`Webhook: Order ${orderId} fulfilled successfully.`);

@@ -87,6 +87,7 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
         user.uid,
         data,
         orderId,
+        couponCode,
       );
 
       if (response.success && response.clientSecret) {

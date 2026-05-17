@@ -7,11 +7,13 @@ import { calculateOrderTotals } from "@/lib/utils/pricing";
 import { TShippingForm } from "@/lib/validations/checkout";
 
 import { getCheckoutCart } from "@/app/actions/checkout";
+import { validateCoupon } from "@/app/actions/coupon";
 
 export async function createOrUpdatePaymentIntent(
   userId: string,
   shippingInfo: TShippingForm,
   existingOrderId?: string | null,
+  couponCode?: string | null,
 ) {
   try {
     await connectDB();
@@ -32,7 +34,22 @@ export async function createOrUpdatePaymentIntent(
     const verifiedItems = cartResponse.items;
 
     // 2. Calculate the exact, secure total
-    const totals = calculateOrderTotals(verifiedItems);
+    const tempTotals = calculateOrderTotals(verifiedItems);
+    let finalDiscount = 0;
+    let finalCouponCode = undefined;
+
+    // Securely re-validate the coupon on the server before calculating final price
+    if (couponCode) {
+      const couponRes = await validateCoupon(couponCode, tempTotals.subtotal);
+      if (couponRes.success) {
+        finalDiscount = couponRes.discountAmount;
+        finalCouponCode = couponRes.code;
+      } else {
+        throw new Error(couponRes.message || "Invalid or expired coupon.");
+      }
+    }
+
+    const totals = calculateOrderTotals(verifiedItems, finalDiscount);
 
     // Stripe requires the amount to be an integer in the smallest currency unit (cents for USD)
     const amountInCents = Math.round(totals.total * 100);
@@ -56,6 +73,7 @@ export async function createOrUpdatePaymentIntent(
       order.tax = totals.tax;
       order.shippingCost = totals.shippingCost;
       order.discount = totals.discount;
+      if (finalCouponCode) order.couponCode = finalCouponCode;
       order.total = totals.total;
       await order.save();
 
@@ -113,6 +131,7 @@ export async function createOrUpdatePaymentIntent(
       tax: totals.tax,
       shippingCost: totals.shippingCost,
       discount: totals.discount,
+      couponCode: finalCouponCode,
       total: totals.total,
       status: "pending",
       stripePaymentId: paymentIntent.id,
