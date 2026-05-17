@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Elements } from "@stripe/react-stripe-js";
 import { getStripe } from "@/lib/stripe/client";
 import { createOrUpdatePaymentIntent } from "@/app/actions/payment";
+import { validateCoupon } from "@/app/actions/coupon";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { PaymentForm } from "./PaymentForm";
@@ -44,7 +45,32 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [isInitializingPayment, setIsInitializingPayment] = useState(false);
 
-  const totals = calculateOrderTotals(cartItems);
+  // Coupon State
+  const [couponCode, setCouponCode] = useState<string | null>(null);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+
+  // Calculate totals including the discount
+  const totals = calculateOrderTotals(cartItems, discountAmount);
+
+  // Handler: Apply Coupon
+  const handleApplyCoupon = async (code: string) => {
+    setIsApplyingCoupon(true);
+    try {
+      const response = await validateCoupon(code, totals.subtotal);
+      if (response.success) {
+        setCouponCode(response.code!);
+        setDiscountAmount(response.discountAmount);
+        toast.success(response.message);
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      toast.error("Failed to apply coupon.");
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
 
   // Handler: Shipping form completed
   const handleShippingComplete = async (data: TShippingForm) => {
@@ -178,7 +204,12 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
 
       {/* Right Column — Order Summary */}
       <div className="lg:col-span-5 xl:col-span-4">
-        <OrderSummary items={cartItems} totals={totals} />
+        <OrderSummary
+          items={cartItems}
+          totals={totals}
+          onApplyCoupon={handleApplyCoupon}
+          isApplyingCoupon={isApplyingCoupon}
+        />
       </div>
     </div>
   );
