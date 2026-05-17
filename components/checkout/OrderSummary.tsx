@@ -11,7 +11,9 @@ import { useState } from "react";
 interface OrderSummaryProps {
   items: CartItem[];
   totals: OrderTotals;
+  couponCode?: string | null;
   onApplyCoupon?: (code: string) => Promise<void>;
+  onRemoveCoupon?: () => void;
   isApplyingCoupon?: boolean;
 }
 
@@ -21,7 +23,9 @@ interface OrderSummaryProps {
 export function OrderSummary({
   items,
   totals,
+  couponCode,
   onApplyCoupon,
+  onRemoveCoupon,
   isApplyingCoupon,
 }: OrderSummaryProps) {
   const [couponInput, setCouponInput] = useState("");
@@ -29,6 +33,13 @@ export function OrderSummary({
   const handleApply = () => {
     if (!couponInput.trim() || !onApplyCoupon) return;
     onApplyCoupon(couponInput.trim());
+  };
+
+  const handleRemove = () => {
+    if (onRemoveCoupon) {
+      onRemoveCoupon();
+      setCouponInput(""); // Clear input when removing
+    }
   };
 
   return (
@@ -51,29 +62,44 @@ export function OrderSummary({
       {/* Promo Code Input */}
       {onApplyCoupon && (
         <div className="px-6 py-4 border-t border-slate-100 bg-white">
-          <div className="flex gap-2">
-            <input
-              type="text"
-              placeholder="Promo code"
-              value={couponInput}
-              onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-              disabled={isApplyingCoupon || totals.discount > 0}
-              className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 disabled:bg-slate-50 disabled:text-slate-500"
-            />
-            <button
-              onClick={handleApply}
-              disabled={
-                !couponInput.trim() || isApplyingCoupon || totals.discount > 0
-              }
-              className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[76px]"
-            >
-              {isApplyingCoupon ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                "Apply"
-              )}
-            </button>
-          </div>
+          {couponCode ? (
+            <div className="flex gap-2 items-center justify-between bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">
+              <div className="flex items-center gap-2">
+                <Tag className="w-4 h-4 text-emerald-600" />
+                <span className="text-sm font-semibold text-emerald-700">
+                  {couponCode}
+                </span>
+              </div>
+              <button
+                onClick={handleRemove}
+                className="text-xs font-medium text-red-600 hover:text-red-700 px-2 py-1 cursor-pointer"
+              >
+                Remove
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Promo code"
+                value={couponInput}
+                onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                disabled={isApplyingCoupon}
+                className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 disabled:bg-slate-50 disabled:text-slate-500"
+              />
+              <button
+                onClick={handleApply}
+                disabled={!couponInput.trim() || isApplyingCoupon}
+                className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[76px]"
+              >
+                {isApplyingCoupon ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  "Apply"
+                )}
+              </button>
+            </div>
+          )}
         </div>
       )}
 

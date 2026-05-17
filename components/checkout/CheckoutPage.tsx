@@ -72,6 +72,13 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
     }
   };
 
+  // Handler: Remove Coupon
+  const handleRemoveCoupon = () => {
+    setCouponCode(null);
+    setDiscountAmount(0);
+    toast.info("Coupon removed.");
+  };
+
   // Handler: Shipping form completed
   const handleShippingComplete = async (data: TShippingForm) => {
     if (!user) {
@@ -208,7 +215,9 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
         <OrderSummary
           items={cartItems}
           totals={totals}
+          couponCode={couponCode}
           onApplyCoupon={handleApplyCoupon}
+          onRemoveCoupon={handleRemoveCoupon}
           isApplyingCoupon={isApplyingCoupon}
         />
       </div>
