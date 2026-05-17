@@ -79,6 +79,16 @@ const OrderSchema = new Schema<TOrder>(
   { timestamps: true },
 );
 
+// Partial TTL Index: Automatically delete documents after 24 hours (86400 seconds)
+// ONLY if their status is strictly "pending".
+OrderSchema.index(
+  { createdAt: 1 },
+  {
+    expireAfterSeconds: 86400,
+    partialFilterExpression: { status: "pending" },
+  },
+);
+
 const Order: Model<TOrder> =
   mongoose.models.Order || mongoose.model<TOrder>("Order", OrderSchema);
 
