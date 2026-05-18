@@ -102,6 +102,16 @@ export async function createOrUpdatePaymentIntent(
           clientSecret: paymentIntent.client_secret,
           orderId: order._id.toString(),
         };
+      } else {
+        // Order record exists in DB but has no linked Stripe PaymentIntent.
+        // This is an inconsistent state that shouldn't normally happen — it
+        // means the original Stripe call succeeded in creating the DB Order
+        // but failed before saving the PaymentIntent ID back to it.
+        // Throwing here prevents a second orphaned PaymentIntent from being
+        // created for the same cart.
+        throw new Error(
+          "Order is in an inconsistent state (missing PaymentIntent). Please refresh and try again.",
+        );
       }
     }
 

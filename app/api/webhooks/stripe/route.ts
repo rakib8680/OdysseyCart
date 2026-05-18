@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   let event;
 
-  // 1. Cryptographically verify the webhook signature
+  //Cryptographically verify the webhook signature
   try {
     event = stripe.webhooks.constructEvent(
       body,
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // 2. Handle the event
+  // Handle the event
   if (event.type === "payment_intent.succeeded") {
     const paymentIntent = event.data.object;
     const orderId = paymentIntent.metadata?.orderId;
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
         await Product.bulkWrite(bulkOps);
       }
 
-      // 5. Update Coupon usage count if a coupon was used
+      //Update Coupon usage count if a coupon was used
       if (order.couponCode) {
         await Coupon.updateOne(
           { code: order.couponCode },

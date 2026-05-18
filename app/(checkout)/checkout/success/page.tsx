@@ -3,7 +3,8 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { clearCart as clearServerCart } from "@/app/actions/checkout";
+import { clearCart as clearServerCart } from "@/app/actions/cart";
+
 import { useCart } from "@/contexts/CartContext";
 import { CheckCircle, Package, ArrowRight, ShoppingBag } from "lucide-react";
 import Link from "next/link";

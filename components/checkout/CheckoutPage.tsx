@@ -54,6 +54,7 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
   const totals = calculateOrderTotals(cartItems, discountAmount);
 
   // Handler: Apply Coupon
+  // This is a UX pre-check only — it gives the user instant feedback
   const handleApplyCoupon = async (code: string) => {
     setIsApplyingCoupon(true);
     try {
