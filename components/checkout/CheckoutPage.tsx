@@ -53,8 +53,9 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
   // Calculate totals including the discount
   const totals = calculateOrderTotals(cartItems, discountAmount);
 
-  // Handler: Apply Coupon
-  // This is a UX pre-check only — it gives the user instant feedback
+  // Handler: Apply Coupon — UX pre-check only, gives instant feedback.
+  // The PaymentIntent amount is synced authoritatively in handleFinalizeOrder,
+  // called right before stripe.confirmPayment in ReviewStep.
   const handleApplyCoupon = async (code: string) => {
     setIsApplyingCoupon(true);
     try {
@@ -73,11 +74,23 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
     }
   };
 
-  // Handler: Remove Coupon
+  // Handler: Remove Coupon — state only, no server call needed.
   const handleRemoveCoupon = () => {
     setCouponCode(null);
     setDiscountAmount(0);
     toast.info("Coupon removed.");
+  };
+
+  // Finalize Order — called by ReviewStep right before stripe.confirmPayment.
+  const handleFinalizeOrder = async (): Promise<boolean> => {
+    if (!user || !shippingData || !orderId) return false;
+    const response = await createOrUpdatePaymentIntent(
+      user.uid,
+      shippingData,
+      orderId,
+      couponCode,
+    );
+    return response.success === true;
   };
 
   // Handler: Shipping form completed
@@ -182,6 +195,7 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
                 shippingData={shippingData!}
                 cartItems={cartItems}
                 totals={totals}
+                onFinalizeOrder={handleFinalizeOrder}
               />
             </AccordionStep>
           </Elements>

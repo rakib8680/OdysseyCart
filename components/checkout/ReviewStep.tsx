@@ -18,12 +18,14 @@ interface ReviewStepProps {
   shippingData: TShippingForm;
   cartItems: CartItem[];
   totals: OrderTotals;
+  onFinalizeOrder: () => Promise<boolean>;
 }
 
 export function ReviewStep({
   shippingData,
   cartItems,
   totals,
+  onFinalizeOrder,
 }: ReviewStepProps) {
   const stripe = useStripe();
   const elements = useElements();
@@ -37,7 +39,7 @@ export function ReviewStep({
 
     setIsProcessing(true);
 
-    // 1. Trigger Stripe's built-in form validation (checks for empty/invalid card numbers)
+    // 1. Trigger Stripe's built-in form validation
     const { error: submitError } = await elements.submit();
     if (submitError) {
       toast.error(
@@ -48,7 +50,15 @@ export function ReviewStep({
       return;
     }
 
-    // 2. Confirm the payment and redirect on success
+    // 2. Sync the PaymentIntent amount with the current coupon state.
+    const finalized = await onFinalizeOrder();
+    if (!finalized) {
+      toast.error("Could not finalize your order. Please try again.");
+      setIsProcessing(false);
+      return;
+    }
+
+    // 3. Confirm the payment and redirect on success
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
@@ -56,7 +66,7 @@ export function ReviewStep({
       },
     });
 
-    // 3. Handle failure (Success won't reach here because of the redirect)
+    // 4. Handle failure (Success redirects away, so this only runs on error)
     if (error) {
       toast.error(error.message || "Payment failed. Please try again.");
       setIsProcessing(false);
