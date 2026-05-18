@@ -75,7 +75,7 @@ export function ShippingForm({ defaultValues, onComplete }: ShippingFormProps) {
         />
       </div>
 
-      {/* ZIP + Phone */}
+      {/* ZIP + Country */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormInput
           label="ZIP / Postal Code"
@@ -84,13 +84,21 @@ export function ShippingForm({ defaultValues, onComplete }: ShippingFormProps) {
           {...register("zipCode", { required: "ZIP code is required" })}
         />
         <FormInput
-          label="Phone Number"
-          type="tel"
-          placeholder="+1 (555) 000-0000"
-          error={errors.phone?.message}
-          {...register("phone", { required: "Phone number is required" })}
+          label="Country"
+          placeholder="United States"
+          error={errors.country?.message}
+          {...register("country", { required: "Country is required" })}
         />
       </div>
+
+      {/* Phone */}
+      <FormInput
+        label="Phone Number"
+        type="tel"
+        placeholder="+1 (555) 000-0000"
+        error={errors.phone?.message}
+        {...register("phone", { required: "Phone number is required" })}
+      />
 
       {/* Submit */}
       <button

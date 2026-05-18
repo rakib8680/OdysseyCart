@@ -1,5 +1,6 @@
 "use server";
 
+import mongoose from "mongoose";
 import { connectDB } from "@/lib/db/mongoose";
 import Order from "@/lib/models/Order";
 import { stripe } from "@/lib/stripe";
@@ -54,6 +55,15 @@ export async function createOrUpdatePaymentIntent(
     // Stripe requires the amount to be an integer in the smallest currency unit (cents for USD)
     const amountInCents = Math.round(totals.total * 100);
 
+    // Map CartItem[] → TOrderItem[] shape (converts string productId to ObjectId)
+    const orderItems = verifiedItems.map((item) => ({
+      productId: new mongoose.Types.ObjectId(item.productId),
+      title: item.title,
+      price: item.price,
+      image: item.image,
+      quantity: item.quantity,
+    }));
+
     // 3. Upsert Logic (Fixing the Database Bloat)
     if (existingOrderId) {
       const order = await Order.findById(existingOrderId);
@@ -68,7 +78,7 @@ export async function createOrUpdatePaymentIntent(
 
       // Update the Order with the latest shipping address and amounts
       order.shippingInfo = shippingInfo;
-      order.items = verifiedItems as any;
+      order.items = orderItems;
       order.subtotal = totals.subtotal;
       order.tax = totals.tax;
       order.shippingCost = totals.shippingCost;
@@ -91,7 +101,7 @@ export async function createOrUpdatePaymentIntent(
                 city: shippingInfo.city,
                 state: shippingInfo.state,
                 postal_code: shippingInfo.zipCode,
-                country: "US", // Default to US or handle dynamically
+                country: shippingInfo.country,
               },
             },
           },
@@ -127,7 +137,7 @@ export async function createOrUpdatePaymentIntent(
           city: shippingInfo.city,
           state: shippingInfo.state,
           postal_code: shippingInfo.zipCode,
-          country: "US",
+          country: shippingInfo.country,
         },
       },
     });
@@ -135,7 +145,7 @@ export async function createOrUpdatePaymentIntent(
     // Create the pending Mongoose Order
     const newOrder = await Order.create({
       userId,
-      items: verifiedItems as any,
+      items: orderItems,
       shippingInfo,
       subtotal: totals.subtotal,
       tax: totals.tax,

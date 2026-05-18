@@ -17,7 +17,6 @@ interface CartContextType {
   totalPrice: number;
   isLoading: boolean;
   busyItems: Set<string>;
-  // UI State
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
   openCart: () => void;

@@ -15,6 +15,7 @@ export interface TShippingInfo {
   city: string;
   state: string;
   zipCode: string;
+  country: string;
   phone: string;
 }
 
@@ -53,6 +54,7 @@ const ShippingInfoSchema = new Schema<TShippingInfo>(
     city: { type: String, required: true },
     state: { type: String, required: true },
     zipCode: { type: String, required: true },
+    country: { type: String, required: true },
     phone: { type: String, required: true },
   },
   { _id: false },

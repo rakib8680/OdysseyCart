@@ -31,7 +31,8 @@ function SuccessContent() {
   // Clear the cart once after a successful payment
   useEffect(() => {
     async function handleSuccess() {
-      if (!user || hasClearedRef.current) return;
+      if (!user) return;
+      if (hasClearedRef.current) return;
       hasClearedRef.current = true;
 
       if (redirectStatus === "succeeded") {

@@ -38,7 +38,7 @@ export function calculateOrderTotals(
   const discountedSubtotal = Math.max(subtotal - discount, 0);
   const shippingCost =
     discountedSubtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
-  const tax = parseFloat((discountedSubtotal * TAX_RATE).toFixed(2));
+  const tax = parseFloat((subtotal * TAX_RATE).toFixed(2));
   const total = parseFloat(
     (discountedSubtotal + shippingCost + tax).toFixed(2),
   );
