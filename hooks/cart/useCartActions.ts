@@ -173,7 +173,7 @@ export function useCartActions(
 
         const res = await clearCartAction(user.uid);
         if (res.success) {
-          toast.success("Cart cleared");
+          // toast.success("Cart cleared");
         } else {
           setItems(snapshot); // Rollback
           toast.error(res.error || "Failed to clear cart");

@@ -84,9 +84,25 @@ Here is an analysis of the current state of the application against the `ASSESSM
 
 ---
 
-**Next Up:**
+## 10. Checkout Flow (Stripe) : 🟢 Complete
 
-1. **Checkout Flow (Stripe)**: Single-page accordion checkout with Stripe Elements (Shipping → Payment → Review). Distraction-free layout.
-2. **Order Management**: MongoDB `Order` schema, Stripe webhook for payment verification, stock decrement, order confirmation page.
-3. **Admin Dashboard**: Sales metrics, order fulfillment tracking.
+- [x] Secure Accordion UI: Distraction-free, single-page layout (Shipping → Payment → Review).
+- [x] Payment Intents: Dynamic calculation of exact totals via `createOrUpdatePaymentIntent` server action.
+- [x] Stripe Elements: Beautiful, localized, embedded credit card forms.
+- [x] Webhook Fulfillment: Cryptographically secured endpoint to process successful payments, atomic inventory decrementing, and update `Order` status.
+- [x] Database Hygiene: Integrated MongoDB Partial TTL index to automatically prune abandoned (unpaid) orders after 24 hours.
 
+## 11. Discount & Coupon System : 🟢 Complete
+
+- [x] Schema Design: New `Coupon` Mongoose schema with `minimumPurchaseAmount`, `maximumDiscountAmount`, `usageLimit`, and `isActive` toggles.
+- [x] Secure Server Validation: Centralized `validateCoupon` action that securely verifies dates, limits, and recalculates math on the backend.
+- [x] State Lifting UI: Added a sleek, interactive Promo Code input component with a seamless "Remove" functionality inside the `OrderSummary`.
+- [x] Payment Enforcement: Modified payment server actions to re-validate coupons at the exact moment of checkout to prevent frontend manipulation.
+- [x] Webhook Analytics: Added atomic `$inc` updates to the Stripe Webhook to track exactly how many times a coupon has been successfully used.
+
+---
+
+**Next Up (Tomorrow):**
+
+1. **User Order History**: Create a protected UI page where authenticated users can view their past orders, order statuses, and track fulfillment.
+2. **Admin Order Dashboard**: Build a secure admin interface to list all orders, view total sales metrics, and manually update order statuses (e.g., `paid` → `shipped`).

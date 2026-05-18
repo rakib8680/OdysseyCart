@@ -49,31 +49,36 @@ export async function POST(req: NextRequest) {
     try {
       await connectDB();
 
-      const order = await Order.findById(orderId);
+      // ATOMIC IDEMPOTENCY GUARD
+      // Replace the old 3-step (findById → check → save) with a single atomic
+      // findOneAndUpdate. The filter { status: "pending" } means only ONE
+      // concurrent webhook delivery can ever "claim" the order — the second
+      // request will get null back and exit safely. This eliminates the
+      // check-then-act race condition.
+      const order = await Order.findOneAndUpdate(
+        { _id: orderId, status: "pending" },
+        { $set: { status: "paid", stripePaymentId: paymentIntent.id } },
+        { new: true },
+      );
 
       if (!order) {
-        console.error(`Webhook: Order ${orderId} not found.`);
-        return NextResponse.json(
-          { error: "Order not found." },
-          { status: 404 },
+        console.log(
+          `Webhook: Order ${orderId} not found or already fulfilled. Skipping.`,
         );
-      }
-
-      // IDEMPOTENCY GUARD: If already paid, skip to prevent double stock decrement
-      if (order.status === "paid") {
-        console.log(`Webhook: Order ${orderId} already fulfilled. Skipping.`);
         return NextResponse.json({ received: true });
       }
 
-      // 3. Mark the order as paid
-      order.status = "paid";
-      order.stripePaymentId = paymentIntent.id;
-      await order.save();
-
-      // 4. Decrement stock for each purchased item
+      //SAFE STOCK DECREMENT (FLOOR AT ZERO)
+      // Added stockQuantity: { $gte: item.quantity } to the filter.
+      // This makes the decrement conditional — if stock is somehow already 0
+      // (e.g. from a duplicate event), the updateOne simply matches nothing
+      // instead of pushing stockQuantity into negative territory.
       const bulkOps = order.items.map((item: any) => ({
         updateOne: {
-          filter: { _id: item.productId },
+          filter: {
+            _id: item.productId,
+            stockQuantity: { $gte: item.quantity },
+          },
           update: { $inc: { stockQuantity: -item.quantity } },
         },
       }));
