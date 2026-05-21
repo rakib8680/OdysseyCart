@@ -1,19 +1,11 @@
 import { useElements, useStripe } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import { toast } from "sonner";
-import {
-  Loader2,
-  ShieldCheck,
-  MapPin,
-  Package,
-  Tag,
-  Truck,
-  Lock,
-} from "lucide-react";
+import { Loader2, ShieldCheck, MapPin, Package, Lock } from "lucide-react";
 import { CartItem } from "@/lib/types/cart";
 import { OrderTotals } from "@/lib/utils/pricing";
 import { TShippingForm } from "@/lib/validations/checkout";
-import { SummaryItem, PriceLine } from "./OrderSummary";
+import { SummaryItem } from "./OrderSummary";
 
 interface ReviewStepProps {
   shippingData: TShippingForm;
@@ -88,6 +80,7 @@ export function ReviewStep({
           <p>
             {shippingData.city}, {shippingData.state} {shippingData.zipCode}
           </p>
+          <p>{shippingData.country}</p>
           <p>{shippingData.phone}</p>
           <p className="text-slate-500">{shippingData.email}</p>
         </div>
@@ -105,36 +98,6 @@ export function ReviewStep({
           {cartItems.map((item) => (
             <SummaryItem key={item.productId} item={item} />
           ))}
-        </div>
-      </div>
-
-      {/* Price Breakdown — Reuses PriceLine from OrderSummary */}
-      <div className="bg-slate-50 rounded-xl p-4 space-y-3">
-        <PriceLine label="Subtotal" value={totals.subtotal} />
-
-        {totals.discount > 0 && (
-          <PriceLine
-            label="Discount"
-            value={-totals.discount}
-            className="text-emerald-600"
-            icon={<Tag className="w-3.5 h-3.5" />}
-          />
-        )}
-
-        <PriceLine
-          label="Shipping"
-          value={totals.shippingCost}
-          isFree={totals.shippingCost === 0}
-          icon={<Truck className="w-3.5 h-3.5" />}
-        />
-
-        <PriceLine label="Tax (5%)" value={totals.tax} />
-
-        <div className="pt-3 border-t border-slate-200 flex justify-between items-center">
-          <span className="text-base font-bold text-slate-900">Total</span>
-          <span className="text-xl font-bold text-slate-900">
-            ${totals.total.toFixed(2)}
-          </span>
         </div>
       </div>
 

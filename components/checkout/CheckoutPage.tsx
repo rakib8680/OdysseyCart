@@ -189,6 +189,7 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
               isActive={activeStep === 2}
               isCompleted={activeStep > 2}
               onEdit={() => activeStep > 2 && setActiveStep(2)}
+              summary="Credit Card"
             >
               <PaymentForm onContinue={() => setActiveStep(3)} />
             </AccordionStep>
