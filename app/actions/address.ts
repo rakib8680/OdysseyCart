@@ -11,7 +11,7 @@ export async function getSavedAddresses(firebaseUid: string) {
     if (!user) {
       return { success: false, message: "User not found" };
     }
-    
+
     // Stringify and parse to ensure ObjectIds become standard strings for Next.js Client Components
     return {
       success: true,
@@ -27,7 +27,7 @@ export async function saveAddress(
   firebaseUid: string,
   addressData: TShippingForm,
   label: string,
-  setAsDefault: boolean = false
+  setAsDefault: boolean = false,
 ) {
   try {
     await connectDB();
@@ -37,7 +37,10 @@ export async function saveAddress(
     }
 
     if (user.shippingAddresses.length >= 5) {
-      return { success: false, message: "Maximum of 5 saved addresses reached." };
+      return {
+        success: false,
+        message: "Maximum of 5 saved addresses reached.",
+      };
     }
 
     // If this is the first address, automatically make it the default
@@ -60,10 +63,10 @@ export async function saveAddress(
     user.shippingAddresses.push(newAddress as IShippingAddress);
     await user.save();
 
-    return { 
-      success: true, 
+    return {
+      success: true,
       message: "Address saved successfully",
-      addresses: JSON.parse(JSON.stringify(user.shippingAddresses))
+      addresses: JSON.parse(JSON.stringify(user.shippingAddresses)),
     };
   } catch (error) {
     console.error("Error saving address:", error);
@@ -80,7 +83,7 @@ export async function deleteAddress(firebaseUid: string, addressId: string) {
     }
 
     const addrIndex = user.shippingAddresses.findIndex(
-      (addr) => addr._id?.toString() === addressId
+      (addr) => addr._id?.toString() === addressId,
     );
 
     if (addrIndex === -1) {
@@ -99,10 +102,10 @@ export async function deleteAddress(firebaseUid: string, addressId: string) {
 
     await user.save();
 
-    return { 
-      success: true, 
+    return {
+      success: true,
       message: "Address deleted successfully",
-      addresses: JSON.parse(JSON.stringify(user.shippingAddresses))
+      addresses: JSON.parse(JSON.stringify(user.shippingAddresses)),
     };
   } catch (error) {
     console.error("Error deleting address:", error);
@@ -110,7 +113,10 @@ export async function deleteAddress(firebaseUid: string, addressId: string) {
   }
 }
 
-export async function setDefaultAddress(firebaseUid: string, addressId: string) {
+export async function setDefaultAddress(
+  firebaseUid: string,
+  addressId: string,
+) {
   try {
     await connectDB();
     const user = await User.findOne({ firebaseUid });
@@ -134,10 +140,10 @@ export async function setDefaultAddress(firebaseUid: string, addressId: string) 
 
     await user.save();
 
-    return { 
-      success: true, 
+    return {
+      success: true,
       message: "Default address updated",
-      addresses: JSON.parse(JSON.stringify(user.shippingAddresses))
+      addresses: JSON.parse(JSON.stringify(user.shippingAddresses)),
     };
   } catch (error) {
     console.error("Error setting default address:", error);
