@@ -10,10 +10,11 @@ import {
 } from "@/components/ui/sheet";
 import Link from "next/link";
 import { ShoppingCart, ArrowRight, ShoppingBag, Lock } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { CartItem } from "./CartItem";
 import { ShippingProgress, FREE_SHIPPING_THRESHOLD } from "./ShippingProgress";
+import { useEffect } from "react";
 
 export function CartDrawer() {
   const {
@@ -27,6 +28,18 @@ export function CartDrawer() {
     busyItems,
   } = useCart();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Auto-open cart when navigated with ?cart=open
+  useEffect(() => {
+    if (searchParams.get("cart") === "open") {
+      setIsCartOpen(true);
+      // Clean up the query param from URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete("cart");
+      window.history.replaceState({}, "", url.pathname);
+    }
+  }, [searchParams, setIsCartOpen]);
 
   return (
     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>

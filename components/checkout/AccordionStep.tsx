@@ -21,9 +21,9 @@ export function AccordionStep({
 }: AccordionStepProps) {
   return (
     <div
-      className={`bg-white rounded-xl border transition-colors ${
+      className={`bg-white rounded-xl border transition-all ${
         isActive
-          ? "border-slate-300 shadow-sm"
+          ? "border-slate-300 border-l-[3px] border-l-emerald-500 shadow-sm"
           : isCompleted
             ? "border-emerald-200"
             : "border-slate-200 opacity-60"

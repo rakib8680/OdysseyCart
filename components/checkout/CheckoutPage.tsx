@@ -14,7 +14,8 @@ import { getStripe } from "@/lib/stripe/client";
 import { createOrUpdatePaymentIntent } from "@/app/actions/payment";
 import { validateCoupon } from "@/app/actions/coupon";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronLeft } from "lucide-react";
+import Link from "next/link";
 import { PaymentForm } from "./PaymentForm";
 import { ReviewStep } from "./ReviewStep";
 
@@ -129,6 +130,15 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       {/* Left Column — Accordion Steps */}
       <div className="lg:col-span-7 xl:col-span-8 space-y-4">
+        {/* Back to Cart */}
+        <Link
+          href="/items?cart=open"
+          className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-800 transition-colors my-5"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Back to cart
+        </Link>
+
         {/* Step Indicators */}
         <div className="flex items-center gap-3 mb-6">
           {STEPS.map((step, index) => (
@@ -152,7 +162,7 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
           onEdit={() => setActiveStep(1)}
           summary={
             shippingData
-              ? `${shippingData.fullName} — ${shippingData.address}, ${shippingData.city}`
+              ? `${shippingData.fullName} — ${shippingData.address}, ${shippingData.city} · Est. 5–7 business days`
               : undefined
           }
         >
