@@ -5,7 +5,7 @@ import { Loader2, ShieldCheck, MapPin, Package, Lock } from "lucide-react";
 import { CartItem } from "@/lib/types/cart";
 import { OrderTotals } from "@/lib/utils/pricing";
 import { TShippingForm } from "@/lib/validations/checkout";
-import { SummaryItem } from "./OrderSummary";
+import { SummaryItem } from "./SummaryItem";
 
 interface ReviewStepProps {
   shippingData: TShippingForm;

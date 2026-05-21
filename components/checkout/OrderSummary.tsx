@@ -1,11 +1,13 @@
 "use client";
 
-import { CartItem } from "@/lib/types/cart";
 import { OrderTotals } from "@/lib/utils/pricing";
+import { CartItem } from "@/lib/types/cart";
 import { ShippingProgress } from "@/components/cart/ShippingProgress";
 import { TrustBadges } from "@/components/ui/TrustBadges";
 import { AcceptedPayments } from "@/components/ui/AcceptedPayments";
-import { ImageOff, Truck, Tag, Loader2 } from "lucide-react";
+import { SummaryItem } from "./SummaryItem";
+import { PriceLine } from "./PriceLine";
+import { Truck, Tag, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 // ==========================================
@@ -145,88 +147,6 @@ export function OrderSummary({
 
       {/* Accepted Payment Methods */}
       <AcceptedPayments />
-    </div>
-  );
-}
-
-// ==========================================
-// REUSABLE SUB-COMPONENTS
-// ==========================================
-
-/** Single item row in the summary list — with quantity badge overlay */
-export function SummaryItem({ item }: { item: CartItem }) {
-  const [imgError, setImgError] = useState(false);
-
-  return (
-    <div className="flex gap-3 py-3 first:pt-0 last:pb-0">
-      {/* Thumbnail with quantity badge */}
-      <div className="relative flex-shrink-0">
-        <div className="w-14 h-14 rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center">
-          {item.image && !imgError ? (
-            <img
-              src={item.image}
-              alt={item.title}
-              className="w-full h-full object-cover"
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <ImageOff className="w-5 h-5 text-slate-300" />
-          )}
-        </div>
-        {item.quantity > 1 && (
-          <span className="absolute -top-1.5 -right-1.5 bg-slate-700 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
-            {item.quantity}
-          </span>
-        )}
-      </div>
-
-      {/* Details */}
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-slate-900 truncate">
-          {item.title}
-        </p>
-        <p className="text-xs text-slate-500 mt-0.5">Qty: {item.quantity}</p>
-      </div>
-
-      {/* Line Price */}
-      <p className="text-sm font-semibold text-slate-900 flex-shrink-0">
-        ${(item.price * item.quantity).toFixed(2)}
-      </p>
-    </div>
-  );
-}
-
-/** Reusable price breakdown line */
-export function PriceLine({
-  label,
-  value,
-  isFree = false,
-  className = "",
-  icon,
-}: {
-  label: string;
-  value: number;
-  isFree?: boolean;
-  className?: string;
-  icon?: React.ReactNode;
-}) {
-  return (
-    <div className={`flex justify-between items-center text-sm ${className}`}>
-      <span className="text-slate-600 flex items-center gap-1.5">
-        {icon}
-        {label}
-      </span>
-      {isFree ? (
-        <span className="font-semibold text-emerald-600 uppercase text-xs">
-          Free
-        </span>
-      ) : (
-        <span className="font-medium text-slate-900">
-          {value < 0
-            ? `-$${Math.abs(value).toFixed(2)}`
-            : `$${value.toFixed(2)}`}
-        </span>
-      )}
     </div>
   );
 }

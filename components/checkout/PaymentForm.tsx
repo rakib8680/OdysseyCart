@@ -29,7 +29,7 @@ export function PaymentForm({ onContinue }: PaymentFormProps) {
         <button
           type="button"
           onClick={onContinue}
-          className="w-full h-12 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-colors mt-6"
+          className="w-full h-12 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-colors mt-6 cursor-pointer"
         >
           Continue to Review
         </button>

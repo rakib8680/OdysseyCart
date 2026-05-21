@@ -43,7 +43,7 @@ export function StepIndicator({
       </div>
       {!isLast && (
         <div
-          className={`flex-1 h-px ${
+          className={`flex-1 h-0.5 ${
             isCompleted ? "bg-emerald-300" : "bg-slate-200"
           }`}
         />
