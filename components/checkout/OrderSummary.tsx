@@ -2,6 +2,9 @@
 
 import { CartItem } from "@/lib/types/cart";
 import { OrderTotals } from "@/lib/utils/pricing";
+import { ShippingProgress } from "@/components/cart/ShippingProgress";
+import { TrustBadges } from "@/components/ui/TrustBadges";
+import { AcceptedPayments } from "@/components/ui/AcceptedPayments";
 import { ImageOff, Truck, Tag, Loader2 } from "lucide-react";
 import { useState } from "react";
 
@@ -38,7 +41,7 @@ export function OrderSummary({
   const handleRemove = () => {
     if (onRemoveCoupon) {
       onRemoveCoupon();
-      setCouponInput(""); // Clear input when removing
+      setCouponInput("");
     }
   };
 
@@ -103,6 +106,9 @@ export function OrderSummary({
         </div>
       )}
 
+      {/* Free Shipping Progress */}
+      <ShippingProgress subtotal={totals.subtotal - totals.discount} />
+
       {/* Price Breakdown */}
       <div className="px-6 py-5 border-t border-slate-200 bg-slate-50 space-y-3">
         <PriceLine label="Subtotal" value={totals.subtotal} />
@@ -133,6 +139,12 @@ export function OrderSummary({
           </span>
         </div>
       </div>
+
+      {/* Trust Badges */}
+      <TrustBadges />
+
+      {/* Accepted Payment Methods */}
+      <AcceptedPayments />
     </div>
   );
 }
@@ -141,23 +153,30 @@ export function OrderSummary({
 // REUSABLE SUB-COMPONENTS
 // ==========================================
 
-/** Single item row in the summary list */
+/** Single item row in the summary list — with quantity badge overlay */
 export function SummaryItem({ item }: { item: CartItem }) {
   const [imgError, setImgError] = useState(false);
 
   return (
     <div className="flex gap-3 py-3 first:pt-0 last:pb-0">
-      {/* Thumbnail */}
-      <div className="w-14 h-14 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0 flex items-center justify-center">
-        {item.image && !imgError ? (
-          <img
-            src={item.image}
-            alt={item.title}
-            className="w-full h-full object-cover"
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <ImageOff className="w-5 h-5 text-slate-300" />
+      {/* Thumbnail with quantity badge */}
+      <div className="relative flex-shrink-0">
+        <div className="w-14 h-14 rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center">
+          {item.image && !imgError ? (
+            <img
+              src={item.image}
+              alt={item.title}
+              className="w-full h-full object-cover"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <ImageOff className="w-5 h-5 text-slate-300" />
+          )}
+        </div>
+        {item.quantity > 1 && (
+          <span className="absolute -top-1.5 -right-1.5 bg-slate-700 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+            {item.quantity}
+          </span>
         )}
       </div>
 

@@ -8,6 +8,7 @@ import {
   Package,
   Tag,
   Truck,
+  Lock,
 } from "lucide-react";
 import { CartItem } from "@/lib/types/cart";
 import { OrderTotals } from "@/lib/utils/pricing";
@@ -159,7 +160,10 @@ export function ReviewStep({
             Processing Payment...
           </>
         ) : (
-          `Place Order — $${totals.total.toFixed(2)}`
+          <>
+            <Lock className="w-4 h-4" />
+            Place Order — ${totals.total.toFixed(2)}
+          </>
         )}
       </button>
     </div>
