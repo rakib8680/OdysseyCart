@@ -1,6 +1,7 @@
 import { AdminRoute } from "@/components/AdminRoute";
 import AddProductForm from "@/components/AddProductForm";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "Add Item | OdysseyCart" };
 
 export default function AddItemPage() {

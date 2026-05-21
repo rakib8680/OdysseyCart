@@ -3,6 +3,7 @@ import { AdminRoute } from "@/components/AdminRoute";
 import { getProducts } from "@/app/actions/products";
 import ManageTable from "@/components/ManageTable";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "Manage Items | OdysseyCart" };
 
 export default async function ManageItemsPage() {
