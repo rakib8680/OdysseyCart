@@ -60,7 +60,10 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
           );
           if (defaultAddr) {
             setSelectedAddressId(defaultAddr._id);
-            setShippingData(defaultAddr);
+            setShippingData({
+              ...defaultAddr,
+              email: user.email || "", // Approach 2: Strictly use auth email
+            });
           }
         }
       });
@@ -219,10 +222,13 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
                 onSelect={(addr) => {
                   if (addr) {
                     setSelectedAddressId(addr._id);
-                    setShippingData(addr);
+                    setShippingData({
+                      ...addr,
+                      email: user.email || "", // Approach 2: Strictly use auth email
+                    });
                   } else {
                     setSelectedAddressId(null);
-                    setShippingData(null);
+                    setShippingData({ email: user.email || "" } as any);
                   }
                 }}
               />
