@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CartItem } from "@/lib/types/cart";
 import { calculateOrderTotals } from "@/lib/utils/pricing";
 import { TShippingForm } from "@/lib/validations/checkout";
@@ -18,6 +18,8 @@ import { Loader2, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { PaymentForm } from "./PaymentForm";
 import { ReviewStep } from "./ReviewStep";
+import { AddressPicker, SavedAddress } from "./AddressPicker";
+import { getSavedAddresses, saveAddress } from "@/app/actions/address";
 
 // ==========================================
 // TYPES
@@ -40,6 +42,30 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
   const { user } = useAuth();
   const [activeStep, setActiveStep] = useState(1);
   const [shippingData, setShippingData] = useState<TShippingForm | null>(null);
+
+  // Saved Addresses State
+  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (user) {
+      getSavedAddresses(user.uid).then((res) => {
+        if (res.success && res.addresses) {
+          setSavedAddresses(res.addresses);
+          // Auto-select default address if available
+          const defaultAddr = res.addresses.find(
+            (a: SavedAddress) => a.isDefault,
+          );
+          if (defaultAddr) {
+            setSelectedAddressId(defaultAddr._id);
+            setShippingData(defaultAddr);
+          }
+        }
+      });
+    }
+  }, [user]);
 
   // Stripe State
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -95,7 +121,10 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
   };
 
   // Handler: Shipping form completed
-  const handleShippingComplete = async (data: TShippingForm) => {
+  const handleShippingComplete = async (
+    data: TShippingForm,
+    saveAddressInfo?: { label: string },
+  ) => {
     if (!user) {
       toast.error("You must be logged in to checkout.");
       return;
@@ -105,6 +134,17 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
     setIsInitializingPayment(true);
 
     try {
+      if (saveAddressInfo) {
+        const saveRes = await saveAddress(
+          user.uid,
+          data,
+          saveAddressInfo.label,
+        );
+        if (saveRes.success && saveRes.addresses) {
+          setSavedAddresses(saveRes.addresses);
+        }
+      }
+
       const response = await createOrUpdatePaymentIntent(
         user.uid,
         data,
@@ -172,10 +212,26 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
               <p>Initializing secure payment...</p>
             </div>
           ) : (
-            <ShippingForm
-              defaultValues={shippingData || undefined}
-              onComplete={handleShippingComplete}
-            />
+            <div className="space-y-6">
+              <AddressPicker
+                addresses={savedAddresses}
+                selectedAddressId={selectedAddressId}
+                onSelect={(addr) => {
+                  if (addr) {
+                    setSelectedAddressId(addr._id);
+                    setShippingData(addr);
+                  } else {
+                    setSelectedAddressId(null);
+                    setShippingData(null);
+                  }
+                }}
+              />
+              <ShippingForm
+                defaultValues={shippingData || undefined}
+                onComplete={handleShippingComplete}
+                showSaveOption={selectedAddressId === null}
+              />
+            </div>
           )}
         </AccordionStep>
 
