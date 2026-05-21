@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
@@ -12,7 +13,9 @@ export default function MainLayout({
       <Navbar />
       <main className="flex-1 w-full">{children}</main>
       <Footer />
-      <CartDrawer />
+      <Suspense>
+        <CartDrawer />
+      </Suspense>
     </>
   );
 }

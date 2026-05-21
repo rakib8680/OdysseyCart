@@ -3,7 +3,6 @@ import AddProductForm from "@/components/AddProductForm";
 import { getProductById } from "@/app/actions/products";
 import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
 export const metadata = { title: "Edit Item | OdysseyCart" };
 
 export default async function EditItemPage({
