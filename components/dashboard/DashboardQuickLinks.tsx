@@ -1,15 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { ACCOUNT_MENU } from "@/lib/config/dashboard";
+import { type MenuItem } from "@/lib/config/dashboard";
+
+interface DashboardQuickLinksProps {
+  menuItems: MenuItem[];
+  /** The root path to exclude (e.g., "/account" or "/admin") */
+  excludeHref: string;
+  /** Map of href → short description text */
+  descriptions: Record<string, string>;
+}
 
 /**
- * Quick link cards for the account overview page.
- * Reads from the same ACCOUNT_MENU config used by the sidebar (DRY).
- * Skips the "Overview" item since we're already on that page.
+ * Quick link cards for any dashboard overview page.
+ * Reads from the same menu config used by the sidebar (DRY).
+ * Filters out the root overview item since we're already on it.
  */
-export function AccountQuickLinks() {
-  const links = ACCOUNT_MENU.filter((item) => item.href !== "/account");
+export function DashboardQuickLinks({
+  menuItems,
+  excludeHref,
+  descriptions,
+}: DashboardQuickLinksProps) {
+  const links = menuItems.filter((item) => item.href !== excludeHref);
 
   return (
     <div>
@@ -31,7 +43,7 @@ export function AccountQuickLinks() {
                   {item.label}
                 </p>
                 <p className="text-xs text-slate-500">
-                  {getDescription(item.href)}
+                  {descriptions[item.href] || ""}
                 </p>
               </div>
             </Link>
@@ -40,13 +52,4 @@ export function AccountQuickLinks() {
       </div>
     </div>
   );
-}
-
-/** Map route to a human-readable description */
-function getDescription(href: string): string {
-  const descriptions: Record<string, string> = {
-    "/account/orders": "View your past orders and track deliveries",
-    "/account/addresses": "Manage your saved shipping addresses",
-  };
-  return descriptions[href] || "";
 }

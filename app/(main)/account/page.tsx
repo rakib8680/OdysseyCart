@@ -3,7 +3,13 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { AccountInfoCard } from "@/components/account/AccountInfoCard";
-import { AccountQuickLinks } from "@/components/account/AccountQuickLinks";
+import { DashboardQuickLinks } from "@/components/dashboard/DashboardQuickLinks";
+import { ACCOUNT_MENU } from "@/lib/config/dashboard";
+
+const ACCOUNT_DESCRIPTIONS: Record<string, string> = {
+  "/account/orders": "View your past orders and track deliveries",
+  "/account/addresses": "Manage your saved shipping addresses",
+};
 
 export default function AccountPage() {
   const { user, dbUser } = useAuth();
@@ -32,7 +38,11 @@ export default function AccountPage() {
       <AccountInfoCard user={user} dbUser={dbUser} />
 
       {/* Quick Links */}
-      <AccountQuickLinks />
+      <DashboardQuickLinks
+        menuItems={ACCOUNT_MENU}
+        excludeHref="/account"
+        descriptions={ACCOUNT_DESCRIPTIONS}
+      />
     </div>
   );
 }
