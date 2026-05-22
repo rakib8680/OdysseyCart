@@ -1,6 +1,6 @@
 # OdysseyCart Progress Report
 
-Here is an analysis of the current state of the application against the `ASSESSMENT.md` requirements.
+Here is an analysis of the current state of the application.
 
 ## 1. Landing Page (/) : 🟢 Complete
 
@@ -100,9 +100,29 @@ Here is an analysis of the current state of the application against the `ASSESSM
 - [x] Payment Enforcement: Modified payment server actions to re-validate coupons at the exact moment of checkout to prevent frontend manipulation.
 - [x] Webhook Analytics: Added atomic `$inc` updates to the Stripe Webhook to track exactly how many times a coupon has been successfully used.
 
+## 12. Checkout Polish & Saved Addresses : 🟢 Complete _(May 21)_
+
+### Checkout Refinements
+- [x] DRY Refactor: Extracted `SummaryItem` and `PriceLine` from `OrderSummary.tsx` into standalone reusable files.
+- [x] UX: "Back to cart" button opens cart drawer via `?cart=open` URL params.
+- [x] UX: "Credit Card" summary text on collapsed Payment accordion step.
+- [x] Visual: Thickened step connector lines (`h-px` → `h-0.5`) in `StepIndicator.tsx`.
+- [x] Visual: Added `cursor-pointer` to PaymentForm continue button.
+- [x] Build Fix: Wrapped `CartDrawer` in `<Suspense>` boundary to fix Vercel prerender errors on static pages (`/about`, `/items/add`).
+- [x] Build Fix: Removed unnecessary `force-dynamic` exports; retained only on `/items/manage`.
+
+### Saved Shipping Addresses Feature
+- [x] Schema: Embedded `shippingAddresses` subdocument array on User model (MongoDB 1:few best practice).
+- [x] Server Actions: Full CRUD in `app/actions/address.ts` (get, save, delete, setDefault) with 5-address cap.
+- [x] UI: `AddressPicker.tsx` — reusable selectable address card grid with default badge.
+- [x] Integration: Auto-fetches saved addresses on checkout mount, auto-selects default, auto-fills `ShippingForm`.
+- [x] Save Flow: "Save this address for next time" checkbox with label input on new addresses.
+- [x] DRY Architecture (Approach 2): Email is NOT stored in the address schema — dynamically injected from the authenticated `user.email` at selection time to prevent data duplication.
+
 ---
 
 **Next Up (Tomorrow):**
 
 1. **User Order History**: Create a protected UI page where authenticated users can view their past orders, order statuses, and track fulfillment.
 2. **Admin Order Dashboard**: Build a secure admin interface to list all orders, view total sales metrics, and manually update order statuses (e.g., `paid` → `shipped`).
+3. **Address Management UI**: Add edit/delete buttons directly on `AddressPicker` cards for in-checkout address management.

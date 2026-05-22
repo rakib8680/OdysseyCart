@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { ShoppingCart } from "lucide-react";
+import { UserAvatar } from "@/components/ui/UserAvatar";
 
 const NAV_LINKS = [
   { name: "Home", href: "/" },
@@ -60,20 +61,6 @@ export function Navbar() {
     router.push("/");
   };
 
-  // get initials for avatar
-  const getInitials = () => {
-    if (!user) return "";
-    if (user.displayName) {
-      return user.displayName
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-    }
-    return user.email?.charAt(0).toUpperCase() || "U";
-  };
-
   return (
     <nav className="sticky top-0 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -108,7 +95,7 @@ export function Navbar() {
           {/* Right Side */}
           <div className="flex items-center space-x-4">
             {/* Cart Button */}
-            <button 
+            <button
               onClick={openCart}
               className="relative p-2 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer mr-2"
               aria-label="Open cart"
@@ -130,17 +117,13 @@ export function Navbar() {
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className="flex items-center space-x-2 cursor-pointer"
                 >
-                  {user.photoURL ? (
-                    <img
-                      src={user.photoURL}
-                      alt="avatar"
-                      className="w-8 h-8 rounded-full border-2 border-slate-200"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">
-                      {getInitials()}
-                    </div>
-                  )}
+                  <UserAvatar
+                    photoURL={user.photoURL}
+                    displayName={user.displayName}
+                    email={user.email}
+                    size="sm"
+                    className="border-slate-200"
+                  />
                   <span className="hidden sm:block text-sm font-medium text-slate-700 max-w-[120px] truncate">
                     {user.displayName || user.email}
                   </span>
