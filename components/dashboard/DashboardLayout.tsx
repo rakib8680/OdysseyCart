@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DashboardSidebar } from "./DashboardSidebar";
+import { DashboardBreadcrumbs } from "./DashboardBreadcrumbs";
 import { type MenuItem } from "@/lib/config/dashboard";
 import { type LucideIcon, Menu, X } from "lucide-react";
 
@@ -32,7 +33,7 @@ export function DashboardLayout({
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-slate-50/50">
-      <div className="max-w-7xl mx-auto flex">
+      <div className=" mx-auto flex">
         {/* ───── Desktop Sidebar ───── */}
         <div className="hidden lg:block flex-shrink-0 sticky top-16 h-[calc(100vh-64px)]">
           <DashboardSidebar
@@ -85,7 +86,10 @@ export function DashboardLayout({
           </div>
 
           {/* Page Content */}
-          <div className="p-4 sm:p-6 lg:p-8">{children}</div>
+          <div className="p-4 sm:p-6 lg:p-8 container mx-auto mb-32">
+            <DashboardBreadcrumbs />
+            {children}
+          </div>
         </main>
       </div>
     </div>

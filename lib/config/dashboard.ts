@@ -33,3 +33,17 @@ export const ADMIN_MENU: MenuItem[] = [
   { label: "Orders", href: "/admin/orders", icon: Package },
   { label: "Products", href: "/admin/products", icon: ShoppingBag },
 ];
+
+// ==========================================
+// BREADCRUMB SEGMENT LABELS
+// ==========================================
+/** Maps raw URL segments to human-readable breadcrumb labels */
+export const SEGMENT_LABELS: Record<string, string> = {
+  account: "My Account",
+  admin: "Admin",
+  orders: "Orders",
+  products: "Products",
+  addresses: "Addresses",
+  add: "Add New",
+  edit: "Edit",
+};
