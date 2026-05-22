@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, User, Shield, LogOut } from "lucide-react";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 
 const NAV_LINKS = [
@@ -14,11 +14,6 @@ const NAV_LINKS = [
   { name: "Items", href: "/items" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
-];
-
-const USER_MENU_ITEMS = [
-  { name: "Add Product", href: "/items/add" },
-  { name: "Manage Products", href: "/items/manage" },
 ];
 
 export function Navbar() {
@@ -155,24 +150,32 @@ export function Navbar() {
                       </p>
                     </div>
 
-                    {/* Menu Links */}
-                    {dbUser?.role === "admin" &&
-                      USER_MENU_ITEMS.map((item) => (
-                        <Link
-                          key={item.name}
-                          href={item.href}
-                          className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-emerald-600 transition-colors"
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
+                    {/* Dashboard Links */}
+                    <Link
+                      href="/account"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-emerald-600 transition-colors"
+                    >
+                      <User className="w-4 h-4 text-slate-400" />
+                      My Account
+                    </Link>
+
+                    {dbUser?.role === "admin" && (
+                      <Link
+                        href="/admin"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-emerald-600 transition-colors"
+                      >
+                        <Shield className="w-4 h-4 text-slate-400" />
+                        Admin Dashboard
+                      </Link>
+                    )}
 
                     {/* Logout */}
                     <div className="border-t border-slate-100 mt-1 pt-1">
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                        className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                       >
+                        <LogOut className="w-4 h-4" />
                         Logout
                       </button>
                     </div>
