@@ -121,7 +121,7 @@ export default function AddProductForm({ initialData }: ProductFormProps) {
         );
         reset();
         router.refresh();
-        router.push("/items/manage");
+        router.push("/admin/products");
       } else {
         toast.error(
           result.error ||

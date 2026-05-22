@@ -43,7 +43,7 @@ export async function createProduct(data: Record<string, any>) {
     await Product.create(validatedData);
 
     revalidatePath("/items");
-    revalidatePath("/items/manage");
+    revalidatePath("/admin/products");
 
     return { success: true };
   } catch (error: any) {
@@ -101,7 +101,7 @@ export async function updateProduct(id: string, data: Record<string, any>) {
     });
 
     revalidatePath("/items");
-    revalidatePath("/items/manage");
+    revalidatePath("/admin/products");
     revalidatePath(`/items/${newSlug}`);
     revalidatePath(`/items/${existingProduct.slug}`);
 
@@ -184,7 +184,7 @@ export async function deleteProduct(id: string, uid: string) {
     await Product.findByIdAndDelete(id);
 
     revalidatePath("/items");
-    revalidatePath("/items/manage");
+    revalidatePath("/admin/products");
 
     return { success: true };
   } catch (error: any) {

@@ -64,7 +64,10 @@ export default function ManageTable({ products }: ManageTableProps) {
         <p className="text-lg font-medium mb-2">No products yet</p>
         <p className="text-sm">
           Start by{" "}
-          <Link href="/items/add" className="text-emerald-600 underline">
+          <Link
+            href="/admin/products/add"
+            className="text-emerald-600 underline"
+          >
             adding your first product
           </Link>
           .
@@ -148,7 +151,7 @@ export default function ManageTable({ products }: ManageTableProps) {
                       <span className="sr-only">View</span>
                     </Link>
                     <Link
-                      href={`/items/edit/${product._id}`}
+                      href={`/admin/products/edit/${product._id}`}
                       className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
                       title="Edit Product"
                     >
