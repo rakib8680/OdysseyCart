@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { type SerializedOrder } from "@/app/actions/order";
 import { OrderStatusBadge } from "@/components/orders/OrderStatusBadge";
-import { ImageOff, ChevronRight, Calendar, User } from "lucide-react";
+import { ImageOff, ChevronRight } from "lucide-react";
+import { formatOrderId } from "@/lib/utils";
 
 // ==========================================
 // CONSTANTS
@@ -27,7 +28,7 @@ interface OrderCardProps {
  * Adapts to a single horizontal line on larger screens, and a tight card on mobile.
  */
 export function OrderCard({ order, onViewDetails }: OrderCardProps) {
-  const shortId = `#OD-${order._id.slice(-6).toUpperCase()}`;
+  const shortId = formatOrderId(order._id);
   const orderDate = new Date(order.createdAt).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",

@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/sheet";
 import {
   CreditCard,
-  PackageCheck,
   Truck,
   MapPin,
   Phone,
@@ -22,6 +21,7 @@ import {
   Tag,
   Check,
 } from "lucide-react";
+import { formatOrderId } from "@/lib/utils";
 
 // ==========================================
 // FULFILLMENT TIMELINE CONFIG
@@ -64,7 +64,7 @@ export function OrderDetailSheet({
 }: OrderDetailSheetProps) {
   if (!order) return null;
 
-  const shortId = `#OD-${order._id.slice(-6).toUpperCase()}`;
+  const shortId = formatOrderId(order._id);
   const orderDate = new Date(order.createdAt).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
