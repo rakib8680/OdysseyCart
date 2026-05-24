@@ -1,23 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAuthRedirect } from "@/hooks/auth/useAuthRedirect";
 import { toast } from "sonner";
 
 export function GoogleLoginButton() {
   const { loginWithGoogle } = useAuth();
-  const router = useRouter();
+  const { redirect } = useAuthRedirect();
 
   const handleGoogleLogin = async () => {
     try {
       await loginWithGoogle();
       toast.success("Logged in with Google!");
-
-      // Check if there's a redirect parameter in the URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const redirectUrl = urlParams.get("redirect") || "/";
-
-      router.push(redirectUrl);
+      redirect();
     } catch {
       toast.error("Google sign-in failed. Please try again.");
     }
