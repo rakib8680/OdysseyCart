@@ -32,6 +32,8 @@ const FILTER_TABS: FilterTab[] = [
 
 interface OrderListProps {
   orders: SerializedOrder[];
+  onUpdateStatus?: (orderId: string, nextStatus: "shipped" | "delivered") => Promise<void>;
+  isUpdatingStatus?: boolean;
 }
 
 /**
@@ -39,7 +41,7 @@ interface OrderListProps {
  * Orchestrates OrderCard + OrderDetailSheet.
  * Shared across user account and admin dashboards.
  */
-export function OrderList({ orders }: OrderListProps) {
+export function OrderList({ orders, onUpdateStatus, isUpdatingStatus }: OrderListProps) {
   const [activeFilter, setActiveFilter] = useState<OrderStatus | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<SerializedOrder | null>(
@@ -166,6 +168,8 @@ export function OrderList({ orders }: OrderListProps) {
         order={selectedOrder}
         open={sheetOpen}
         onOpenChange={handleSheetClose}
+        onUpdateStatus={onUpdateStatus}
+        isUpdatingStatus={isUpdatingStatus}
       />
     </>
   );

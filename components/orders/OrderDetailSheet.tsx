@@ -20,6 +20,7 @@ import {
   Mail,
   Tag,
   Check,
+  Loader2,
 } from "lucide-react";
 import { formatOrderId } from "@/lib/utils";
 
@@ -50,6 +51,11 @@ interface OrderDetailSheetProps {
   order: SerializedOrder | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onUpdateStatus?: (
+    orderId: string,
+    nextStatus: "shipped" | "delivered",
+  ) => Promise<void>;
+  isUpdatingStatus?: boolean;
 }
 
 /**
@@ -61,6 +67,8 @@ export function OrderDetailSheet({
   order,
   open,
   onOpenChange,
+  onUpdateStatus,
+  isUpdatingStatus,
 }: OrderDetailSheetProps) {
   if (!order) return null;
 
@@ -250,6 +258,47 @@ export function OrderDetailSheet({
               </div>
             </section>
           )}
+
+          {/* ─── Admin Fulfillment Action ─── */}
+          {onUpdateStatus &&
+            (order.status === "paid" || order.status === "shipped") && (
+              <section className="pt-4 border-t border-slate-100 mt-6">
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col gap-3">
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                      Fulfillment Action
+                    </h4>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Move this order to the next step of the pipeline.
+                    </p>
+                  </div>
+                  {order.status === "paid" && (
+                    <button
+                      disabled={isUpdatingStatus}
+                      onClick={() => onUpdateStatus(order._id, "shipped")}
+                      className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg py-2 text-xs font-semibold disabled:opacity-50 transition-colors"
+                    >
+                      {isUpdatingStatus && (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      )}
+                      Mark as Shipped
+                    </button>
+                  )}
+                  {order.status === "shipped" && (
+                    <button
+                      disabled={isUpdatingStatus}
+                      onClick={() => onUpdateStatus(order._id, "delivered")}
+                      className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2 text-xs font-semibold disabled:opacity-50 transition-colors"
+                    >
+                      {isUpdatingStatus && (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      )}
+                      Mark as Delivered
+                    </button>
+                  )}
+                </div>
+              </section>
+            )}
         </div>
       </SheetContent>
     </Sheet>
