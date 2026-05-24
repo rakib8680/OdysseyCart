@@ -56,13 +56,15 @@ export function OrderList({ orders }: OrderListProps) {
       result = result.filter((o) => o.status === activeFilter);
     }
 
-    // Apply search (by shortened ID or shipping name)
+    // Apply search (by ID, name, email, or Stripe Payment ID)
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
         (o) =>
           o._id.slice(-6).toLowerCase().includes(q) ||
-          o.shippingInfo.fullName.toLowerCase().includes(q),
+          o.shippingInfo.fullName.toLowerCase().includes(q) ||
+          o.shippingInfo.email.toLowerCase().includes(q) ||
+          o.stripePaymentId?.toLowerCase().includes(q),
       );
     }
 
@@ -102,7 +104,7 @@ export function OrderList({ orders }: OrderListProps) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
-            placeholder="Search by order ID or name..."
+            placeholder="Search by ID, name, email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"

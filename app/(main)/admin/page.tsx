@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { DollarSign, Package, ShoppingBag } from "lucide-react";
 import { StatCard } from "@/components/ui/StatCard";
 import { DashboardQuickLinks } from "@/components/dashboard/DashboardQuickLinks";
@@ -14,19 +15,21 @@ const ADMIN_DESCRIPTIONS: Record<string, string> = {
 };
 
 export default function AdminPage() {
+  const { user } = useAuth();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchStats() {
-      const result = await getAdminStats();
+      if (!user) return;
+      const result = await getAdminStats(user.uid);
       if (result.success) {
         setStats(result.stats);
       }
       setLoading(false);
     }
     fetchStats();
-  }, []);
+  }, [user]);
 
   return (
     <div className="space-y-6">
