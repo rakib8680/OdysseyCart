@@ -83,7 +83,10 @@ export function OrderDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+      <SheetContent
+        side="right"
+        className="w-full sm:!max-w-xl overflow-y-auto md:p-5"
+      >
         {/* Header */}
         <SheetHeader className="border-b border-slate-100 pb-4">
           <div className="flex items-center justify-between pr-8">

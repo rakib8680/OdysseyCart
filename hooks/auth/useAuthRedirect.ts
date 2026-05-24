@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 /**
  * A DRY hook that automatically redirects authenticated users
  * to their intended destination (via `?redirect=...`) or home.
- * 
+ *
  * It also returns a `redirect` function to manually trigger it
  * (e.g., after a successful form submission before state updates).
  */
