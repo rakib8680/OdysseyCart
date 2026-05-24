@@ -1,128 +1,49 @@
-# OdysseyCart Progress Report
+# OdysseyCart — Session Progress (May 22)
 
-Here is an analysis of the current state of the application.
+## 🎯 What We Accomplished Today: Dual Dashboard Architecture
 
-## 1. Landing Page (/) : 🟢 Complete
+We successfully transitioned the application from a simple dropdown navigation to an enterprise-grade, highly scalable "Dual Dashboard" system. We ruthlessly applied DRY (Don't Repeat Yourself) principles throughout the implementation.
 
-- [x] Navbar: Basic structure exists (Logo, 4 routes, login link, sticky).
-- [x] Navbar (Auth State): Dynamic dropdown showing User Info, Add Product, and Manage Products after login.
-- [x] Hero section: Implemented with high-end product presentation.
-- [x] 4 Relevant Sections: Completed (Category Grid, Editorial Featured Products, Craftsmanship Split, Bento Value Props, Newsletter Island).
-- [x] Footer: Massive 6-column premium footer implemented.
+### 1. Architectural Foundation
 
-## 2. Items Page (/items) : 🟢 Complete
+- **`lib/config/dashboard.ts`**: Created a centralized configuration file as the single source of truth for both `ACCOUNT_MENU` and `ADMIN_MENU`.
+- **Shared Shell (`DashboardLayout`, `DashboardSidebar`)**: Built a responsive shell that powers _both_ the admin and user dashboards. It features a fixed sidebar on desktop and a slide-out overlay on mobile.
+- **Dynamic Breadcrumbs**: Implemented a raw, custom `DashboardBreadcrumbs` component injected at the Layout level. It reads the current URL and auto-generates perfectly formatted navigation trails for every page, with zero per-page code required.
 
-- [x] Search bar: Implemented with 🔍 icon.
-- [x] Filtering: Multi-layered filtering (Category, Price Range, and 6-way Sorting) implemented to satisfy 2+ filter requirements.
-- [x] Performance: Optimized using `useMemo` for heavy calculations.
-- [x] Code Quality: Refactored into a clean, modular structure (`components/items/`) with custom hooks and separated UI components.
-- [x] Display min 6 items: Works via MongoDB.
-- [x] Responsive grid: Implemented.
-- [x] Product Cards: Contains image, title, short desc, price, and "View Details" button.
+### 2. User Account Dashboard (`/account`)
 
-## 3. Item Details Page (/items/[id]) : 🟢 Complete
+- **Overview Page**: Added `AccountInfoCard` (shows email, role, member since date) and dynamic `DashboardQuickLinks`.
+- **Route Stubs**: Set up `/account/orders` and `/account/addresses` using a new, highly reusable `EmptyState` component.
 
-- [x] Dynamic Route: Implemented (`app/items/[id]/page.tsx`).
-- [x] Content: Displays Title, Image, Full Desc, Info (price/category/status).
-- [x] Interactivity: Clickable image thumbnails and DRY AddToCartButton integration.
-- [x] Related items: Implemented.
-- [x] Back button: Implemented.
+### 3. Admin Dashboard (`/admin`)
 
-## 4. About Page (/about) : 🟢 Complete
+- **Overview Page**: Added live stats (Total Revenue, Orders, Products) fetching via a new server action (`getAdminStats`) utilizing `Promise.all` for performance. Created a reusable `StatCard` component.
+- **Product Management Migration**:
+  - Migrated `/items/manage`, `/items/add`, and `/items/edit/[id]` into the new `/admin/products/*` structure.
+  - Reused existing components (`ManageTable`, `AddProductForm`) inside the dashboard shell without duplication.
+  - Set up redirects from the old routes to prevent broken links.
+  - Updated all `revalidatePath` calls in server actions.
 
-- [x] Simple page with Title, Description, and sections implemented.
+### 4. UI/UX Polish & Cleanup
 
-## 5. Authentication (Firebase) : 🟢 Complete
-
-- [x] Firebase SDK installed and configured.
-- [x] Email & Password login/register: Working with context API and toast notifications.
-- [x] Google login: Implemented successfully.
-- [x] State management: Using `AuthContext` globally.
-- [x] Redirect: Redirects to `/` after login/register correctly.
-
-## 6. Protected Page: Add Items (/items/add) : 🟢 Complete
-
-- [x] Route Protection: `<AdminRoute>` wrapper implemented. Unauthenticated users are redirected to `/login`.
-- [x] Form fields: UI form is fully built using `react-hook-form` and reusable for editing.
-- [x] Submit logic / Toasts: Form submission wired to MongoDB via Next.js Server Actions.
-- [x] Security: Implemented strict Zod schema validation and RBAC checking on the server side.
-
-## 7. Protected Page: Manage Items (/items/manage) : 🟢 Complete
-
-- [x] Route Protection: `<AdminRoute>` wrapper implemented.
-- [x] List layout: Professional Shadcn UI Table component.
-- [x] Actions: View, Edit, and Delete actions implemented.
-- [x] Edit Feature: Added `/items/edit/[id]` route, pre-filled form, and secure `updateProduct` server action.
-- [x] Delete Feature: Secure, DRY Shadcn `AlertDialog` confirmation and server-side deletion logic.
-
-## 8. Cart System : 🟢 Complete
-
-- [x] Hybrid Persistence: Context merges Guest data (LocalStorage) with Authenticated User data (MongoDB) on login.
-- [x] Action Hooks: Cleanly separated `useCartPersistence` and `useCartActions` hooks.
-- [x] Global UI: Slide-out Cart Drawer using Shadcn `Sheet`.
-- [x] DRY Architecture: Centralized `AddToCartButton` used across Product Cards and Details pages.
-
-## 9. Cart Drawer UX Polish : 🟢 Complete _(May 15)_
-
-- [x] Mobile-friendly layout (~75% width, two-row card design).
-- [x] Framer Motion animations (enter/exit with smooth collapse on remove).
-- [x] Optimistic updates with snapshot-rollback pattern.
-- [x] Per-item busy states (spinner on delete, disabled controls during server sync).
-- [x] `ShippingProgress` bar ($1000 free shipping threshold with gamification).
-- [x] Image fallback (`onError` → `ImageOff` icon for broken URLs).
-- [x] Empty state with engaging copy + "Shop New Arrivals" link to `/items`.
-- [x] Footer: "Shipping: FREE" line, trust badge (🔒 Secure Encrypted Checkout), "Continue Shopping" link.
-- [x] Stock limits: Live `stockQuantity` via Mongoose `.populate()` — `+` button disabled at limit.
-- [x] `AddToCartButton` shows "Max Limit in Cart" when stock reached. Backend rejects over-stock.
-
-## Overall Tech & Submission
-
-- [x] Next.js App Router: Used everywhere.
-- [x] UI/Design: Responsive, polished layout, TailwindCSS used well.
-- [x] GitHub / Vercel: Successfully deployed to Vercel (Firebase authorized domain configured).
-- [x] README.md: Written with project description, features, setup instructions, and route summary.
+- **Navbar Refactor**: Stripped out the old dropdown links and replaced them with clean "My Account" and "Admin Dashboard" links with Lucide icons.
+- **DRY Refactoring**:
+  - Extracted `UserAvatar` and a pure `getInitials` utility to eliminate duplicated avatar rendering.
+  - Merged identical quick links components into a single `DashboardQuickLinks` component.
+  - Deleted obsolete routing folders and empty directories.
 
 ---
 
-## 10. Checkout Flow (Stripe) : 🟢 Complete
+## 🚀 Plan for Tomorrow
 
-- [x] Secure Accordion UI: Distraction-free, single-page layout (Shipping → Payment → Review).
-- [x] Payment Intents: Dynamic calculation of exact totals via `createOrUpdatePaymentIntent` server action.
-- [x] Stripe Elements: Beautiful, localized, embedded credit card forms.
-- [x] Webhook Fulfillment: Cryptographically secured endpoint to process successful payments, atomic inventory decrementing, and update `Order` status.
-- [x] Database Hygiene: Integrated MongoDB Partial TTL index to automatically prune abandoned (unpaid) orders after 24 hours.
+1. **User Order History (`/account/orders`)**:
+   - Replace the `EmptyState` stub with a real order list fetching from the database.
+   - Build a detailed order view showing items, fulfillment status, and tracking information.
 
-## 11. Discount & Coupon System : 🟢 Complete
+2. **Admin Order Management (`/admin/orders`)**:
+   - Build the admin view to see all system orders.
+   - Implement functionality to update order statuses (e.g., from `processing` to `shipped`).
 
-- [x] Schema Design: New `Coupon` Mongoose schema with `minimumPurchaseAmount`, `maximumDiscountAmount`, `usageLimit`, and `isActive` toggles.
-- [x] Secure Server Validation: Centralized `validateCoupon` action that securely verifies dates, limits, and recalculates math on the backend.
-- [x] State Lifting UI: Added a sleek, interactive Promo Code input component with a seamless "Remove" functionality inside the `OrderSummary`.
-- [x] Payment Enforcement: Modified payment server actions to re-validate coupons at the exact moment of checkout to prevent frontend manipulation.
-- [x] Webhook Analytics: Added atomic `$inc` updates to the Stripe Webhook to track exactly how many times a coupon has been successfully used.
-
-## 12. Checkout Polish & Saved Addresses : 🟢 Complete _(May 21)_
-
-### Checkout Refinements
-- [x] DRY Refactor: Extracted `SummaryItem` and `PriceLine` from `OrderSummary.tsx` into standalone reusable files.
-- [x] UX: "Back to cart" button opens cart drawer via `?cart=open` URL params.
-- [x] UX: "Credit Card" summary text on collapsed Payment accordion step.
-- [x] Visual: Thickened step connector lines (`h-px` → `h-0.5`) in `StepIndicator.tsx`.
-- [x] Visual: Added `cursor-pointer` to PaymentForm continue button.
-- [x] Build Fix: Wrapped `CartDrawer` in `<Suspense>` boundary to fix Vercel prerender errors on static pages (`/about`, `/items/add`).
-- [x] Build Fix: Removed unnecessary `force-dynamic` exports; retained only on `/items/manage`.
-
-### Saved Shipping Addresses Feature
-- [x] Schema: Embedded `shippingAddresses` subdocument array on User model (MongoDB 1:few best practice).
-- [x] Server Actions: Full CRUD in `app/actions/address.ts` (get, save, delete, setDefault) with 5-address cap.
-- [x] UI: `AddressPicker.tsx` — reusable selectable address card grid with default badge.
-- [x] Integration: Auto-fetches saved addresses on checkout mount, auto-selects default, auto-fills `ShippingForm`.
-- [x] Save Flow: "Save this address for next time" checkbox with label input on new addresses.
-- [x] DRY Architecture (Approach 2): Email is NOT stored in the address schema — dynamically injected from the authenticated `user.email` at selection time to prevent data duplication.
-
----
-
-**Next Up (Tomorrow):**
-
-1. **User Order History**: Create a protected UI page where authenticated users can view their past orders, order statuses, and track fulfillment.
-2. **Admin Order Dashboard**: Build a secure admin interface to list all orders, view total sales metrics, and manually update order statuses (e.g., `paid` → `shipped`).
-3. **Address Management UI**: Add edit/delete buttons directly on `AddressPicker` cards for in-checkout address management.
+3. **Address Management Expansion (`/account/addresses`)**:
+   - Integrate the existing `AddressPicker` component into the account dashboard.
+   - Add full CRUD capabilities (Edit/Delete buttons) directly on the cards.

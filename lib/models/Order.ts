@@ -1,5 +1,10 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
+// ==========================================
+// SHARED ORDER STATUS TYPE
+// ==========================================
+export type OrderStatus = "pending" | "paid" | "failed" | "shipped" | "delivered";
+
 export interface TOrderItem {
   productId: mongoose.Types.ObjectId;
   title: string;
@@ -30,7 +35,7 @@ export interface TOrder extends Document {
   discount: number;
   couponCode?: string;
   total: number;
-  status: "pending" | "paid" | "failed" | "shipped" | "delivered";
+  status: OrderStatus;
   createdAt: Date;
   updatedAt: Date;
 }
