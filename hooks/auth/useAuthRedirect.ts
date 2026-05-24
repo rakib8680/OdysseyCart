@@ -27,5 +27,5 @@ export function useAuthRedirect() {
     }
   }, [user, router]);
 
-  return { redirect };
+  return { redirect, user };
 }

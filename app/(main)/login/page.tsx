@@ -8,6 +8,7 @@ import { AuthFormWrapper } from "@/components/form/AuthFormWrapper";
 import { FormInput } from "@/components/form/FormInput";
 import { GoogleLoginButton } from "@/components/form/GoogleLoginButton";
 import { Spinner } from "@/components/ui/Spinner";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { toast } from "sonner";
 
 export default function LoginPage() {
@@ -16,7 +17,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
-  const { redirect } = useAuthRedirect();
+  const { redirect, user } = useAuthRedirect();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +36,10 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  if (user) {
+    return <PageLoader message="Redirecting..." />;
+  }
 
   return (
     <AuthFormWrapper
