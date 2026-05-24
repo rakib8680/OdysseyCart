@@ -6,14 +6,7 @@ import User from "@/lib/models/User";
 import { revalidatePath } from "next/cache";
 import { ProductValidationSchema } from "@/lib/validations/product";
 
-// Helper function to enforce admin role
-async function requireAdmin(uid?: string) {
-  if (!uid) throw new Error("Unauthorized: No user ID provided");
-  const user = await User.findOne({ firebaseUid: uid });
-  if (!user || user.role !== "admin") {
-    throw new Error("Forbidden: Admin access required");
-  }
-}
+import { requireAdmin } from "@/app/actions/users";
 
 // ==========================================
 // CREATE

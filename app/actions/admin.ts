@@ -3,6 +3,7 @@
 import { connectDB } from "@/lib/db/mongoose";
 import Order from "@/lib/models/Order";
 import Product from "@/lib/models/Product";
+import { requireAdmin } from "@/app/actions/users";
 
 // ==========================================
 // ADMIN STATS
@@ -17,13 +18,14 @@ export interface AdminStats {
  * Fetches aggregate stats for the admin dashboard overview.
  * Only counts orders with status !== "pending" (pending = unpaid/abandoned).
  */
-export async function getAdminStats(): Promise<{
+export async function getAdminStats(adminUid: string): Promise<{
   success: boolean;
   stats: AdminStats;
   error?: string;
 }> {
   try {
     await connectDB();
+    await requireAdmin(adminUid);
 
     // Run all three queries in parallel for speed
     const [revenueResult, totalOrders, totalProducts] = await Promise.all([

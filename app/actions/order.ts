@@ -6,6 +6,7 @@ import Order, {
   type TShippingInfo,
 } from "@/lib/models/Order";
 import { type CartItem } from "@/lib/types/cart";
+import { requireAdmin } from "@/app/actions/users";
 
 // ==========================================
 // SERIALIZED ORDER TYPE (Client-safe)
@@ -158,13 +159,14 @@ export async function getOrderDetails(
  * Fetches all non-pending orders in the system for admin management.
  * Sorted newest-first.
  */
-export async function getAllOrders(): Promise<{
+export async function getAllOrders(adminUid: string): Promise<{
   success: boolean;
   orders: SerializedOrder[];
   error?: string;
 }> {
   try {
     await connectDB();
+    await requireAdmin(adminUid);
 
     const orders = await Order.find({
       status: { $ne: "pending" },
@@ -193,6 +195,7 @@ export async function getAllOrders(): Promise<{
 export async function updateOrderStatus(
   orderId: string,
   newStatus: "shipped" | "delivered",
+  adminUid: string,
 ): Promise<{
   success: boolean;
   order: SerializedOrder | null;
@@ -200,6 +203,7 @@ export async function updateOrderStatus(
 }> {
   try {
     await connectDB();
+    await requireAdmin(adminUid);
 
     if (!orderId || !newStatus) {
       throw new Error("Order ID and new status are required.");
