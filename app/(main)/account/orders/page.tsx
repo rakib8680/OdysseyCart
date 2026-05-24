@@ -49,7 +49,11 @@ function OrderCardSkeleton() {
   return (
     <div className="bg-white rounded-xl border border-slate-200 px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       {/* Col 1: ID, Date & Recipient */}
-      <div className="min-w-[160px]">
+      <div className="w-[200px] flex-shrink-0 sm:block hidden">
+        <Skeleton className="h-4 w-20 mb-1.5" />
+        <Skeleton className="h-3.5 w-32" />
+      </div>
+      <div className="w-full sm:hidden">
         <Skeleton className="h-4 w-20 mb-1.5" />
         <Skeleton className="h-3.5 w-32" />
       </div>

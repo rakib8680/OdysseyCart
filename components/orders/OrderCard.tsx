@@ -41,7 +41,7 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
   return (
     <div className="bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-xs transition-all p-3.5 sm:px-4 sm:py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
       {/* Row 1/Col 1: ID, Date & Status (Status on right on mobile) */}
-      <div className="flex items-center justify-between sm:justify-start gap-4 sm:min-w-[160px]">
+      <div className="flex items-center justify-between sm:justify-start gap-4 sm:w-[200px] sm:flex-shrink-0">
         <div className="space-y-0.5">
           <p className="text-sm font-semibold text-slate-900">{shortId}</p>
           <div className="flex items-center gap-1 text-[11px] text-slate-500">
