@@ -7,6 +7,7 @@ import { OrderCard } from "@/components/orders/OrderCard";
 import { OrderDetailSheet } from "@/components/orders/OrderDetailSheet";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Package, Search } from "lucide-react";
+import { formatOrderId } from "@/lib/utils";
 
 // ==========================================
 // FILTER TAB CONFIG
@@ -32,7 +33,10 @@ const FILTER_TABS: FilterTab[] = [
 
 interface OrderListProps {
   orders: SerializedOrder[];
-  onUpdateStatus?: (orderId: string, nextStatus: "shipped" | "delivered") => Promise<void>;
+  onUpdateStatus?: (
+    orderId: string,
+    nextStatus: "shipped" | "delivered",
+  ) => Promise<void>;
   isUpdatingStatus?: boolean;
 }
 
@@ -41,7 +45,11 @@ interface OrderListProps {
  * Orchestrates OrderCard + OrderDetailSheet.
  * Shared across user account and admin dashboards.
  */
-export function OrderList({ orders, onUpdateStatus, isUpdatingStatus }: OrderListProps) {
+export function OrderList({
+  orders,
+  onUpdateStatus,
+  isUpdatingStatus,
+}: OrderListProps) {
   const [activeFilter, setActiveFilter] = useState<OrderStatus | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<SerializedOrder | null>(
@@ -63,7 +71,8 @@ export function OrderList({ orders, onUpdateStatus, isUpdatingStatus }: OrderLis
       const q = searchQuery.toLowerCase();
       result = result.filter(
         (o) =>
-          o._id.slice(-6).toLowerCase().includes(q) ||
+          formatOrderId(o._id).toLowerCase().includes(q) ||
+          o._id.toLowerCase().includes(q) ||
           o.shippingInfo.fullName.toLowerCase().includes(q) ||
           o.shippingInfo.email.toLowerCase().includes(q) ||
           o.stripePaymentId?.toLowerCase().includes(q),
