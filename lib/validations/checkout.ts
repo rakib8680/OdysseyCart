@@ -12,3 +12,7 @@ export const ShippingSchema = z.object({
 });
 
 export type TShippingForm = z.infer<typeof ShippingSchema>;
+
+/** Address-only fields (no email). Used for saved address management. */
+export const AddressSchema = ShippingSchema.omit({ email: true });
+export type TAddressForm = z.infer<typeof AddressSchema>;

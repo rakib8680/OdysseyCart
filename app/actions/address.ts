@@ -2,7 +2,7 @@
 
 import { connectDB } from "@/lib/db/mongoose";
 import User, { IShippingAddress } from "@/lib/models/User";
-import { TShippingForm } from "@/lib/validations/checkout";
+import { TAddressForm } from "@/lib/validations/checkout";
 
 export async function getSavedAddresses(firebaseUid: string) {
   try {
@@ -25,7 +25,7 @@ export async function getSavedAddresses(firebaseUid: string) {
 
 export async function saveAddress(
   firebaseUid: string,
-  addressData: TShippingForm,
+  addressData: TAddressForm,
   label: string,
   setAsDefault: boolean = false,
 ) {
@@ -148,5 +148,52 @@ export async function setDefaultAddress(
   } catch (error) {
     console.error("Error setting default address:", error);
     return { success: false, message: "Failed to update default address" };
+  }
+}
+
+// ==========================================
+// UPDATE ADDRESS
+// ==========================================
+
+export async function updateAddress(
+  firebaseUid: string,
+  addressId: string,
+  addressData: TAddressForm,
+  label: string,
+) {
+  try {
+    await connectDB();
+    const user = await User.findOne({ firebaseUid });
+    if (!user) {
+      return { success: false, message: "User not found" };
+    }
+
+    const addr = user.shippingAddresses.find(
+      (a) => a._id?.toString() === addressId,
+    );
+    if (!addr) {
+      return { success: false, message: "Address not found" };
+    }
+
+    // Update fields
+    addr.label = label;
+    addr.fullName = addressData.fullName;
+    addr.address = addressData.address;
+    addr.city = addressData.city;
+    addr.state = addressData.state;
+    addr.zipCode = addressData.zipCode;
+    addr.country = addressData.country;
+    addr.phone = addressData.phone;
+
+    await user.save();
+
+    return {
+      success: true,
+      message: "Address updated successfully",
+      addresses: JSON.parse(JSON.stringify(user.shippingAddresses)),
+    };
+  } catch (error) {
+    console.error("Error updating address:", error);
+    return { success: false, message: "Failed to update address" };
   }
 }
