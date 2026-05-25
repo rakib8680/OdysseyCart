@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { type SerializedOrder } from "@/app/actions/order";
 import { type OrderStatus } from "@/lib/models/Order";
 import { OrderCard } from "@/components/orders/OrderCard";
@@ -52,10 +52,16 @@ export function OrderList({
 }: OrderListProps) {
   const [activeFilter, setActiveFilter] = useState<OrderStatus | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedOrder, setSelectedOrder] = useState<SerializedOrder | null>(
-    null,
-  );
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+
+  // Derive selected order from the canonical orders prop.
+  // This ensures mutations (e.g. status updates) are reflected instantly
+  // without needing to manually sync a separate snapshot.
+  const selectedOrder = useMemo(
+    () => orders.find((o) => o._id === selectedOrderId) || null,
+    [orders, selectedOrderId],
+  );
 
   // ─── Derived: filtered + searched orders ───
   const filteredOrders = useMemo(() => {
@@ -84,13 +90,13 @@ export function OrderList({
 
   // ─── Handlers ───
   const handleViewDetails = (order: SerializedOrder) => {
-    setSelectedOrder(order);
+    setSelectedOrderId(order._id);
     setSheetOpen(true);
   };
 
   const handleSheetClose = (open: boolean) => {
     setSheetOpen(open);
-    if (!open) setSelectedOrder(null);
+    if (!open) setSelectedOrderId(null);
   };
 
   // ─── No orders at all ───
