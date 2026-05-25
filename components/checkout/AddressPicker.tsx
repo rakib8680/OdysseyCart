@@ -1,13 +1,17 @@
 "use client";
 
-import { TShippingForm } from "@/lib/validations/checkout";
+import {
+  AddressCard,
+  type SavedAddress,
+} from "@/components/addresses/AddressCard";
 import { CheckCircle2, MapPin, Plus } from "lucide-react";
 
-export interface SavedAddress extends TShippingForm {
-  _id: string;
-  label: string;
-  isDefault: boolean;
-}
+// Re-export the shared type so existing consumers don't break
+export type { SavedAddress };
+
+// ==========================================
+// COMPONENT
+// ==========================================
 
 interface AddressPickerProps {
   addresses: SavedAddress[];
@@ -15,6 +19,10 @@ interface AddressPickerProps {
   onSelect: (address: SavedAddress | null) => void;
 }
 
+/**
+ * Address selection component for checkout.
+ * Wraps shared AddressCard with selection behavior (click-to-select, checkmark).
+ */
 export function AddressPicker({
   addresses,
   selectedAddressId,
@@ -35,40 +43,21 @@ export function AddressPicker({
           const isSelected = selectedAddressId === addr._id;
 
           return (
-            <div
+            <AddressCard
               key={addr._id}
+              address={addr}
               onClick={() => onSelect(addr)}
-              className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all ${
+              className={
                 isSelected
                   ? "border-emerald-600 bg-emerald-50/50"
                   : "border-slate-200 hover:border-slate-300 bg-white"
-              }`}
-            >
-              {isSelected && (
-                <div className="absolute top-3 right-3">
+              }
+              actions={
+                isSelected ? (
                   <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                </div>
-              )}
-
-              <div className="pr-8">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="font-bold text-slate-900">{addr.label}</span>
-                  {addr.isDefault && (
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
-                      Default
-                    </span>
-                  )}
-                </div>
-
-                <div className="text-sm text-slate-600 space-y-0.5">
-                  <p className="font-medium text-slate-800">{addr.fullName}</p>
-                  <p className="truncate">{addr.address}</p>
-                  <p>
-                    {addr.city}, {addr.state} {addr.zipCode}
-                  </p>
-                </div>
-              </div>
-            </div>
+                ) : undefined
+              }
+            />
           );
         })}
       </div>

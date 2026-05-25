@@ -193,6 +193,7 @@ export default function ManageTable({ products }: ManageTableProps) {
         onConfirm={confirmDelete}
         isDeleting={!!deletingId}
         itemName={productToDelete?.title}
+        confirmLabel="Delete Product"
       />
     </div>
   );

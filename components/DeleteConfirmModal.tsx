@@ -14,8 +14,10 @@ interface DeleteConfirmModalProps {
   onClose: () => void;
   onConfirm: () => void;
   title?: string;
+  description?: string;
   itemName?: string;
   isDeleting: boolean;
+  confirmLabel?: string;
 }
 
 export function DeleteConfirmModal({
@@ -23,8 +25,10 @@ export function DeleteConfirmModal({
   onClose,
   onConfirm,
   title = "Are you absolutely sure?",
+  description,
   itemName,
   isDeleting,
+  confirmLabel = "Delete",
 }: DeleteConfirmModalProps) {
   return (
     <AlertDialog
@@ -37,11 +41,15 @@ export function DeleteConfirmModal({
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete{" "}
-            <strong className="text-slate-900 font-semibold">
-              {itemName || "this item"}
-            </strong>{" "}
-            from your inventory and our servers.
+            {description || (
+              <>
+                This action cannot be undone. This will permanently delete{" "}
+                <strong className="text-slate-900 font-semibold">
+                  {itemName || "this item"}
+                </strong>
+                .
+              </>
+            )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -57,7 +65,7 @@ export function DeleteConfirmModal({
                 Deleting...
               </>
             ) : (
-              "Delete Product"
+              confirmLabel
             )}
           </button>
         </AlertDialogFooter>
