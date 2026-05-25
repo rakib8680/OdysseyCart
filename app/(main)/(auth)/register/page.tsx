@@ -2,34 +2,40 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useAuthRedirect } from "@/hooks/auth/useAuthRedirect";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAuthRedirect } from "@/hooks/auth/useAuthRedirect";
 import { AuthFormWrapper } from "@/components/form/AuthFormWrapper";
 import { FormInput } from "@/components/form/FormInput";
 import { GoogleLoginButton } from "@/components/form/GoogleLoginButton";
 import { Spinner } from "@/components/ui/Spinner";
-import { PageLoader } from "@/components/ui/PageLoader";
 import { toast } from "sonner";
 
-export default function LoginPage() {
+export default function RegisterPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const { redirect, user } = useAuthRedirect();
+  const { register } = useAuth();
+  const { redirect } = useAuthRedirect();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await login(email, password);
-      toast.success("Logged in Successfully!");
+      await register(email, password, name);
+      toast.success("Account created successfully!");
       redirect();
     } catch (err: any) {
-      const msg = err.message || "Failed to sign in. Please try again.";
+      const msg = err.message || "Failed to create account. Please try again.";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -37,21 +43,17 @@ export default function LoginPage() {
     }
   };
 
-  if (user) {
-    return <PageLoader message="Redirecting..." />;
-  }
-
   return (
     <AuthFormWrapper
-      title="Welcome Back"
+      title="Create an account"
       subtitle={
         <>
-          Or{" "}
+          Already have an account?{" "}
           <Link
-            href="/register"
+            href="/login"
             className="font-medium text-emerald-600 hover:text-emerald-500"
           >
-            create a new account
+            Sign in here
           </Link>
         </>
       }
@@ -62,6 +64,17 @@ export default function LoginPage() {
             {error}
           </div>
         )}
+
+        <FormInput
+          label="Full Name"
+          id="name"
+          name="name"
+          type="text"
+          required
+          placeholder="John Doe"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
         <FormInput
           label="Email address"
@@ -80,7 +93,7 @@ export default function LoginPage() {
           name="password"
           type="password"
           required
-          placeholder="••••••••"
+          placeholder="Min. 6 characters"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -91,7 +104,7 @@ export default function LoginPage() {
           className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-slate-900 hover:bg-emerald-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {loading && <Spinner className="w-4 h-4 mr-2" />}
-          {loading ? "Signing in..." : "Sign in"}
+          {loading ? "Creating account..." : "Create Account"}
         </button>
       </form>
 

@@ -1,31 +1,23 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
 
 /**
- * A DRY hook that automatically redirects authenticated users
- * to their intended destination (via `?redirect=...`) or home.
+ * Returns a redirect function for post-login/register navigation.
+ * Reads the `?redirect=...` query param to send the user to their
+ * intended destination, or falls back to home.
  *
- * It also returns a `redirect` function to manually trigger it
- * (e.g., after a successful form submission before state updates).
+ * NOTE: This hook does NOT guard routes. Route guarding for
+ * guest-only pages is handled by the (auth) layout.
  */
 export function useAuthRedirect() {
-  const { user } = useAuth();
   const router = useRouter();
 
   const redirect = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const redirectUrl = urlParams.get("redirect") || "/";
-    router.push(redirectUrl);
+    const params = new URLSearchParams(window.location.search);
+    const destination = params.get("redirect") || "/";
+    router.replace(destination);
   };
 
-  useEffect(() => {
-    if (user) {
-      redirect();
-    }
-  }, [user, router]);
-
-  return { redirect, user };
+  return { redirect };
 }
