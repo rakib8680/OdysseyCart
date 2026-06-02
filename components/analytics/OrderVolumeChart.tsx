@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -10,46 +10,36 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ChartCard } from "@/components/analytics/ChartCard";
-import {
-  formatCurrency,
-  formatCurrencyFull,
-  formatDateLabel,
-  CHART_TOOLTIP_STYLE,
-} from "@/lib/utils/chart";
-import type { RevenueDataPoint } from "@/lib/types/analytics";
+import { formatDateLabel, CHART_TOOLTIP_STYLE } from "@/lib/utils/chart";
+import type { OrderVolumePoint } from "@/lib/types/analytics";
 
-interface RevenueChartProps {
-  data: RevenueDataPoint[];
+interface OrderVolumeChartProps {
+  data: OrderVolumePoint[];
   loading: boolean;
 }
 
 /**
- * Revenue trend area chart — pure presentational component.
+ * Order volume bar chart — pure presentational component.
  * Receives data as props, renders inside ChartCard wrapper.
+ * Uses shared formatDateLabel and CHART_TOOLTIP_STYLE from lib/utils/chart.
  */
-export function RevenueChart({ data, loading }: RevenueChartProps) {
+export function OrderVolumeChart({ data, loading }: OrderVolumeChartProps) {
   return (
     <ChartCard
-      title="Revenue Trend"
-      subtitle="Total revenue over time"
+      title="Order Volume"
+      subtitle="Number of orders over time"
       loading={loading}
     >
       {data.length === 0 ? (
         <div className="h-[200px] flex items-center justify-center text-sm text-slate-400">
-          No revenue data for this period
+          No order data for this period
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={250}>
-          <AreaChart
+          <BarChart
             data={data}
             margin={{ top: 5, right: 5, left: -10, bottom: 0 }}
           >
-            <defs>
-              <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#10b981" stopOpacity={0.2} />
-                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-              </linearGradient>
-            </defs>
             <CartesianGrid
               strokeDasharray="3 3"
               stroke="#e2e8f0"
@@ -63,27 +53,23 @@ export function RevenueChart({ data, loading }: RevenueChartProps) {
               tickLine={false}
             />
             <YAxis
-              tickFormatter={formatCurrency}
+              allowDecimals={false}
               tick={{ fontSize: 11, fill: "#94a3b8" }}
               axisLine={false}
               tickLine={false}
             />
             <Tooltip
-              formatter={(value: number) => [
-                formatCurrencyFull(value),
-                "Revenue",
-              ]}
+              formatter={(value: number) => [value, "Orders"]}
               labelFormatter={formatDateLabel}
               contentStyle={CHART_TOOLTIP_STYLE}
             />
-            <Area
-              type="monotone"
-              dataKey="revenue"
-              stroke="#10b981"
-              strokeWidth={2}
-              fill="url(#revenueGradient)"
+            <Bar
+              dataKey="count"
+              fill="#3b82f6"
+              radius={[6, 6, 0, 0]}
+              maxBarSize={40}
             />
-          </AreaChart>
+          </BarChart>
         </ResponsiveContainer>
       )}
     </ChartCard>
