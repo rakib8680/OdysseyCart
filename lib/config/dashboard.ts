@@ -47,3 +47,30 @@ export const SEGMENT_LABELS: Record<string, string> = {
   add: "Add New",
   edit: "Edit",
 };
+
+// ==========================================
+// DASHBOARD VIEW THEMES
+// ==========================================
+export interface DashboardTheme {
+  name: "account" | "admin";
+  activeBg: string;
+  activeText: string;
+  activeIcon: string;
+  badgeBg: string;
+}
+
+export const ACCOUNT_THEME: DashboardTheme = {
+  name: "account",
+  activeBg: "bg-emerald-50 text-emerald-700 shadow-sm",
+  activeText: "text-emerald-700",
+  activeIcon: "text-emerald-600",
+  badgeBg: "bg-emerald-100 text-emerald-800 border-emerald-200",
+};
+
+export const ADMIN_THEME: DashboardTheme = {
+  name: "admin",
+  activeBg: "bg-indigo-50 text-indigo-700 shadow-sm",
+  activeText: "text-indigo-700",
+  activeIcon: "text-indigo-600",
+  badgeBg: "bg-indigo-100 text-indigo-800 border-indigo-200",
+};

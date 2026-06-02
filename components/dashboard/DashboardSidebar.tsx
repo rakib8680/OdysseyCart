@@ -1,9 +1,15 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { DashboardSidebarItem } from "./DashboardSidebarItem";
 import { UserAvatar } from "@/components/ui/UserAvatar";
-import { type MenuItem } from "@/lib/config/dashboard";
+import { cn } from "@/lib/utils";
+import {
+  type MenuItem,
+  ADMIN_THEME,
+  ACCOUNT_THEME,
+} from "@/lib/config/dashboard";
 import { type LucideIcon } from "lucide-react";
 
 interface BottomAction {
@@ -26,11 +32,21 @@ export function DashboardSidebar({
   bottomAction,
 }: DashboardSidebarProps) {
   const { user } = useAuth();
+  const pathname = usePathname();
+  const isAdmin = pathname.startsWith("/admin");
+  const theme = isAdmin ? ADMIN_THEME : ACCOUNT_THEME;
 
   const BottomIcon = bottomAction.icon;
 
   return (
-    <aside className="flex flex-col h-full w-[260px] bg-white border-r border-slate-200 p-4">
+    <aside
+      className={cn(
+        "flex flex-col h-full w-[260px] bg-white border-r p-4 transition-all duration-300",
+        isAdmin
+          ? "border-r-indigo-100 border-l-4 border-l-indigo-600"
+          : "border-r-slate-200 border-l-0",
+      )}
+    >
       {/* Dashboard Title */}
       <div className="px-3 mb-6">
         <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -46,9 +62,21 @@ export function DashboardSidebar({
           email={user?.email}
         />
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-slate-900 truncate">
-            {user?.displayName || "User"}
-          </p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-sm font-semibold text-slate-900 truncate">
+              {user?.displayName || "User"}
+            </p>
+            {isAdmin && (
+              <span
+                className={cn(
+                  "px-1.5 py-0.5 text-[9px] font-bold tracking-wide uppercase rounded border",
+                  theme.badgeBg,
+                )}
+              >
+                Admin
+              </span>
+            )}
+          </div>
           <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
         </div>
       </div>
