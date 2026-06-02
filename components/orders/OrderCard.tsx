@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { type SerializedOrder } from "@/app/actions/order";
+import type { SerializedOrder } from "@/lib/types/order";
 import { OrderStatusBadge } from "@/components/orders/OrderStatusBadge";
 import { ImageOff, ChevronRight } from "lucide-react";
 import { formatOrderId } from "@/lib/utils";

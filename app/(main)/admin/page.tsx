@@ -6,7 +6,8 @@ import { DollarSign, Package, ShoppingBag } from "lucide-react";
 import { StatCard } from "@/components/ui/StatCard";
 import { DashboardQuickLinks } from "@/components/dashboard/DashboardQuickLinks";
 import { ADMIN_MENU } from "@/lib/config/dashboard";
-import { getAdminStats, type AdminStats } from "@/app/actions/admin";
+import { getAdminStats } from "@/app/actions/admin";
+import type { AdminStats } from "@/lib/types/admin";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ADMIN_DESCRIPTIONS: Record<string, string> = {

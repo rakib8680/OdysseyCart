@@ -1,6 +1,6 @@
 "use client";
 
-import { type SerializedOrder } from "@/app/actions/order";
+import type { SerializedOrder } from "@/lib/types/order";
 import { type OrderStatus } from "@/lib/models/Order";
 import { OrderStatusBadge } from "@/components/orders/OrderStatusBadge";
 import { SummaryItem } from "@/components/checkout/SummaryItem";

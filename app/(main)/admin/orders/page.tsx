@@ -2,11 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  getAllOrders,
-  updateOrderStatus,
-  type SerializedOrder,
-} from "@/app/actions/order";
+import { getAllOrders, updateOrderStatus } from "@/app/actions/order";
+import type { SerializedOrder } from "@/lib/types/order";
 import { OrderList } from "@/components/orders/OrderList";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";

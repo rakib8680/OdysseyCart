@@ -1,34 +1,9 @@
 "use server";
 
 import { connectDB } from "@/lib/db/mongoose";
-import Order, {
-  type OrderStatus,
-  type TShippingInfo,
-} from "@/lib/models/Order";
-import { type CartItem } from "@/lib/types/cart";
+import Order from "@/lib/models/Order";
 import { requireAdmin } from "@/app/actions/users";
-
-// ==========================================
-// SERIALIZED ORDER TYPE (Client-safe)
-// ==========================================
-
-/** Fully serialized order document safe for Next.js Client Components */
-export interface SerializedOrder {
-  _id: string;
-  userId: string;
-  stripePaymentId?: string;
-  items: CartItem[]; // Reuses CartItem — same shape (productId as string)
-  shippingInfo: TShippingInfo; // Reuses TShippingInfo — already plain strings
-  subtotal: number;
-  tax: number;
-  shippingCost: number;
-  discount: number;
-  couponCode?: string;
-  total: number;
-  status: OrderStatus; // Reuses shared OrderStatus type
-  createdAt: string; // ISO string
-  updatedAt: string; // ISO string
-}
+import type { SerializedOrder } from "@/lib/types/order";
 
 // ==========================================
 // SERIALIZATION HELPER

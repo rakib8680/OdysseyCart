@@ -4,15 +4,7 @@ import { connectDB } from "@/lib/db/mongoose";
 import Order from "@/lib/models/Order";
 import Product from "@/lib/models/Product";
 import { requireAdmin } from "@/app/actions/users";
-
-// ==========================================
-// ADMIN STATS
-// ==========================================
-export interface AdminStats {
-  totalRevenue: number;
-  totalOrders: number;
-  totalProducts: number;
-}
+import type { AdminStats } from "@/lib/types/admin";
 
 /**
  * Fetches aggregate stats for the admin dashboard overview.

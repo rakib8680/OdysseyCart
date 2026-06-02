@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { type SerializedOrder } from "@/app/actions/order";
+import type { SerializedOrder } from "@/lib/types/order";
 import { type OrderStatus } from "@/lib/models/Order";
 import { OrderCard } from "@/components/orders/OrderCard";
 import { OrderDetailSheet } from "@/components/orders/OrderDetailSheet";
