@@ -159,18 +159,8 @@ export function AddressManager() {
           title="No Saved Addresses"
           description="Save a shipping address to speed up your checkout process."
           actionLabel="Add Address"
-          actionHref="#"
+          actionOnClick={handleAdd}
         />
-
-        {/* Hijack the EmptyState action with a real button overlay */}
-        <div className="flex justify-center -mt-12 mb-6">
-          <button
-            onClick={handleAdd}
-            className="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-colors cursor-pointer"
-          >
-            Add Address
-          </button>
-        </div>
 
         <AddressFormDialog
           open={formOpen}

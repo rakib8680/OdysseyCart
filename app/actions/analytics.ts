@@ -110,31 +110,38 @@ async function _getTopProducts(startDate: Date): Promise<TopProduct[]> {
   return result;
 }
 
-/** New vs returning customers within the period */
+/** New vs returning customers — only counts users active within the period */
 async function _getCustomerMetrics(startDate: Date): Promise<CustomerMetrics> {
-  // Find each customer's first order date, then classify
   const result = await Order.aggregate([
+    // Step 1: Look at ALL non-pending orders (full history needed to find firstOrder)
     { $match: { status: { $ne: "pending" } } },
+
+    // Step 2: Group by user — track their first-ever order AND latest order
     {
       $group: {
         _id: "$userId",
         firstOrder: { $min: "$createdAt" },
-        orderCount: { $sum: 1 },
+        latestOrder: { $max: "$createdAt" },
       },
     },
+
+    // Step 3: Only keep users who actually ordered during the selected period
+    { $match: { latestOrder: { $gte: startDate } } },
+
+    // Step 4: Classify and count
     {
       $facet: {
-        // Customers whose first order is within the period = new
+        // First-ever order is within the period → new customer
         newCustomers: [
           { $match: { firstOrder: { $gte: startDate } } },
           { $count: "count" },
         ],
-        // Customers who have orders in the period but first order was before = returning
+        // First-ever order predates the period → returning customer
         returningCustomers: [
           { $match: { firstOrder: { $lt: startDate } } },
           { $count: "count" },
         ],
-        // Total unique customers
+        // Total active customers in the period
         total: [{ $count: "count" }],
       },
     },
