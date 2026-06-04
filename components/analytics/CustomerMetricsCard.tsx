@@ -25,7 +25,7 @@ export function CustomerMetricsCard({
       subtitle="New vs returning customers"
       loading={loading}
     >
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <StatCard
           label="Total Customers"
           value={String(data.totalCustomers)}

@@ -1,68 +1,29 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { getAnalyticsData } from "@/app/actions/analytics";
+import { useAnalytics } from "@/hooks/analytics/useAnalytics";
 import { PeriodSelector } from "@/components/analytics/PeriodSelector";
 import { RevenueChart } from "@/components/analytics/RevenueChart";
 import { OrderVolumeChart } from "@/components/analytics/OrderVolumeChart";
 import { TopProductsChart } from "@/components/analytics/TopProductsChart";
 import { CustomerMetricsCard } from "@/components/analytics/CustomerMetricsCard";
-import type { AnalyticsPeriod, AnalyticsData } from "@/lib/types/analytics";
-
-const EMPTY_DATA: AnalyticsData = {
-  revenue: [],
-  orderVolume: [],
-  topProducts: [],
-  customerMetrics: {
-    newCustomers: 0,
-    returningCustomers: 0,
-    totalCustomers: 0,
-  },
-};
 
 /**
- * Analytics dashboard orchestrator — the ONLY component that:
- * 1. Calls getAnalyticsData() server action
- * 2. Manages loading + period state
- * 3. Passes data down to pure presentational chart components
+ * Analytics dashboard orchestrator — a thin presentation layer that:
+ * 1. Consumes useAnalytics() hook for data, loading, and period state
+ * 2. Renders the period selector and chart grid
  *
- * Chart components have zero data-fetching logic — they are props-driven.
+ * All data-fetching, caching, stale-time, and focus-refetching logic
+ * lives in the useAnalytics hook — this component is purely presentational.
  */
 export function AnalyticsDashboard() {
-  const { user } = useAuth();
-  const [period, setPeriod] = useState<AnalyticsPeriod>("30d");
-  const [data, setData] = useState<AnalyticsData>(EMPTY_DATA);
-  const [loading, setLoading] = useState(true);
-
-  const fetchAnalytics = useCallback(
-    async (selectedPeriod: AnalyticsPeriod) => {
-      if (!user) return;
-      setLoading(true);
-      const result = await getAnalyticsData(user.uid, selectedPeriod);
-      if (result.success) {
-        setData(result.data);
-      }
-      setLoading(false);
-    },
-    [user],
-  );
-
-  // Fetch on mount and when period changes
-  useEffect(() => {
-    fetchAnalytics(period);
-  }, [period, fetchAnalytics]);
-
-  const handlePeriodChange = (newPeriod: AnalyticsPeriod) => {
-    setPeriod(newPeriod);
-  };
+  const { data, loading, period, setPeriod } = useAnalytics();
 
   return (
     <div className="space-y-5">
       {/* Section Header + Period Selector */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-slate-900">Analytics</h2>
-        <PeriodSelector value={period} onChange={handlePeriodChange} />
+        <PeriodSelector value={period} onChange={setPeriod} />
       </div>
 
       {/* Charts Grid — 2 columns on desktop, 1 on mobile */}
