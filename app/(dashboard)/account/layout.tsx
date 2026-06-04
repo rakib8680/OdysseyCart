@@ -1,12 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { ACCOUNT_MENU } from "@/lib/config/dashboard";
 import { type SecondaryLink } from "@/components/dashboard/DashboardSidebar";
+import { useLogout } from "@/hooks/auth/useLogout";
 import { LogOut, ArrowLeft, Shield } from "lucide-react";
 
 export default function AccountLayout({
@@ -23,14 +22,8 @@ export default function AccountLayout({
 
 /** Inner shell — only renders after auth is confirmed */
 function AccountShell({ children }: { children: React.ReactNode }) {
-  const { logout, dbUser } = useAuth();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    await logout();
-    toast.success("Logged out successfully!");
-    router.push("/");
-  };
+  const { dbUser } = useAuth();
+  const handleLogout = useLogout();
 
   // Build secondary links — admin link only visible to admins
   const secondaryLinks: SecondaryLink[] = [
