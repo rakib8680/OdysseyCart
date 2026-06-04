@@ -93,5 +93,10 @@ export function useAnalytics() {
     return () => window.removeEventListener("focus", handleFocus);
   }, [fetchPeriod]);
 
-  return { data: activeData, loading, period, setPeriod };
+  // Manual refresh — bypasses stale-time, always fetches fresh data
+  const refresh = useCallback(() => {
+    fetchPeriod(periodRef.current, { force: true });
+  }, [fetchPeriod]);
+
+  return { data: activeData, loading, period, setPeriod, refresh };
 }
