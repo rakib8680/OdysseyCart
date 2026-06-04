@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { DashboardSidebarItem } from "./DashboardSidebarItem";
@@ -25,7 +26,7 @@ interface DashboardSidebarProps {
   bottomAction: BottomAction;
 }
 
-/** Reusable sidebar panel — renders user info, menu items, and a bottom action */
+/** Reusable sidebar panel — brand top, nav middle, user card bottom */
 export function DashboardSidebar({
   menuItems,
   title,
@@ -47,19 +48,37 @@ export function DashboardSidebar({
           : "border-r-slate-200 border-l-0",
       )}
     >
-      {/* Dashboard Title */}
-      <div className="px-3 mb-6">
-        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+      {/* ── Brand Logo ── */}
+      <Link href="/" className="flex items-center gap-2 px-3 py-1 mb-6">
+        <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+          O
+        </div>
+        <span className="text-base font-bold tracking-tight text-slate-900">
+          ODYSSEY CART
+        </span>
+      </Link>
+
+      {/* ── Contextual Section Label ── */}
+      <div className="px-3 mb-2">
+        <h2 className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
           {title}
         </h2>
       </div>
 
-      {/* User Info Card */}
-      <div className="flex items-center gap-3 px-3 py-3 mb-4 rounded-xl bg-slate-50">
+      {/* ── Navigation Links ── */}
+      <nav className="flex flex-col gap-1 flex-1">
+        {menuItems.map((item) => (
+          <DashboardSidebarItem key={item.href} item={item} />
+        ))}
+      </nav>
+
+      {/* ── User Info Card (Pinned to bottom) ── */}
+      <div className="flex items-center gap-3 px-3 py-3 mb-3 rounded-xl bg-slate-50 border border-slate-100">
         <UserAvatar
           photoURL={user?.photoURL}
           displayName={user?.displayName}
           email={user?.email}
+          size="sm"
         />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
@@ -81,15 +100,8 @@ export function DashboardSidebar({
         </div>
       </div>
 
-      {/* Navigation Links */}
-      <nav className="flex flex-col gap-1 flex-1">
-        {menuItems.map((item) => (
-          <DashboardSidebarItem key={item.href} item={item} />
-        ))}
-      </nav>
-
-      {/* Bottom Action */}
-      <div className="border-t border-slate-100 pt-3 mt-3">
+      {/* ── Bottom Action ── */}
+      <div className="border-t border-slate-100 pt-3">
         {bottomAction.href ? (
           <a
             href={bottomAction.href}

@@ -61,14 +61,30 @@ We successfully transitioned the application from a simple dropdown navigation t
 
 ---
 
+## 🎯 June 2: Admin Analytics & Layout Segregation
+
+We completed the server actions, charting widgets, and layout updates to deploy the full Admin Analytics Dashboard, and refactored the layout structure for clean design separation.
+
+### 1. Analytics Dashboard & Server Aggregations
+- **Server Actions**: Implemented `getAnalyticsData()` utilizing parallelized MongoDB `$aggregate` pipelines to fetch revenue trends, order volume, top selling products, and customer acquisition metrics.
+- **Shared Types**: Centralized all analytics contracts inside `lib/types/analytics.ts` to uphold code standards.
+- **Modular Chart Components**: Built Recharts widgets (`RevenueChart`, `OrderVolumeChart`, `TopProductsChart`, `CustomerMetricsCard`) inside the `components/analytics/` directory. All components are pure, presentational, and run inside a reusable `ChartCard` wrapper.
+- **Shared Utilities**: Created `lib/utils/chart.ts` to share currency, date formatter helpers, and tooltip styling assets across all charts.
+
+### 2. Custom Dashboard Visual Branding
+- **Route-Based Styling Themes**: Introduced `DashboardTheme` configuration defining custom active styles (`ADMIN_THEME` with indigo accents vs `ACCOUNT_THEME` with emerald accents) inside `lib/config/dashboard.ts`.
+- **Sidebar Indicators**: Added left-accent border highlights (`border-l-4 border-l-indigo-600`) and matching role pill badges (`Admin`) to the sidebar dynamically when entering `/admin` paths.
+
+### 3. Route Group Separation (Storefront vs App)
+- **Navbar/Footer Removal**: Moved `/admin` and `/account` paths from `app/(main)` to a new route group `app/(dashboard)`.
+- **Clean Inheritances**: Stripped storefront navigation (`Navbar`/`Footer`) elements from all dashboard layouts completely without code duplication, returning full screen height to charts and admin sheets.
+
+---
+
 ## 🚀 Plan for Next Session
 
-1. **Admin Analytics Dashboard (`/admin`)**:
-   - Flesh out the admin statistics with chart widgets or more detailed revenue data.
-2. **Address Management Expansion (`/account/addresses` & Checkout)**:
-   - Integrate the existing `AddressPicker` component into the account dashboard.
-   - Begin Phase 13: Allow users to save their shipping addresses permanently during checkout for future reuse.
+1. **Dashboard Restructure (Command Center Refactor)**:
+   - Restructure `DashboardSidebar` (logo/brand at the top, user metadata/card pinned to the bottom).
+   - Create a sticky `DashboardHeader` housing mobile menu triggers, responsive search indicators, and breadcrumbs.
+   - Clean up spacing and container limits inside `DashboardLayout`.
 
-bug:
--when logged in and go to login/reg page, it stuck to redirectig loading screen
--order shipped/delivered etc. buttons changes needs site refresh to see output
