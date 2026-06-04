@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -18,9 +19,20 @@ interface TopProductsChartProps {
 }
 
 /** Truncates long product titles for Y-axis labels */
-function truncateTitle(title: string, maxLen: number = 18): string {
+function truncateTitle(title: string, maxLen: number): string {
   return title.length > maxLen ? `${title.slice(0, maxLen)}…` : title;
 }
+
+const CustomYAxisTick = (props: any) => {
+  const { x, y, payload, maxLen } = props;
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={-10} y={0} dy={4} textAnchor="end" fill="#334155" fontSize={12}>
+        {truncateTitle(payload.value, maxLen)}
+      </text>
+    </g>
+  );
+};
 
 /**
  * Top 5 best-selling products — horizontal bar chart.
@@ -28,6 +40,18 @@ function truncateTitle(title: string, maxLen: number = 18): string {
  * Uses shared CHART_TOOLTIP_STYLE and formatCurrencyFull from lib/utils/chart.
  */
 export function TopProductsChart({ data, loading }: TopProductsChartProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const yAxisWidth = isMobile ? 90 : 160;
+  const maxTitleLen = isMobile ? 12 : 22;
+
   return (
     <ChartCard
       title="Top Products"
@@ -43,7 +67,7 @@ export function TopProductsChart({ data, loading }: TopProductsChartProps) {
           <BarChart
             data={data}
             layout="vertical"
-            margin={{ top: 0, right: 5, left: 0, bottom: 0 }}
+            margin={{ top: 0, right: 20, left: isMobile ? 0 : 20, bottom: 0 }}
           >
             <XAxis
               type="number"
@@ -55,11 +79,10 @@ export function TopProductsChart({ data, loading }: TopProductsChartProps) {
             <YAxis
               type="category"
               dataKey="title"
-              tickFormatter={truncateTitle}
-              tick={{ fontSize: 12, fill: "#334155" }}
               axisLine={false}
               tickLine={false}
-              width={130}
+              width={yAxisWidth}
+              tick={<CustomYAxisTick maxLen={maxTitleLen} />}
             />
             <Tooltip
               formatter={(value: number, name: string) => {
