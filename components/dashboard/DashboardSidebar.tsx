@@ -20,9 +20,16 @@ interface BottomAction {
   href?: string;
 }
 
+export interface SecondaryLink {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+}
+
 interface DashboardSidebarProps {
   menuItems: MenuItem[];
   title: string;
+  secondaryLinks?: SecondaryLink[];
   bottomAction: BottomAction;
 }
 
@@ -30,6 +37,7 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({
   menuItems,
   title,
+  secondaryLinks,
   bottomAction,
 }: DashboardSidebarProps) {
   const { user } = useAuth();
@@ -99,6 +107,25 @@ export function DashboardSidebar({
           <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
         </div>
       </div>
+
+      {/* ── Secondary Links (cross-dashboard navigation) ── */}
+      {secondaryLinks && secondaryLinks.length > 0 && (
+        <div className="flex flex-col gap-0.5 mb-3">
+          {secondaryLinks.map((link) => {
+            const LinkIcon = link.icon;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-all duration-200"
+              >
+                <LinkIcon className="w-[18px] h-[18px]" />
+                {link.label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
 
       {/* ── Bottom Action ── */}
       <div className="border-t border-slate-100 pt-3">

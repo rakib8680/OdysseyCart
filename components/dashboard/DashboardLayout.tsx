@@ -4,12 +4,14 @@ import { useState } from "react";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardHeader } from "./DashboardHeader";
 import { type MenuItem } from "@/lib/config/dashboard";
+import { type SecondaryLink } from "./DashboardSidebar";
 import { type LucideIcon, X } from "lucide-react";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
   menuItems: MenuItem[];
   title: string;
+  secondaryLinks?: SecondaryLink[];
   bottomAction: {
     label: string;
     icon: LucideIcon;
@@ -27,6 +29,7 @@ export function DashboardLayout({
   children,
   menuItems,
   title,
+  secondaryLinks,
   bottomAction,
 }: DashboardLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -39,6 +42,7 @@ export function DashboardLayout({
           <DashboardSidebar
             menuItems={menuItems}
             title={title}
+            secondaryLinks={secondaryLinks}
             bottomAction={bottomAction}
           />
         </div>
@@ -56,6 +60,7 @@ export function DashboardLayout({
               <DashboardSidebar
                 menuItems={menuItems}
                 title={title}
+                secondaryLinks={secondaryLinks}
                 bottomAction={bottomAction}
               />
             </div>
