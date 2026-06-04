@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { DashboardSidebar } from "./DashboardSidebar";
-import { DashboardBreadcrumbs } from "./DashboardBreadcrumbs";
+import { DashboardHeader } from "./DashboardHeader";
 import { type MenuItem } from "@/lib/config/dashboard";
-import { type LucideIcon, Menu, X } from "lucide-react";
+import { type LucideIcon, X } from "lucide-react";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -32,10 +32,10 @@ export function DashboardLayout({
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-slate-50/50">
-      <div className=" mx-auto flex">
+    <div className="min-h-screen bg-slate-50/50">
+      <div className="mx-auto flex">
         {/* ───── Desktop Sidebar ───── */}
-        <div className="hidden lg:block flex-shrink-0 sticky top-16 h-[calc(100vh-64px)]">
+        <div className="hidden lg:block flex-shrink-0 sticky top-0 h-screen">
           <DashboardSidebar
             menuItems={menuItems}
             title={title}
@@ -71,23 +71,13 @@ export function DashboardLayout({
 
         {/* ───── Content Area ───── */}
         <main className="flex-1 min-w-0">
-          {/* Mobile Header Bar */}
-          <div className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-slate-200">
-            <button
-              onClick={() => setMobileOpen(true)}
-              className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer"
-              aria-label="Open sidebar"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400">
-              {title}
-            </h2>
-          </div>
+          <DashboardHeader
+            onMobileMenuOpen={() => setMobileOpen(true)}
+            title={title}
+          />
 
           {/* Page Content */}
           <div className="p-4 sm:p-6 lg:p-8 container mx-auto mb-32">
-            <DashboardBreadcrumbs />
             {children}
           </div>
         </main>

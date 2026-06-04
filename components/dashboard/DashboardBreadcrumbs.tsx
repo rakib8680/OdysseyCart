@@ -52,10 +52,13 @@ export function DashboardBreadcrumbs() {
   if (finalCrumbs.length <= 1) return null;
 
   return (
-    <nav aria-label="Breadcrumb" className="mb-4">
+    <nav aria-label="Breadcrumb" className="flex items-center">
       <ol className="flex items-center gap-1.5 text-sm">
         {finalCrumbs.map((crumb) => (
-          <li key={crumb.href} className="flex items-center gap-1.5">
+          <li
+            key={crumb.href}
+            className="flex items-center gap-1.5  text-xs md:text-sm"
+          >
             {!crumb.isLast ? (
               <>
                 <Link
