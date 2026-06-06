@@ -3,7 +3,7 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 // ==========================================
 // SHARED ORDER STATUS TYPE
 // ==========================================
-export type OrderStatus = "pending" | "paid" | "failed" | "shipped" | "delivered";
+export type OrderStatus = "pending" | "paid" | "paid-stock-issue" | "failed" | "shipped" | "delivered";
 
 export interface TOrderItem {
   productId: mongoose.Types.ObjectId;
@@ -79,7 +79,7 @@ const OrderSchema = new Schema<TOrder>(
     total: { type: Number, required: true },
     status: {
       type: String,
-      enum: ["pending", "paid", "failed", "shipped", "delivered"],
+      enum: ["pending", "paid", "paid-stock-issue", "failed", "shipped", "delivered"],
       default: "pending",
     },
   },

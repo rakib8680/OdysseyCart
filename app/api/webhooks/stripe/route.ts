@@ -84,7 +84,20 @@ export async function POST(req: NextRequest) {
       }));
 
       if (bulkOps.length > 0) {
-        await Product.bulkWrite(bulkOps);
+        const bulkResult = await Product.bulkWrite(bulkOps);
+
+        // OVERSELL DETECTION: If some items couldn't be decremented,
+        // flag the order so an admin can review and resolve it.
+        if (bulkResult.matchedCount < bulkOps.length) {
+          await Order.findByIdAndUpdate(orderId, {
+            $set: { status: "paid-stock-issue" },
+          });
+          console.warn(
+            `Webhook: Order ${orderId} has stock discrepancy — ` +
+              `expected ${bulkOps.length} decrements, only ${bulkResult.matchedCount} matched. ` +
+              `Flagged for admin review.`,
+          );
+        }
       }
 
       //Update Coupon usage count if a coupon was used

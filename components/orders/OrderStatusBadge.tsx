@@ -37,6 +37,11 @@ const STATUS_MAP: Record<OrderStatus, StatusConfig> = {
     icon: CreditCard,
     className: "bg-blue-50 text-blue-700 border-blue-200",
   },
+  "paid-stock-issue": {
+    label: "Stock Issue",
+    icon: AlertTriangle,
+    className: "bg-amber-50 text-amber-700 border-amber-200",
+  },
   shipped: {
     label: "Shipped",
     icon: Truck,

@@ -3,7 +3,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { clearCart as clearServerCart } from "@/app/actions/cart";
 
 import { useCart } from "@/contexts/CartContext";
 import { CheckCircle, Package, ArrowRight, ShoppingBag } from "lucide-react";
@@ -20,7 +19,7 @@ export default function CheckoutSuccessPage() {
 
 function SuccessContent() {
   const { user } = useAuth();
-  const { clearCart: clearClientCart } = useCart();
+  const { clearCart } = useCart();
   const searchParams = useSearchParams();
   const [isClearing, setIsClearing] = useState(true);
   const hasClearedRef = useRef(false);
@@ -36,8 +35,7 @@ function SuccessContent() {
       hasClearedRef.current = true;
 
       if (redirectStatus === "succeeded") {
-        await clearServerCart(user.uid); // Clear MongoDB cart
-        await clearClientCart(); // Sync React state (Navbar badge)
+        await clearCart();
       }
       setIsClearing(false);
     }
