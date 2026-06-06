@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { useAuthRedirect } from "@/hooks/auth/useAuthRedirect";
 import { AuthFormWrapper } from "@/components/form/AuthFormWrapper";
 import { FormInput } from "@/components/form/FormInput";
 import { GoogleLoginButton } from "@/components/form/GoogleLoginButton";
@@ -17,7 +16,6 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
-  const { redirect } = useAuthRedirect();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +31,6 @@ export default function RegisterPage() {
     try {
       await register(email, password, name);
       toast.success("Account created successfully!");
-      redirect();
     } catch (err: any) {
       const msg = err.message || "Failed to create account. Please try again.";
       setError(msg);

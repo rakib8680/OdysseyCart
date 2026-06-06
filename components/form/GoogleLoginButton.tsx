@@ -1,18 +1,15 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { useAuthRedirect } from "@/hooks/auth/useAuthRedirect";
 import { toast } from "sonner";
 
 export function GoogleLoginButton() {
   const { loginWithGoogle } = useAuth();
-  const { redirect } = useAuthRedirect();
 
   const handleGoogleLogin = async () => {
     try {
       await loginWithGoogle();
       toast.success("Logged in with Google!");
-      redirect();
     } catch {
       toast.error("Google sign-in failed. Please try again.");
     }
