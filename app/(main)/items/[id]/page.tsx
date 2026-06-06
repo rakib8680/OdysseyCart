@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
-import { getProductById, getProducts } from "@/app/actions/products";
+import { getProductById, getRelatedProducts } from "@/app/actions/products";
 import ProductGallery from "@/components/product-details/ProductGallery";
 import ProductInfo from "@/components/product-details/ProductInfo";
 import KeyInformation from "@/components/product-details/KeyInformation";
@@ -21,13 +21,8 @@ export default async function ItemDetailsPage({
     notFound();
   }
 
-  // Fetch related items (same category, exclude current)
-  const allProducts = await getProducts();
-  const relatedItems = allProducts
-    .filter(
-      (p: any) => p.category === product.category && p._id !== product._id,
-    )
-    .slice(0, 3);
+  // Fetch related items — filtered and limited at the DB level
+  const relatedItems = await getRelatedProducts(product.category, product._id);
 
   return (
     <div className="container max-w-6xl mx-auto px-4 md:px-8 py-16">

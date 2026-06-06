@@ -204,3 +204,29 @@ export async function getFeaturedProducts(limit = 3) {
     return [];
   }
 }
+
+// ==========================================
+// READ RELATED (for product detail page)
+// ==========================================
+export async function getRelatedProducts(
+  category: string,
+  excludeId: string,
+  limit = 3,
+) {
+  try {
+    await connectDB();
+
+    const products = await Product.find({
+      category,
+      _id: { $ne: excludeId },
+    })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+
+    return serialize(products);
+  } catch (error: any) {
+    console.error("Error getting related products:", error);
+    return [];
+  }
+}
