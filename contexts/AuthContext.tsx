@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   ReactNode,
 } from "react";
@@ -40,23 +41,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [dbUser, setDbUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const isRegistering = useRef(false);
+
   // This is a listener function, for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
 
       if (currentUser) {
-        // Sync with MongoDB to fetch custom roles
-        const result = await syncUser(
-          currentUser.uid,
-          currentUser.email!,
-          currentUser.displayName || undefined,
-        );
+        // During registration, register() handles syncUser manually
+        // with the correct displayName after updateProfile completes.
+        if (!isRegistering.current) {
+          const result = await syncUser(
+            currentUser.uid,
+            currentUser.email!,
+            currentUser.displayName || undefined,
+          );
 
-        if (result.success) {
-          setDbUser(result.user);
-        } else {
-          setDbUser(null);
+          if (result.success) {
+            setDbUser(result.user);
+          } else {
+            setDbUser(null);
+          }
         }
       } else {
         setDbUser(null);
@@ -69,8 +75,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // register with email & password
   const register = async (email: string, password: string, name: string) => {
-    const result = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(result.user, { displayName: name });
+    isRegistering.current = true;
+    try {
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      await updateProfile(result.user, { displayName: name });
+
+      // Manually sync with the correct name — the listener skipped this
+      const dbResult = await syncUser(result.user.uid, email, name);
+      if (dbResult.success) {
+        setDbUser(dbResult.user);
+      }
+    } finally {
+      isRegistering.current = false;
+    }
   };
 
   // login with email & password
