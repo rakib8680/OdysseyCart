@@ -81,10 +81,29 @@ We completed the server actions, charting widgets, and layout updates to deploy 
 
 ---
 
-## 🚀 Plan for Next Session
+## 🎯 June 4: Analytics Caching & UI Robustness
 
-1. **Dashboard Restructure (Command Center Refactor)**:
-   - Restructure `DashboardSidebar` (logo/brand at the top, user metadata/card pinned to the bottom).
-   - Create a sticky `DashboardHeader` housing mobile menu triggers, responsive search indicators, and breadcrumbs.
-   - Clean up spacing and container limits inside `DashboardLayout`.
+We implemented client-side data caching for the Admin Analytics Dashboard, corrected the database aggregations for customer cohort calculations, resolved mobile chart styling constraints, and fixed empty-state layout bugs.
+
+### 1. In-Memory Analytics Caching & Refetching
+- **Centralized Hook (`useAnalytics`)**: Extracted all metrics orchestration into a custom React hook, decoupling presentation concerns from the API layer.
+- **Client Cache Strategy**: Built a per-period memory cache mapped via React `useRef`. If data is requested for a period that already exists in memory, it serves it instantly.
+- **Stale-Time Invalidation**: Added a `5-minute` stale-time boundary. When requested, cache entries older than 5 minutes are silently background-refetched.
+- **Tab-Focus Refetching**: Added window event listeners tracking document focus, ensuring that returning to an idle browser tab updates out-of-date analytics data.
+- **Manual Force-Refresh**: Added a force-refetch mechanism triggered by a button in the UI, allowing administrators to bypass the cache completely and get real-time metrics.
+
+### 2. Analytics Aggregation Corrections
+- **Customer Metrics Pipeline**: Redesigned the MongoDB aggregation pipeline in `_getCustomerMetrics` inside `app/actions/analytics.ts`.
+- **Query Precision**: Tracked each user's `latestOrder` to isolate and count only users who were **actively placing orders** during the selected window. Customers who bought years ago are no longer incorrectly classified as "returning" in short windows.
+
+### 3. Responsive Chart Optimization
+- **Recharts Text Measurement Bypass**: Replaced the default YAxis tick renderer with a custom SVG `<text>` node (`CustomYAxisTick`) in `TopProductsChart.tsx` to stop Recharts from truncating labels to 3 characters.
+- **Mobile Styling Adaptive Layout**: Added window resize listeners to dynamically contract the YAxis width from `160px` to `90px` and the truncation limit from 22 characters to 12 characters on screen sizes `< 768px`, reclaiming space for visual data bars.
+
+### 4. EmptyState Upgrade & Address Manager Bugfix
+- **EmptyState Flexibility**: Upgraded the reusable `EmptyState` component to accept an optional `actionOnClick` handler for opening modals, instead of forcing `Link` component routing via `actionHref`.
+- **Double Button Elimination**: Removed a hacky CSS overlay layout in `AddressManager.tsx` and cleanly routed the "Add Address" modal popup to the new native `actionOnClick` prop inside `EmptyState`, resolving the stacked duplicate button rendering error.
+
+---
+
 
