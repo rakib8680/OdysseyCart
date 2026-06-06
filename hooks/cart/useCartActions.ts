@@ -43,12 +43,13 @@ export function useCartActions(
     markBusy(product.productId);
     try {
       if (user) {
-        // Optimistic: update UI immediately
+        // Snapshot for rollback on failure
+        const snapshot = [...items];
+
+        // Optimistic: update UI + toast immediately
         const existingIndex = items.findIndex(
           (i) => i.productId === product.productId,
         );
-        const snapshot = [...items];
-
         if (existingIndex > -1) {
           const updated = [...items];
           updated[existingIndex] = {
@@ -59,12 +60,12 @@ export function useCartActions(
         } else {
           setItems((prev) => [...prev, { ...product, quantity }]);
         }
+        toast.success("Added to cart");
 
-        // Server sync
+        // Server sync in background — reconcile or rollback
         const res = await addToCart(user.uid, product.productId, quantity);
         if (res.success) {
           setItems(res.items || []);
-          toast.success("Added to cart");
         } else {
           setItems(snapshot); // Rollback
           toast.error(res.error || "Failed to add item");
