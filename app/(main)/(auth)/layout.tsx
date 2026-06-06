@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageLoader } from "@/components/ui/PageLoader";
@@ -17,11 +17,19 @@ export default function AuthGuardLayout({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
+  const hasRedirected = useRef(false);
+
   useEffect(() => {
-    if (!loading && user) {
+    if (!loading && user && !hasRedirected.current) {
+      hasRedirected.current = true;
       const params = new URLSearchParams(window.location.search);
       const destination = params.get("redirect") || "/";
-      router.replace(destination);
+
+      const timer = setTimeout(() => {
+        router.replace(destination);
+      }, 50);
+
+      return () => clearTimeout(timer);
     }
   }, [user, loading, router]);
 
