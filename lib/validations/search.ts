@@ -7,8 +7,14 @@ import { z } from "zod";
 export const SearchFiltersSchema = z.object({
   search: z.string().max(100).default(""),
   category: z.string().max(50).default(""),
-  minPrice: z.coerce.number().min(0).optional(),
-  maxPrice: z.coerce.number().min(0).optional(),
+  minPrice: z.preprocess(
+    (val) => (val === "" || val === undefined ? undefined : Number(val)),
+    z.number().min(0).optional(),
+  ),
+  maxPrice: z.preprocess(
+    (val) => (val === "" || val === undefined ? undefined : Number(val)),
+    z.number().min(0).optional(),
+  ),
   sort: z
     .enum(["newest", "oldest", "price-low", "price-high", "name-az", "name-za"])
     .default("newest"),

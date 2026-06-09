@@ -5,6 +5,10 @@ import Product from "@/lib/models/Product";
 import User from "@/lib/models/User";
 import { revalidatePath } from "next/cache";
 import { ProductValidationSchema } from "@/lib/validations/product";
+import { SearchFiltersSchema } from "@/lib/validations/search";
+import { PaginatedProducts } from "@/lib/types/product";
+
+import { DB_SORT_MAP } from "@/lib/config/products";
 
 import { requireAdmin } from "@/app/actions/users";
 
@@ -117,6 +121,111 @@ export async function getProducts() {
     return serialize(products);
   } catch (error: any) {
     console.error("Error getting products:", error);
+    return [];
+  }
+}
+
+// ==========================================
+// READ FILTERED + PAGINATED (for items page)
+// ==========================================
+
+// Only fetch fields that the ProductCard and AddToCartButton need
+const LISTING_PROJECTION = {
+  _id: 1,
+  title: 1,
+  slug: 1,
+  shortDescription: 1,
+  price: 1,
+  category: 1,
+  images: 1,
+  stockQuantity: 1,
+  discount: 1,
+  brand: 1,
+  createdAt: 1,
+};
+
+export async function getFilteredProducts(
+  params: Record<string, string | number | undefined>,
+): Promise<PaginatedProducts> {
+  try {
+    await connectDB();
+
+    // 1. Validate & sanitize input
+    const { search, category, minPrice, maxPrice, sort, page, limit } =
+      SearchFiltersSchema.parse(params);
+
+    // 2. Build MongoDB filter dynamically
+    const filter: Record<string, any> = {};
+    const isTextSearch = search.length >= 3;
+
+    if (search) {
+      if (isTextSearch) {
+        // Full-text search for 3+ character queries
+        filter.$text = { $search: search };
+      } else {
+        // Regex fallback for short queries (partial matching)
+        filter.$or = [
+          { title: { $regex: search, $options: "i" } },
+          { shortDescription: { $regex: search, $options: "i" } },
+        ];
+      }
+    }
+
+    if (category) {
+      filter.category = category;
+    }
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      filter.price = {};
+      if (minPrice !== undefined) filter.price.$gte = minPrice;
+      if (maxPrice !== undefined) filter.price.$lte = maxPrice;
+    }
+
+    // 3. Determine sort order
+    // When actively searching with default sort, rank by text relevance
+    const skip = (page - 1) * limit;
+    const useRelevanceSort = isTextSearch && sort === "newest";
+    const sortOrder = useRelevanceSort
+      ? { score: { $meta: "textScore" as const } }
+      : DB_SORT_MAP[sort] || DB_SORT_MAP.newest;
+
+    // 4. Add text score to projection when sorting by relevance
+    const projection = useRelevanceSort
+      ? { ...LISTING_PROJECTION, score: { $meta: "textScore" as const } }
+      : LISTING_PROJECTION;
+
+    // 5. Execute query + count in parallel for performance
+    const [products, totalCount] = await Promise.all([
+      Product.find(filter, projection)
+        .sort(sortOrder)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Product.countDocuments(filter),
+    ]);
+
+    return {
+      products: serialize(products),
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+    };
+  } catch (error: any) {
+    console.error("getFilteredProducts error:", error);
+    return { products: [], totalCount: 0, totalPages: 0, currentPage: 1 };
+  }
+}
+
+// ==========================================
+// READ CATEGORIES (for filter dropdown)
+// ==========================================
+export async function getCategories(): Promise<string[]> {
+  try {
+    await connectDB();
+    const categories: string[] = await Product.distinct("category");
+    return categories.sort();
+  } catch (error: any) {
+    console.error("getCategories error:", error);
     return [];
   }
 }
