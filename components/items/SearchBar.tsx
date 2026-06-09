@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, SlidersHorizontal } from "lucide-react";
 
@@ -16,6 +19,24 @@ export function SearchBar({
   onToggleFilters,
   activeFilterCount,
 }: SearchBarProps) {
+  // Local state for debouncing — prevents server request on every keystroke
+  const [localSearch, setLocalSearch] = useState(search);
+
+  // Sync local state when external search changes (e.g. reset filters)
+  useEffect(() => {
+    setLocalSearch(search);
+  }, [search]);
+
+  // Debounce: update URL 300ms after user stops typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (localSearch !== search) {
+        onSearchChange(localSearch);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [localSearch, search, onSearchChange]);
+
   return (
     <div className="flex gap-3 w-full md:w-auto">
       {/* Search Input */}
@@ -25,8 +46,8 @@ export function SearchBar({
           type="text"
           placeholder="Search products..."
           className="w-full pl-9 h-10"
-          value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
+          value={localSearch}
+          onChange={(e) => setLocalSearch(e.target.value)}
         />
       </div>
 

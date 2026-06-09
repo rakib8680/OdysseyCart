@@ -1,35 +1,28 @@
 import { Input } from "@/components/ui/input";
-import { SortOption } from "@/lib/types/product";
+import { SORT_CONFIG } from "@/lib/config/products";
 import { X } from "lucide-react";
 
 const SELECT_STYLES =
   "h-10 px-3 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm cursor-pointer";
 
 interface FilterPanelProps {
-  category: string;
+  filters: {
+    category: string;
+    minPrice: string;
+    maxPrice: string;
+    sort: string;
+  };
   categories: string[];
-  minPrice: string;
-  maxPrice: string;
-  sortBy: SortOption;
   activeFilterCount: number;
-  onCategoryChange: (value: string) => void;
-  onMinPriceChange: (value: string) => void;
-  onMaxPriceChange: (value: string) => void;
-  onSortChange: (value: SortOption) => void;
+  onFilterChange: (updates: Record<string, string>) => void;
   onReset: () => void;
 }
 
 export function FilterPanel({
-  category,
+  filters,
   categories,
-  minPrice,
-  maxPrice,
-  sortBy,
   activeFilterCount,
-  onCategoryChange,
-  onMinPriceChange,
-  onMaxPriceChange,
-  onSortChange,
+  onFilterChange,
   onReset,
 }: FilterPanelProps) {
   return (
@@ -42,9 +35,10 @@ export function FilterPanel({
           </label>
           <select
             className={SELECT_STYLES + " w-full sm:w-44"}
-            value={category}
-            onChange={(e) => onCategoryChange(e.target.value)}
+            value={filters.category}
+            onChange={(e) => onFilterChange({ category: e.target.value })}
           >
+            <option value="">All</option>
             {categories.map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
@@ -68,8 +62,8 @@ export function FilterPanel({
               min="0"
               step="0.01"
               className="w-full sm:w-28 pl-7 h-10"
-              value={minPrice}
-              onChange={(e) => onMinPriceChange(e.target.value)}
+              value={filters.minPrice}
+              onChange={(e) => onFilterChange({ minPrice: e.target.value })}
             />
           </div>
         </div>
@@ -89,28 +83,27 @@ export function FilterPanel({
               min="0"
               step="0.01"
               className="w-full sm:w-28 pl-7 h-10"
-              value={maxPrice}
-              onChange={(e) => onMaxPriceChange(e.target.value)}
+              value={filters.maxPrice}
+              onChange={(e) => onFilterChange({ maxPrice: e.target.value })}
             />
           </div>
         </div>
 
-        {/* Sort By */}
+        {/* Sort By — rendered dynamically from shared config */}
         <div className="w-full sm:w-auto">
           <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">
             Sort By
           </label>
           <select
             className={SELECT_STYLES + " w-full sm:w-44"}
-            value={sortBy}
-            onChange={(e) => onSortChange(e.target.value as SortOption)}
+            value={filters.sort}
+            onChange={(e) => onFilterChange({ sort: e.target.value })}
           >
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="price-low">Price: Low → High</option>
-            <option value="price-high">Price: High → Low</option>
-            <option value="name-az">Name: A → Z</option>
-            <option value="name-za">Name: Z → A</option>
+            {SORT_CONFIG.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </div>
 

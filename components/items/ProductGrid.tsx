@@ -1,17 +1,13 @@
 import ProductCard from "@/components/ProductCard";
 import { Product } from "@/lib/types/product";
+import Link from "next/link";
 
 interface ProductGridProps {
   products: Product[];
   totalCount: number;
-  onResetFilters: () => void;
 }
 
-export function ProductGrid({
-  products,
-  totalCount,
-  onResetFilters,
-}: ProductGridProps) {
+export function ProductGrid({ products, totalCount }: ProductGridProps) {
   return (
     <>
       {/* Results count */}
@@ -31,12 +27,9 @@ export function ProductGrid({
           <p className="text-lg font-medium mb-2">No products found</p>
           <p className="text-sm">
             Try adjusting your filters or{" "}
-            <button
-              onClick={onResetFilters}
-              className="text-emerald-600 underline cursor-pointer"
-            >
-              reset all filters
-            </button>
+            <Link href="/items" className="text-emerald-600 underline">
+              view all products
+            </Link>
             .
           </p>
         </div>

@@ -1,37 +1,45 @@
 "use client";
 
-import { useProductFilters } from "@/hooks/products/useProductFilters";
+import { useState } from "react";
+import { useQueryStates } from "nuqs";
+import { productFilterParsers } from "@/lib/search-params";
 import { SearchBar } from "./SearchBar";
 import { FilterPanel } from "./FilterPanel";
-import { ProductGrid } from "./ProductGrid";
-import { Product } from "@/lib/types/product";
+import { ActiveFilters } from "./ActiveFilters";
 
 interface ItemsFilterProps {
-  products: Product[];
+  categories: string[];
 }
 
-export function ItemsFilter({ products }: ItemsFilterProps) {
-  const {
-    search,
-    category,
-    minPrice,
-    maxPrice,
-    sortBy,
-    showFilters,
-    setSearch,
-    setCategory,
-    setMinPrice,
-    setMaxPrice,
-    setSortBy,
-    categories,
-    activeFilterCount,
-    filteredProducts,
-    resetFilters,
-    toggleFilters,
-  } = useProductFilters(products);
+export function ItemsFilter({ categories }: ItemsFilterProps) {
+  const [filters, setFilters] = useQueryStates(productFilterParsers, {
+    shallow: false, // Trigger server re-render on URL change
+  });
+
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Count non-default filters (excluding page)
+  const activeFilterCount = [
+    filters.search !== "",
+    filters.category !== "",
+    filters.minPrice !== "",
+    filters.maxPrice !== "",
+    filters.sort !== "newest",
+  ].filter(Boolean).length;
+
+  const resetFilters = () => {
+    setFilters({
+      search: "",
+      category: "",
+      minPrice: "",
+      maxPrice: "",
+      sort: "newest",
+      page: 1,
+    });
+  };
 
   return (
-    <div className="container max-w-7xl mx-auto px-4 md:px-8 py-16 min-h-screen">
+    <>
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
         <div>
@@ -44,37 +52,33 @@ export function ItemsFilter({ products }: ItemsFilterProps) {
         </div>
 
         <SearchBar
-          search={search}
-          onSearchChange={setSearch}
+          search={filters.search}
+          onSearchChange={(value) => setFilters({ search: value, page: 1 })}
           showFilters={showFilters}
-          onToggleFilters={toggleFilters}
+          onToggleFilters={() => setShowFilters((prev) => !prev)}
           activeFilterCount={activeFilterCount}
         />
       </div>
 
-      {/* Expandable Filter Bar */}
-      {showFilters && (
-        <FilterPanel
-          category={category}
-          categories={categories}
-          minPrice={minPrice}
-          maxPrice={maxPrice}
-          sortBy={sortBy}
-          activeFilterCount={activeFilterCount}
-          onCategoryChange={setCategory}
-          onMinPriceChange={setMinPrice}
-          onMaxPriceChange={setMaxPrice}
-          onSortChange={setSortBy}
+      {/* Active filter chips */}
+      {activeFilterCount > 0 && (
+        <ActiveFilters
+          filters={filters}
+          onClear={setFilters}
           onReset={resetFilters}
         />
       )}
 
-      {/* Product Grid + Empty State */}
-      <ProductGrid
-        products={filteredProducts}
-        totalCount={products.length}
-        onResetFilters={resetFilters}
-      />
-    </div>
+      {/* Expandable Filter Panel */}
+      {showFilters && (
+        <FilterPanel
+          filters={filters}
+          categories={categories}
+          activeFilterCount={activeFilterCount}
+          onFilterChange={(updates) => setFilters({ ...updates, page: 1 })}
+          onReset={resetFilters}
+        />
+      )}
+    </>
   );
 }
