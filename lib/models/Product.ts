@@ -74,7 +74,14 @@ ProductSchema.pre("validate", function () {
   }
 });
 
-// 4. Create and export the model safely for Next.js
+// 4. Indexes for search & filtering performance
+ProductSchema.index(
+  { title: "text", shortDescription: "text" },
+  { weights: { title: 10, shortDescription: 5 }, name: "product_text_search" },
+);
+ProductSchema.index({ category: 1, price: 1 });
+
+// 5. Create and export the model safely for Next.js
 const Product: Model<TProduct> =
   mongoose.models.Product || mongoose.model<TProduct>("Product", ProductSchema);
 export default Product;

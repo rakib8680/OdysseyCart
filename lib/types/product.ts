@@ -48,3 +48,11 @@ export interface FilterState {
   sortBy: SortOption;
   showFilters: boolean;
 }
+
+// Server response shape for paginated product queries
+export interface PaginatedProducts {
+  products: Product[];
+  totalCount: number;
+  totalPages: number;
+  currentPage: number;
+}
