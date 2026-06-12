@@ -66,9 +66,6 @@ export function ReviewForm({
     }
   };
 
-  const labelStyles =
-    "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5";
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -80,7 +77,7 @@ export function ReviewForm({
       <div className="space-y-6">
         {/* Rating Picker */}
         <div>
-          <label className={labelStyles}>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
             Overall Rating <span className="text-red-500">*</span>
           </label>
           <Controller
