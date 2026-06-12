@@ -1,14 +1,14 @@
 "use client";
 
-import {  forwardRef } from "react";
-import { Input } from "@/components/ui/input";
+import { TextareaHTMLAttributes, forwardRef } from "react";
+import { Textarea } from "@/components/ui/textarea";
 
-interface FormInputProps extends React.ComponentProps<typeof Input> {
+interface FormTextAreaProps extends React.ComponentProps<typeof Textarea> {
   label: string;
   error?: string;
 }
 
-export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
+export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>(
   ({ label, id, error, className, ...props }, ref) => {
     return (
       <div>
@@ -18,7 +18,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
         >
           {label}
         </label>
-        <Input
+        <Textarea
           ref={ref}
           id={id}
           className={className}
@@ -31,4 +31,4 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
   },
 );
 
-FormInput.displayName = "FormInput";
+FormTextArea.displayName = "FormTextArea";
