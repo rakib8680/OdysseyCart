@@ -12,6 +12,7 @@ export interface TProduct extends Document {
   stockQuantity: number;
   averageRating: number;
   numReviews: number;
+  ratingDistribution: Map<string, number>;
   createdBy: string;
   brand: string;
   tags: string[];
@@ -44,6 +45,18 @@ const ProductSchema = new Schema<TProduct>(
     stockQuantity: { type: Number, required: true, default: 0 },
     averageRating: { type: Number, default: 0 },
     numReviews: { type: Number, default: 0 },
+    ratingDistribution: {
+      type: Map,
+      of: Number,
+      default: () =>
+        new Map([
+          ["1", 0],
+          ["2", 0],
+          ["3", 0],
+          ["4", 0],
+          ["5", 0],
+        ]),
+    },
     createdBy: { type: String, required: true }, // Firebase UID
     brand: { type: String, default: "" },
     tags: { type: [String], default: [] },

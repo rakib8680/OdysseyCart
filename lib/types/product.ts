@@ -13,6 +13,7 @@ export interface Product {
   stockQuantity: number;
   averageRating: number;
   numReviews: number;
+  ratingDistribution: Record<string, number>;
   createdBy: string;
   brand: string;
   tags: string[];
