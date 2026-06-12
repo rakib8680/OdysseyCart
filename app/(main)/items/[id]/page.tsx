@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { ReviewSection } from "@/components/reviews/ReviewSection";
 import { notFound } from "next/navigation";
 import { getProductById, getRelatedProducts } from "@/app/actions/products";
 import ProductGallery from "@/components/product-details/ProductGallery";
@@ -60,6 +60,8 @@ export default async function ItemDetailsPage({
           />
         </div>
       </div>
+
+      <ReviewSection product={product} />
 
       <RelatedProducts items={relatedItems} />
     </div>

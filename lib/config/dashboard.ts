@@ -4,6 +4,7 @@ import {
   MapPin,
   BarChart3,
   ShoppingBag,
+  Star,
   type LucideIcon,
 } from "lucide-react";
 
@@ -32,6 +33,7 @@ export const ADMIN_MENU: MenuItem[] = [
   { label: "Overview", href: "/admin", icon: BarChart3 },
   { label: "Orders", href: "/admin/orders", icon: Package },
   { label: "Products", href: "/admin/products", icon: ShoppingBag },
+  { label: "Reviews", href: "/admin/reviews", icon: Star },
 ];
 
 // ==========================================
@@ -43,6 +45,7 @@ export const SEGMENT_LABELS: Record<string, string> = {
   admin: "Admin",
   orders: "Orders",
   products: "Products",
+  reviews: "Reviews",
   addresses: "Addresses",
   add: "Add New",
   edit: "Edit",

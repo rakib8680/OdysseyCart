@@ -2,6 +2,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Tag } from "lucide-react";
 import { Product } from "@/lib/types/product";
+import { StarRating } from "@/components/reviews/StarRating";
 
 interface ProductInfoProps {
   product: Product;
@@ -36,6 +37,15 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4">
         {product.title}
       </h1>
+
+      {/* Ratings */}
+      <div className="flex items-center gap-3 mb-4">
+        <StarRating rating={product.averageRating || 0} size="sm" />
+        <span className="text-sm font-medium text-slate-600">
+          {product.averageRating?.toFixed(1) || "0.0"} (
+          {product.numReviews || 0} reviews)
+        </span>
+      </div>
 
       {/* Price */}
       <div className="flex items-baseline gap-3 mb-6">
