@@ -18,9 +18,10 @@ import {
 import { DeleteConfirmModal } from "./DeleteConfirmModal";
 interface ManageTableProps {
   products: any[];
+  onRefresh?: () => void;
 }
 
-export default function ManageTable({ products }: ManageTableProps) {
+export default function ManageTable({ products, onRefresh }: ManageTableProps) {
   const router = useRouter();
   const { user } = useAuth();
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -46,7 +47,11 @@ export default function ManageTable({ products }: ManageTableProps) {
 
       if (result.success) {
         toast.success(`"${title}" deleted successfully.`);
-        router.refresh();
+        if (onRefresh) {
+          onRefresh();
+        } else {
+          router.refresh(); // Fallback for any legacy usages
+        }
       } else {
         toast.error(result.error || "Failed to delete product.");
       }
