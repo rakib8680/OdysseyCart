@@ -38,14 +38,17 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         {product.title}
       </h1>
 
-      {/* Ratings */}
-      <div className="flex items-center gap-3 mb-4">
+      {/* Ratings — clickable to scroll to review section */}
+      <a
+        href="#reviews"
+        className="flex items-center gap-3 mb-4 group/rating w-fit"
+      >
         <StarRating rating={product.averageRating || 0} size="sm" />
-        <span className="text-sm font-medium text-slate-600">
+        <span className="text-sm font-medium text-slate-600 group-hover/rating:text-emerald-600 transition-colors">
           {product.averageRating?.toFixed(1) || "0.0"} (
           {product.numReviews || 0} reviews)
         </span>
-      </div>
+      </a>
 
       {/* Price */}
       <div className="flex items-baseline gap-3 mb-6">

@@ -17,13 +17,13 @@ import {
 interface AdminReviewListProps {
   reviews: AdminReview[];
   onDelete: (reviewId: string) => void;
-  isDeleting: boolean;
+  deletingId: string | null;
 }
 
 export function AdminReviewList({
   reviews,
   onDelete,
-  isDeleting,
+  deletingId,
 }: AdminReviewListProps) {
   if (reviews.length === 0) {
     return (
@@ -97,7 +97,7 @@ export function AdminReviewList({
                   variant="ghost"
                   size="sm"
                   onClick={() => onDelete(review._id)}
-                  disabled={isDeleting}
+                  disabled={deletingId === review._id}
                   className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
                   title="Delete Review"
                 >

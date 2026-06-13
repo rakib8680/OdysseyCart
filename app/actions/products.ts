@@ -141,6 +141,8 @@ const LISTING_PROJECTION = {
   stockQuantity: 1,
   discount: 1,
   brand: 1,
+  averageRating: 1,
+  numReviews: 1,
   createdAt: 1,
 };
 

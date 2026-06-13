@@ -25,6 +25,7 @@ export function StarRatingInput({
           <button
             key={star}
             type="button"
+            aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
             className={cn(
               "p-1 transition-all rounded-full hover:bg-slate-100 dark:hover:bg-slate-800",
               error

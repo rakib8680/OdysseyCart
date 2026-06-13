@@ -70,12 +70,12 @@ export default function ProductCard({ product }: ProductCardProps) {
       </CardHeader>
       <CardContent className="p-5 pt-0 flex-grow flex flex-col gap-3">
         {product.numReviews > 0 && (
-          <div className="flex items-center gap-2">
-            <StarRating rating={product.averageRating || 0} size="sm" />
-            <span className="text-xs font-medium text-slate-500">
-              ({product.numReviews})
-            </span>
-          </div>
+          <StarRating
+            rating={product.averageRating || 0}
+            size="sm"
+            showCount
+            count={product.numReviews}
+          />
         )}
         <p className="text-sm text-slate-500 line-clamp-2">
           {product.shortDescription}

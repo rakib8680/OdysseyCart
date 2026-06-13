@@ -278,8 +278,8 @@ export async function deleteReview(
     await connectDB();
     await requireAdmin(adminUid);
 
-    // 1. Find the review to get its productId before deleting
-    const review = await Review.findById(reviewId);
+    // 1. Find and delete the review in one atomic call
+    const review = await Review.findByIdAndDelete(reviewId);
 
     if (!review) {
       return { success: false, error: "Review not found." };
@@ -287,13 +287,10 @@ export async function deleteReview(
 
     const productId = review.productId.toString();
 
-    // 2. Delete the review
-    await Review.findByIdAndDelete(reviewId);
-
-    // 3. Recalculate product rating
+    // 2. Recalculate product rating
     await recalculateProductRating(productId);
 
-    // 4. Revalidate affected pages
+    // 3. Revalidate affected pages
     revalidatePath(`/items/${productId}`);
     revalidatePath("/items");
 

@@ -69,7 +69,7 @@ export default function NotFound() {
         }
       `}</style>
 
-      <Navbar />
+      {/* <Navbar /> */}
       <main className="flex-1 w-full flex flex-col items-center justify-center bg-slate-50 relative overflow-hidden py-16 lg:py-24">
         {/* Geometric Background Elements matching Site Hero */}
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[600px] h-[600px] rounded-full border border-emerald-100  lg:block pointer-events-none"></div>

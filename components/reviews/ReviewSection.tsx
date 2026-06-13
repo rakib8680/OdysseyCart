@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { ReviewSummary } from "./ReviewSummary";
 import { ReviewCard } from "./ReviewCard";
@@ -13,12 +14,20 @@ import { REVIEW_SORT_OPTIONS, ReviewSortOption } from "@/lib/config/reviews";
 import { Spinner } from "@/components/ui/Spinner";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { LogIn, ShoppingBag, CheckCircle2 } from "lucide-react";
+
+// ==========================================
+// CONSTANTS
+// ==========================================
+const REVIEWS_PER_PAGE = 5;
 
 interface ReviewSectionProps {
   product: Product;
 }
 
 export function ReviewSection({ product }: ReviewSectionProps) {
+  const router = useRouter();
   const { user, loading: authLoading } = useAuth();
 
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -26,13 +35,19 @@ export function ReviewSection({ product }: ReviewSectionProps) {
   const [sortBy, setSortBy] = useState<ReviewSortOption>("newest");
   const [hasMore, setHasMore] = useState(true);
   const [refetchTrigger, setRefetchTrigger] = useState(0); // Bump to force refetch
-  
+
   // Separation of loading states for optimal UX
   const [isFetching, setIsFetching] = useState(true); // For initial load & sort changes
   const [isLoadingMore, setIsLoadingMore] = useState(false); // For pagination
 
   const [isWriting, setIsWriting] = useState(false);
-  const [userCanReview, setUserCanReview] = useState(false);
+
+  // Eligibility state — separate booleans for contextual messaging
+  const [eligibility, setEligibility] = useState<{
+    canReview: boolean;
+    hasPurchased: boolean;
+    hasReviewed: boolean;
+  }>({ canReview: false, hasPurchased: false, hasReviewed: false });
 
   // 1. Check if user is eligible to write a review
   useEffect(() => {
@@ -42,13 +57,19 @@ export function ReviewSection({ product }: ReviewSectionProps) {
       if (authLoading) return; // Wait for auth context to hydrate
 
       if (!user?.uid) {
-        if (isMounted) setUserCanReview(false);
+        if (isMounted) {
+          setEligibility({
+            canReview: false,
+            hasPurchased: false,
+            hasReviewed: false,
+          });
+        }
         return;
       }
-      
+
       try {
         const res = await canUserReview(user.uid, product._id);
-        if (isMounted) setUserCanReview(res.canReview);
+        if (isMounted) setEligibility(res);
       } catch (error) {
         console.error("Failed to check review eligibility", error);
       }
@@ -71,7 +92,7 @@ export function ReviewSection({ product }: ReviewSectionProps) {
         const res = await getProductReviews(
           product._id,
           1, // page
-          5, // limit
+          REVIEWS_PER_PAGE,
           sortBy,
         );
 
@@ -97,15 +118,15 @@ export function ReviewSection({ product }: ReviewSectionProps) {
   // 3. Handle Load More pagination
   const handleLoadMore = async () => {
     if (isLoadingMore || !hasMore) return;
-    
+
     const nextPage = page + 1;
     setIsLoadingMore(true);
-    
+
     try {
       const res = await getProductReviews(
         product._id,
         nextPage,
-        5,
+        REVIEWS_PER_PAGE,
         sortBy,
       );
 
@@ -123,19 +144,28 @@ export function ReviewSection({ product }: ReviewSectionProps) {
 
   const handleReviewSuccess = () => {
     setIsWriting(false);
-    setUserCanReview(false); // Lock the form instantly
-    
-    // Reset to page 1 and newest to immediately show the new review
+    setEligibility((prev) => ({
+      ...prev,
+      canReview: false,
+      hasReviewed: true,
+    }));
+
+    // Reset sort to newest so the new review appears at the top
     if (sortBy !== "newest") {
       setSortBy("newest"); // This triggers the useEffect refetch
     } else {
-      // Already on newest — bump the trigger to force the useEffect to re-run
       setRefetchTrigger((prev) => prev + 1);
     }
+
+    // Refresh the server component tree so product data (avg, count, distribution) re-fetches
+    router.refresh();
   };
 
   return (
-    <div className="py-12 mt-12 border-t border-slate-200 dark:border-slate-800">
+    <div
+      id="reviews"
+      className="py-12 mt-12 border-t border-slate-200 dark:border-slate-800 scroll-mt-24"
+    >
       <h2 className="mb-8 text-2xl font-bold text-slate-900 dark:text-white">
         Customer Reviews
       </h2>
@@ -168,7 +198,8 @@ export function ReviewSection({ product }: ReviewSectionProps) {
           </select>
         </div>
 
-        {userCanReview && !isWriting && (
+        {/* Write a Review button — only when eligible */}
+        {eligibility.canReview && !isWriting && (
           <Button
             onClick={() => setIsWriting(true)}
             className="bg-emerald-600 hover:bg-emerald-700 text-white"
@@ -177,6 +208,36 @@ export function ReviewSection({ product }: ReviewSectionProps) {
           </Button>
         )}
       </div>
+
+      {/* Eligibility Messages — shown when user CANNOT write a review */}
+      {!authLoading && !eligibility.canReview && !isWriting && (
+        <div className="mb-8">
+          {!user ? (
+            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-3">
+              <LogIn className="w-4 h-4 shrink-0" />
+              <span>
+                <Link
+                  href="/login"
+                  className="text-emerald-600 hover:text-emerald-700 font-medium underline underline-offset-2"
+                >
+                  Sign in
+                </Link>{" "}
+                to write a review.
+              </span>
+            </div>
+          ) : !eligibility.hasPurchased ? (
+            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-3">
+              <ShoppingBag className="w-4 h-4 shrink-0" />
+              <span>Purchase this product to leave a review.</span>
+            </div>
+          ) : eligibility.hasReviewed ? (
+            <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 rounded-lg px-4 py-3">
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <span>You&apos;ve already reviewed this product.</span>
+            </div>
+          ) : null}
+        </div>
+      )}
 
       {/* Review Form */}
       {isWriting && (
@@ -201,7 +262,12 @@ export function ReviewSection({ product }: ReviewSectionProps) {
           </div>
         ) : null}
 
-        <div className={cn("space-y-6 transition-opacity", isFetching && "opacity-50 pointer-events-none")}>
+        <div
+          className={cn(
+            "space-y-6 transition-opacity",
+            isFetching && "opacity-50 pointer-events-none",
+          )}
+        >
           {reviews.map((review) => (
             <ReviewCard key={review._id} review={review} />
           ))}
@@ -209,8 +275,8 @@ export function ReviewSection({ product }: ReviewSectionProps) {
 
         {hasMore && !isFetching && (
           <div className="flex justify-center pt-4">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleLoadMore}
               disabled={isLoadingMore}
             >
