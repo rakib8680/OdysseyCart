@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db/mongoose";
 import Order from "@/lib/models/Order";
 import { requireAdmin } from "@/app/actions/users";
 import type { SerializedOrder } from "@/lib/types/order";
+import { escapeRegex } from "@/lib/utils";
 
 // ==========================================
 // SERIALIZATION HELPER
@@ -127,35 +128,101 @@ export async function getOrderDetails(
 }
 
 // ==========================================
-// GET ALL ORDERS (Admin Dashboard — for Phase 2)
+// GET FILTERED ORDERS (Admin Dashboard — paginated + searchable)
 // ==========================================
 
+const ADMIN_ORDERS_PER_PAGE = 10;
+
 /**
- * Fetches all non-pending orders in the system for admin management.
- * Sorted newest-first.
+ * Fetches paginated, searchable orders for admin management.
+ * Search filters across order ID, customer name, and email.
+ * Optional status filter for fulfillment pipeline views.
+ * Admin-only action.
  */
-export async function getAllOrders(adminUid: string): Promise<{
+export async function getFilteredOrders(
+  adminUid: string,
+  page: number = 1,
+  search: string = "",
+  status: string = "",
+): Promise<{
   success: boolean;
   orders: SerializedOrder[];
+  totalCount: number;
+  totalPages: number;
+  currentPage: number;
   error?: string;
 }> {
+  const empty = {
+    success: false,
+    orders: [],
+    totalCount: 0,
+    totalPages: 0,
+    currentPage: 1,
+  };
+
   try {
     await connectDB();
     await requireAdmin(adminUid);
 
-    const orders = await Order.find({
-      status: { $ne: "pending" },
-    })
-      .sort({ createdAt: -1 })
-      .lean();
+    const skip = (page - 1) * ADMIN_ORDERS_PER_PAGE;
+
+    // Build filter — always exclude pending (abandoned checkouts)
+    const filter: Record<string, any> = { status: { $ne: "pending" } };
+
+    // Status filter (overrides the $ne if a specific status is selected)
+    if (status) {
+      filter.status = status;
+    }
+
+    // Search filter — across order ID, customer name, and email
+    if (search.trim()) {
+      const escaped = escapeRegex(search);
+      filter.$or = [
+        { "shippingInfo.fullName": { $regex: escaped, $options: "i" } },
+        { "shippingInfo.email": { $regex: escaped, $options: "i" } },
+      ];
+
+      // Handle Order ID search (e.g., "#OD-1CE88C" or "1CE88C")
+      // Remove the #OD- prefix if the user typed it
+      const idSearch = search.replace(/^#OD-/i, "").trim();
+      const escapedId = escapeRegex(idSearch);
+
+      filter.$or = [
+        { "shippingInfo.fullName": { $regex: escaped, $options: "i" } },
+        { "shippingInfo.email": { $regex: escaped, $options: "i" } },
+        // MongoDB requires $expr to run regex against an ObjectId field
+        {
+          $expr: {
+            $regexMatch: {
+              input: { $toString: "$_id" },
+              regex: escapedId,
+              options: "i",
+            },
+          },
+        },
+      ];
+    }
+
+    // Execute query + count in parallel
+    const [orders, totalCount] = await Promise.all([
+      Order.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(ADMIN_ORDERS_PER_PAGE)
+        .lean(),
+      Order.countDocuments(filter),
+    ]);
 
     return {
       success: true,
       orders: orders.map(serializeOrder),
+      totalCount,
+      totalPages: Math.ceil(totalCount / ADMIN_ORDERS_PER_PAGE),
+      currentPage: page,
     };
   } catch (error: any) {
-    console.error("Error fetching all orders:", error);
-    return { success: false, orders: [], error: error.message };
+    console.error("getFilteredOrders error:", error);
+    return { ...empty, error: error.message };
   }
 }
 

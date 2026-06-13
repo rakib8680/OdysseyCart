@@ -7,7 +7,9 @@ import { OrderCard } from "@/components/orders/OrderCard";
 import { OrderDetailSheet } from "@/components/orders/OrderDetailSheet";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Package, Search } from "lucide-react";
-import { formatOrderId } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { cn, formatOrderId } from "@/lib/utils";
 
 // ==========================================
 // FILTER TAB CONFIG
@@ -118,13 +120,13 @@ export function OrderList({
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         {/* Search */}
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+          <Input
             type="text"
             placeholder="Search by ID, name, email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+            className="w-full pl-10 h-10"
           />
         </div>
 
@@ -133,17 +135,20 @@ export function OrderList({
           {FILTER_TABS.map((tab) => {
             const isActive = activeFilter === tab.status;
             return (
-              <button
+              <Button
                 key={tab.label}
+                variant="ghost"
+                size="sm"
                 onClick={() => setActiveFilter(tab.status)}
-                className={`px-3.5 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                className={cn(
+                  "rounded-lg text-xs font-semibold whitespace-nowrap",
                   isActive
-                    ? "bg-slate-900 text-white"
+                    ? "bg-slate-900 text-white hover:bg-slate-800 hover:text-white"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
+                )}
               >
                 {tab.label}
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -156,15 +161,17 @@ export function OrderList({
           <p className="text-sm font-medium text-slate-500">
             No orders match your filters.
           </p>
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => {
               setActiveFilter(null);
               setSearchQuery("");
             }}
-            className="mt-3 text-sm font-semibold text-emerald-600 hover:text-emerald-700 cursor-pointer"
+            className="mt-3 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
           >
             Clear filters
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="grid gap-4">
