@@ -8,7 +8,8 @@ import { AdminReview } from "@/lib/types/review";
 import { AdminReviewList } from "@/components/reviews/AdminReviewList";
 import { Pagination } from "@/components/items/Pagination";
 import { DeleteConfirmModal } from "@/components/DeleteConfirmModal";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AdminReviewTableSkeleton } from "@/components/skeletons";
+import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { toast } from "sonner";
 
@@ -39,7 +40,6 @@ export default function AdminReviewsPage() {
   // Reset to page 1 when search changes
   useEffect(() => {
     setPage(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch]);
 
   // Fetch reviews — runs on page, debounced search, or user change
@@ -67,6 +67,7 @@ export default function AdminReviewsPage() {
     fetchReviews();
   }, [fetchReviews]);
 
+  // Delete review handler
   const handleDeleteConfirm = async () => {
     if (!user || !reviewToDelete) return;
 
@@ -76,7 +77,7 @@ export default function AdminReviewsPage() {
 
       if (result.success) {
         toast.success("Review deleted successfully");
-        // Re-fetch current page (instead of optimistic remove, which could leave an empty page)
+        // Re-fetch current page
         await fetchReviews();
       } else {
         toast.error(result.error || "Failed to delete review");
@@ -108,19 +109,19 @@ export default function AdminReviewsPage() {
 
       {/* Search Input */}
       <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <input
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+        <Input
           type="text"
           placeholder="Search by product, user, or review title..."
           value={search}
           onChange={(e) => setSearch(e.target.value || null)}
-          className="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full pl-10 h-10"
         />
       </div>
 
       <div className="pt-4 relative min-h-[400px]">
         {loading ? (
-          <AdminReviewsSkeleton />
+          <AdminReviewTableSkeleton />
         ) : (
           <AdminReviewList
             reviews={reviews}
@@ -148,35 +149,3 @@ export default function AdminReviewsPage() {
   );
 }
 
-// ==========================================
-// TABLE SKELETON — matches AdminReviewList layout
-// ==========================================
-function AdminReviewsSkeleton() {
-  return (
-    <div className="border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 overflow-hidden">
-      {/* Header */}
-      <div className="bg-slate-50 dark:bg-slate-800/50 px-6 py-4 grid grid-cols-6 gap-4">
-        {["w-24", "w-20", "w-16", "w-32", "w-16", "w-12"].map((w, i) => (
-          <Skeleton key={i} className={`h-4 ${w}`} />
-        ))}
-      </div>
-      {/* Rows */}
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div
-          key={i}
-          className="px-6 py-4 grid grid-cols-6 gap-4 items-center border-t border-slate-100 dark:border-slate-800"
-        >
-          <Skeleton className="h-4 w-20" />
-          <Skeleton className="h-4 w-28" />
-          <Skeleton className="h-4 w-20" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-3 w-48" />
-          </div>
-          <Skeleton className="h-4 w-16" />
-          <Skeleton className="h-8 w-8 rounded-md ml-auto" />
-        </div>
-      ))}
-    </div>
-  );
-}

@@ -60,7 +60,7 @@ export function SearchBar({
           "h-10 px-4 gap-2",
           showFilters || activeFilterCount > 0
             ? "border-emerald-500 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800"
-            : "text-slate-700"
+            : "text-slate-700",
         )}
       >
         <SlidersHorizontal className="w-4 h-4" />
