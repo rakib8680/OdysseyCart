@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 import { StarRatingInput } from "./StarRatingInput";
 import { ReviewValidationSchema, ReviewInput } from "@/lib/validations/review";
 import { submitReview } from "@/app/actions/reviews";
@@ -123,6 +124,7 @@ export function ReviewForm({
             disabled={isSubmitting}
             className="bg-emerald-600 hover:bg-emerald-700 text-white"
           >
+            {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
             {isSubmitting ? "Submitting..." : "Submit Review"}
           </Button>
           {onCancel && (

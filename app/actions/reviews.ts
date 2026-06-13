@@ -302,25 +302,48 @@ export async function deleteReview(
 }
 
 // ==========================================
-// GET ALL REVIEWS — Admin Moderation
+// ==========================================
+// GET REVIEWS — Admin Moderation (paginated + searchable)
 // ==========================================
 
+const ADMIN_REVIEWS_PER_PAGE = 10;
+
 /**
- * Fetches all reviews across all products for admin moderation.
+ * Fetches paginated, searchable reviews for admin moderation.
  * Uses $lookup to include product title + slug.
+ * Search filters across product title, user name, and review title.
  * Admin-only action.
  */
-export async function getAllReviewsAdmin(adminUid: string): Promise<{
+export async function getAllReviewsAdmin(
+  adminUid: string,
+  page: number = 1,
+  search: string = "",
+): Promise<{
   success: boolean;
   reviews: AdminReview[];
+  totalCount: number;
+  totalPages: number;
+  currentPage: number;
   error?: string;
 }> {
+  const empty = {
+    success: false,
+    reviews: [],
+    totalCount: 0,
+    totalPages: 0,
+    currentPage: 1,
+  };
+
   try {
     await connectDB();
     await requireAdmin(adminUid);
 
-    const results = await Review.aggregate([
+    const skip = (page - 1) * ADMIN_REVIEWS_PER_PAGE;
+
+    // Build the aggregation pipeline
+    const pipeline: any[] = [
       { $sort: { createdAt: -1 } },
+      // Join product info
       {
         $lookup: {
           from: "products",
@@ -331,7 +354,33 @@ export async function getAllReviewsAdmin(adminUid: string): Promise<{
         },
       },
       { $unwind: { path: "$product", preserveNullAndEmptyArrays: true } },
-    ]);
+    ];
+
+    // If search query provided, filter after $lookup so we can search product title too
+    if (search.trim()) {
+      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      pipeline.push({
+        $match: {
+          $or: [
+            { "product.title": { $regex: escapedSearch, $options: "i" } },
+            { userName: { $regex: escapedSearch, $options: "i" } },
+            { title: { $regex: escapedSearch, $options: "i" } },
+          ],
+        },
+      });
+    }
+
+    // Use $facet to get both paginated results and total count in a single query
+    pipeline.push({
+      $facet: {
+        results: [{ $skip: skip }, { $limit: ADMIN_REVIEWS_PER_PAGE }],
+        count: [{ $count: "total" }],
+      },
+    });
+
+    const [facetResult] = await Review.aggregate(pipeline);
+    const results = facetResult.results || [];
+    const totalCount = facetResult.count[0]?.total || 0;
 
     const reviews: AdminReview[] = results.map((doc: any) => ({
       ...serializeReview(doc),
@@ -339,9 +388,16 @@ export async function getAllReviewsAdmin(adminUid: string): Promise<{
       productSlug: doc.product?.slug || "",
     }));
 
-    return { success: true, reviews };
+    return {
+      success: true,
+      reviews,
+      totalCount,
+      totalPages: Math.ceil(totalCount / ADMIN_REVIEWS_PER_PAGE),
+      currentPage: page,
+    };
   } catch (error: any) {
     console.error("getAllReviewsAdmin error:", error);
-    return { success: false, reviews: [], error: error.message };
+    return { ...empty, error: error.message };
   }
 }
+
