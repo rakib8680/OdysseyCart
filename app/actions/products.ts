@@ -158,19 +158,14 @@ export async function getFilteredProducts(
 
     // 2. Build MongoDB filter dynamically
     const filter: Record<string, any> = {};
-    const isTextSearch = search.length >= 3;
 
     if (search) {
-      if (isTextSearch) {
-        // Full-text search for 3+ character queries
-        filter.$text = { $search: search };
-      } else {
-        // Regex fallback for short queries (partial matching)
-        filter.$or = [
-          { title: { $regex: search, $options: "i" } },
-          { shortDescription: { $regex: search, $options: "i" } },
-        ];
-      }
+      // Escape regex special characters to prevent injection
+      const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      filter.$or = [
+        { title: { $regex: escaped, $options: "i" } },
+        { shortDescription: { $regex: escaped, $options: "i" } },
+      ];
     }
 
     if (category) {
@@ -184,21 +179,12 @@ export async function getFilteredProducts(
     }
 
     // 3. Determine sort order
-    // When actively searching with default sort, rank by text relevance
     const skip = (page - 1) * limit;
-    const useRelevanceSort = isTextSearch && sort === "newest";
-    const sortOrder = useRelevanceSort
-      ? { score: { $meta: "textScore" as const } }
-      : DB_SORT_MAP[sort] || DB_SORT_MAP.newest;
+    const sortOrder = DB_SORT_MAP[sort] || DB_SORT_MAP.newest;
 
-    // 4. Add text score to projection when sorting by relevance
-    const projection = useRelevanceSort
-      ? { ...LISTING_PROJECTION, score: { $meta: "textScore" as const } }
-      : LISTING_PROJECTION;
-
-    // 5. Execute query + count in parallel for performance
+    // 4. Execute query + count in parallel for performance
     const [products, totalCount] = await Promise.all([
-      Product.find(filter, projection)
+      Product.find(filter, LISTING_PROJECTION)
         .sort(sortOrder)
         .skip(skip)
         .limit(limit)
