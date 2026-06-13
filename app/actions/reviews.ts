@@ -8,6 +8,7 @@ import Order from "@/lib/models/Order";
 import { requireAdmin } from "@/app/actions/users";
 import { ReviewValidationSchema } from "@/lib/validations/review";
 import { revalidatePath } from "next/cache";
+import { escapeRegex } from "@/lib/utils";
 import { REVIEW_DB_SORT_MAP } from "@/lib/config/reviews";
 import type {
   Review as ReviewType,
@@ -358,7 +359,7 @@ export async function getAllReviewsAdmin(
 
     // If search query provided, filter after $lookup so we can search product title too
     if (search.trim()) {
-      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const escapedSearch = escapeRegex(search);
       pipeline.push({
         $match: {
           $or: [

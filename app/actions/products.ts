@@ -6,6 +6,7 @@ import User from "@/lib/models/User";
 import { revalidatePath } from "next/cache";
 import { ProductValidationSchema } from "@/lib/validations/product";
 import { SearchFiltersSchema } from "@/lib/validations/search";
+import { escapeRegex } from "@/lib/utils";
 import { PaginatedProducts } from "@/lib/types/product";
 
 import { DB_SORT_MAP } from "@/lib/config/products";
@@ -160,8 +161,7 @@ export async function getFilteredProducts(
     const filter: Record<string, any> = {};
 
     if (search) {
-      // Escape regex special characters to prevent injection
-      const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const escaped = escapeRegex(search);
       filter.$or = [
         { title: { $regex: escaped, $options: "i" } },
         { shortDescription: { $regex: escaped, $options: "i" } },

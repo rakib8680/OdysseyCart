@@ -8,3 +8,11 @@ export function cn(...inputs: ClassValue[]) {
 export function formatOrderId(id: string) {
   return `#OD-${id.slice(-6).toUpperCase()}`;
 }
+
+/**
+ * Escapes regex special characters in a string for safe use in MongoDB $regex queries.
+ * Prevents regex injection when using user-provided search input.
+ */
+export function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
