@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { TShippingForm, ShippingSchema } from "@/lib/validations/checkout";
 import { FormInput } from "@/components/form/FormInput";
 
@@ -34,6 +35,7 @@ export function ShippingForm({
     reset,
     formState: { errors },
   } = useForm<TShippingForm>({
+    resolver: zodResolver(ShippingSchema),
     defaultValues: defaultValues || {},
   });
 
@@ -45,14 +47,11 @@ export function ShippingForm({
   }, [defaultValues, reset]);
 
   const onSubmit = (data: TShippingForm) => {
-    // Validate with Zod before passing up
-    const result = ShippingSchema.safeParse(data);
-    if (result.success) {
-      onComplete(
-        result.data,
-        saveAddress && showSaveOption ? { label: addressLabel } : undefined,
-      );
-    }
+    // Data is already validated by zodResolver at this point
+    onComplete(
+      data,
+      saveAddress && showSaveOption ? { label: addressLabel } : undefined,
+    );
   };
 
   return (
@@ -63,7 +62,7 @@ export function ShippingForm({
         type="email"
         placeholder="you@example.com"
         error={errors.email?.message}
-        {...register("email", { required: "Email is required" })}
+        {...register("email")}
       />
 
       {/* Full Name */}
@@ -71,7 +70,7 @@ export function ShippingForm({
         label="Full Name"
         placeholder="John Doe"
         error={errors.fullName?.message}
-        {...register("fullName", { required: "Full name is required" })}
+        {...register("fullName")}
       />
 
       {/* Address */}
@@ -79,7 +78,7 @@ export function ShippingForm({
         label="Street Address"
         placeholder="123 Main Street, Apt 4B"
         error={errors.address?.message}
-        {...register("address", { required: "Address is required" })}
+        {...register("address")}
       />
 
       {/* City + State */}
@@ -88,13 +87,13 @@ export function ShippingForm({
           label="City"
           placeholder="New York"
           error={errors.city?.message}
-          {...register("city", { required: "City is required" })}
+          {...register("city")}
         />
         <FormInput
           label="State / Province"
           placeholder="NY"
           error={errors.state?.message}
-          {...register("state", { required: "State is required" })}
+          {...register("state")}
         />
       </div>
 
@@ -104,13 +103,13 @@ export function ShippingForm({
           label="ZIP / Postal Code"
           placeholder="10001"
           error={errors.zipCode?.message}
-          {...register("zipCode", { required: "ZIP code is required" })}
+          {...register("zipCode")}
         />
         <FormInput
           label="Country"
           placeholder="United States"
           error={errors.country?.message}
-          {...register("country", { required: "Country is required" })}
+          {...register("country")}
         />
       </div>
 
@@ -120,7 +119,7 @@ export function ShippingForm({
         type="tel"
         placeholder="+1 (555) 000-0000"
         error={errors.phone?.message}
-        {...register("phone", { required: "Phone number is required" })}
+        {...register("phone")}
       />
 
       {/* Save Address Toggle */}

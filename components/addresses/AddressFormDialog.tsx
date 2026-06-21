@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { TAddressForm, AddressSchema } from "@/lib/validations/checkout";
 import { FormInput } from "@/components/form/FormInput";
 import {
@@ -41,7 +42,7 @@ interface AddressFormDialogProps {
 /**
  * Centered dialog with address form fields.
  * Supports "Add" and "Edit" modes via defaultValues prop.
- * Reuses FormInput + AddressSchema for consistent validation.
+ * Reuses FormInput + zodResolver(FormSchema) for consistent validation.
  */
 export function AddressFormDialog({
   open,
@@ -51,9 +52,6 @@ export function AddressFormDialog({
   isSaving,
 }: AddressFormDialogProps) {
   const isEditing = !!defaultValues;
-  const [validationErrors, setValidationErrors] = useState<
-    Record<string, string>
-  >({});
 
   const {
     register,
@@ -61,6 +59,7 @@ export function AddressFormDialog({
     reset,
     formState: { errors },
   } = useForm<TFormData>({
+    resolver: zodResolver(FormSchema),
     defaultValues: defaultValues || { label: "Home" },
   });
 
@@ -68,34 +67,14 @@ export function AddressFormDialog({
   useEffect(() => {
     if (open) {
       reset(defaultValues || { label: "Home" });
-      setValidationErrors({});
     }
   }, [open, defaultValues, reset]);
 
   const onSubmit = (data: TFormData) => {
-    // Validate with Zod before passing up (consistent with ShippingForm pattern)
-    const result = FormSchema.safeParse(data);
-
-    if (result.success) {
-      const { label, ...addressData } = result.data;
-      setValidationErrors({});
-      onSave(addressData, label);
-    } else {
-      // Map Zod errors to field-level messages
-      const fieldErrors: Record<string, string> = {};
-      result.error.issues.forEach((issue) => {
-        const field = issue.path[0] as string;
-        if (!fieldErrors[field]) {
-          fieldErrors[field] = issue.message;
-        }
-      });
-      setValidationErrors(fieldErrors);
-    }
+    // Data is already validated by zodResolver at this point
+    const { label, ...addressData } = data;
+    onSave(addressData, label);
   };
-
-  // Helper: get error message for a field (react-hook-form OR zod)
-  const getError = (field: keyof TFormData) =>
-    errors[field]?.message || validationErrors[field];
 
   return (
     <Dialog open={open} onOpenChange={(v) => !isSaving && onOpenChange(v)}>
@@ -117,7 +96,7 @@ export function AddressFormDialog({
             label="Address Label"
             id="addr-label"
             placeholder="e.g. Home, Office, Mom's House"
-            error={getError("label")}
+            error={errors.label?.message}
             {...register("label")}
           />
 
@@ -126,7 +105,7 @@ export function AddressFormDialog({
             label="Full Name"
             id="addr-fullName"
             placeholder="John Doe"
-            error={getError("fullName")}
+            error={errors.fullName?.message}
             {...register("fullName")}
           />
 
@@ -135,7 +114,7 @@ export function AddressFormDialog({
             label="Street Address"
             id="addr-address"
             placeholder="123 Main Street, Apt 4B"
-            error={getError("address")}
+            error={errors.address?.message}
             {...register("address")}
           />
 
@@ -145,14 +124,14 @@ export function AddressFormDialog({
               label="City"
               id="addr-city"
               placeholder="New York"
-              error={getError("city")}
+              error={errors.city?.message}
               {...register("city")}
             />
             <FormInput
               label="State / Province"
               id="addr-state"
               placeholder="NY"
-              error={getError("state")}
+              error={errors.state?.message}
               {...register("state")}
             />
           </div>
@@ -163,14 +142,14 @@ export function AddressFormDialog({
               label="ZIP / Postal Code"
               id="addr-zipCode"
               placeholder="10001"
-              error={getError("zipCode")}
+              error={errors.zipCode?.message}
               {...register("zipCode")}
             />
             <FormInput
               label="Country"
               id="addr-country"
               placeholder="United States"
-              error={getError("country")}
+              error={errors.country?.message}
               {...register("country")}
             />
           </div>
@@ -181,7 +160,7 @@ export function AddressFormDialog({
             id="addr-phone"
             type="tel"
             placeholder="+1 (555) 000-0000"
-            error={getError("phone")}
+            error={errors.phone?.message}
             {...register("phone")}
           />
 

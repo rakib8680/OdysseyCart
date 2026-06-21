@@ -1,0 +1,159 @@
+# Search & Filter Architecture — OdysseyCart
+
+## The Golden Rule
+
+> **Server-side for admin (all data). Client-side for user (their data).**
+
+A single user will never have 100k orders. But an admin dashboard shows ALL orders, ALL products, ALL reviews across the entire platform. That's the dividing line.
+
+---
+
+## Current State vs Target State
+
+| Page | Current | Problem | Target |
+|---|---|---|---|
+| `/items` (Shop) | ✅ Server-side regex + pagination + `nuqs` | None — already great | ✅ Keep as-is |
+| `/admin/reviews` | ✅ Server-side aggregation + pagination + `nuqs` | None — already great | ✅ Keep as-is |
+| `/admin/orders` | ⚠️ Client-side — loads ALL orders in 1 request | Won't scale past ~500 orders | Upgrade to server-side |
+| `/admin/products` | ❌ No search, no filter, no pagination | Unusable at scale | Upgrade to server-side |
+| `/account/orders` | ✅ Client-side filter + search | Perfectly fine — user-scoped data | ✅ Keep as-is |
+
+---
+
+## What To Share (DRY) vs What To Keep Separate
+
+### ✅ SHARE These (Shared Infrastructure Layer)
+
+These are **generic utilities** with no business logic baked in — safe to centralize:
+
+| Layer | What | Status |
+|---|---|---|
+| **Hook** | `useDebounce` | ✅ Done — `hooks/useDebounce.ts` |
+| **Component** | `<Pagination>` | ✅ Done — `components/items/Pagination.tsx` |
+| **Component** | `<Input>` | ✅ Done — `components/ui/input.tsx` |
+| **Component** | `<Button>` | ✅ Done — `components/ui/button.tsx` |
+| **Utility** | `escapeRegex()` | ❌ Currently duplicated inline in 2 files. Extract to `lib/utils.ts` |
+| **Skeletons** | Per-page skeletons | ⚠️ Partially done. Admin Orders and Account Orders still have inline skeletons |
+
+### ❌ DO NOT Share These
+
+These are **domain-specific** — forcing them into a generic abstraction creates worse code:
+
+| Layer | Why Separate |
+|---|---|
+| **Server actions** (query logic) | Each collection has different fields, projections, lookups, sorts |
+| **Zod validation schemas** | Each search has different filter dimensions |
+| **Filter UI** (dropdowns, tabs) | Products have category + price range; orders have status tabs; reviews have none |
+| **Search fields config** | Products search title + description; orders search ID + name + email; reviews search title + userName + product title |
+
+> [!IMPORTANT]
+> **The pattern is shared, the implementation is not.** Every server-side search action follows the same *structure* (accept page/search/filters → build query → paginate → return `{ data, totalCount, totalPages, currentPage }`), but the actual query logic must be specific to each domain.
+
+---
+
+## Implementation Plan
+
+### Step 1: Extract `escapeRegex` utility (DRY fix)
+
+Currently duplicated in `products.ts` and `reviews.ts`:
+```typescript
+// Both files have this inline:
+const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+```
+
+Extract to `lib/utils.ts`:
+```typescript
+export function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+```
+
+### Step 2: Upgrade Admin Orders to Server-Side
+
+**Server action** (`actions/order.ts`):
+- Replace `getAllOrders` with `getFilteredOrders(adminUid, page, search, status?)`
+- Uses `$regex` for search (by order ID, customer name, email)
+- Uses `$match` for status filter
+- Returns `{ orders, totalCount, totalPages, currentPage }`
+
+**Admin page** (`admin/orders/page.tsx`):
+- Use `nuqs` for URL state (`?page=1&q=john&status=shipped`)
+- Use `useDebounce` for search input
+- Use `<Pagination>` component
+- Use `<Input>` component (not raw `<input>`)
+
+**Account page** (`account/orders/page.tsx`):
+- Keep client-side filtering as-is — user-scoped data is always small
+
+> [!NOTE]
+> `OrderList` is currently shared between admin and account pages. After upgrading admin to server-side, admin will no longer use `OrderList` for filtering — it will pass already-filtered data. But `OrderList`'s filter tabs + search can remain for the account page where client-side filtering is appropriate.
+
+### Step 3: Upgrade Admin Products to Server-Side
+
+**Server action** (`actions/products.ts`):
+- The `getFilteredProducts` action already exists and is fully functional
+- Admin products page should reuse it (or a variant with admin-specific projection)
+
+**Admin page** (`admin/products/page.tsx`):
+- Add search input + category filter + pagination
+- Same pattern as admin reviews: `nuqs` + `useDebounce` + `<Pagination>`
+
+### Step 4: Centralize Remaining Inline Skeletons
+
+Move these to `components/skeletons/`:
+- `OrderListSkeleton` + `OrderCardSkeleton` (duplicated in both admin and account orders pages!)
+- Register in barrel export
+
+### Step 5: Standardize Raw HTML Elements
+
+Replace remaining raw `<input>` and `<button>` elements with `<Input>` and `<Button>` from the design system:
+- `OrderList.tsx` line 122: raw `<input>`
+- `OrderList.tsx` line 136: raw `<button>` for filter tabs
+- `OrderList.tsx` line 159: raw `<button>` for clear filters
+
+---
+
+## Final Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   SHARED INFRASTRUCTURE                  │
+│                                                          │
+│  hooks/useDebounce.ts          lib/utils.ts (escapeRegex)│
+│  components/ui/Input           components/ui/Button       │
+│  components/items/Pagination   components/skeletons/*     │
+└─────────────┬───────────────────────────┬────────────────┘
+              │                           │
+    ┌─────────▼──────────┐    ┌──────────▼──────────┐
+    │   SERVER-SIDE       │    │   CLIENT-SIDE        │
+    │   (Admin Views)     │    │   (User Views)       │
+    │                     │    │                      │
+    │  /items             │    │  /account/orders     │
+    │  /admin/reviews  ✅  │    │    └─ OrderList      │
+    │  /admin/orders   🔧  │    │       (filter tabs   │
+    │  /admin/products 🔧  │    │        + search)     │
+    │                     │    │                      │
+    │  Pattern:           │    │  Pattern:            │
+    │  nuqs URL state     │    │  useState + useMemo  │
+    │  + useDebounce      │    │  (instant, no server)│
+    │  + server action    │    │                      │
+    │  + <Pagination>     │    │                      │
+    └─────────────────────┘    └──────────────────────┘
+```
+
+✅ = Already done  |  🔧 = Needs upgrade
+
+---
+
+## Priority Order
+
+| Priority | Task | Effort |
+|---|---|---|
+| **1** | Extract `escapeRegex` to `lib/utils.ts` | 5 min |
+| **2** | Upgrade Admin Orders (server-side pagination + search) | 30 min |
+| **3** | Upgrade Admin Products (add search + pagination to ManageTable) | 30 min |
+| **4** | Centralize Order skeletons (DRY fix) | 10 min |
+| **5** | Standardize raw HTML elements in OrderList | 10 min |
+
+> [!TIP]
+> Steps 1-3 are **functional improvements** (scalability). Steps 4-5 are **DRY/quality cleanup**. Do them in this order.
