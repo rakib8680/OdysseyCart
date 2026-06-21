@@ -228,7 +228,16 @@ export function CheckoutPage({ cartItems }: CheckoutPageProps) {
                     });
                   } else {
                     setSelectedAddressId(null);
-                    setShippingData({ email: user.email || "" } as any);
+                    setShippingData({
+                      email: user?.email || "",
+                      fullName: user?.displayName || "",
+                      address: "",
+                      city: "",
+                      state: "",
+                      zipCode: "",
+                      country: "",
+                      phone: "",
+                    });
                   }
                 }}
               />
