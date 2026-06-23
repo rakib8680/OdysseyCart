@@ -11,12 +11,14 @@ import { Pagination } from "@/components/items/Pagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import { toast } from "sonner";
 import { ManageTableSkeleton } from "@/components/skeletons";
+import { LastUpdated } from "@/components/ui/LastUpdated";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(Date.now());
 
   // URL-synced state via nuqs
   const [page, setPage] = useQueryState(
@@ -45,6 +47,7 @@ export default function AdminProductsPage() {
       setProducts(result.products || []);
       setTotalCount(result.totalCount || 0);
       setTotalPages(result.totalPages || 0);
+      setLastUpdated(Date.now());
     } catch (error) {
       toast.error("Failed to load products");
     } finally {
@@ -71,6 +74,7 @@ export default function AdminProductsPage() {
             Total Products:{" "}
             <span className="text-slate-900">{totalCount}</span>
           </div>
+          <LastUpdated timestamp={lastUpdated} onRefresh={fetchProducts} loading={loading} />
           <Link
             href="/admin/products/add"
             className="px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-colors shadow-sm flex items-center gap-2 whitespace-nowrap"

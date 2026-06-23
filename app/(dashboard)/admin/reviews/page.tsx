@@ -10,6 +10,7 @@ import { Pagination } from "@/components/items/Pagination";
 import { DeleteConfirmModal } from "@/components/DeleteConfirmModal";
 import { AdminReviewTableSkeleton } from "@/components/skeletons";
 import { Input } from "@/components/ui/input";
+import { LastUpdated } from "@/components/ui/LastUpdated";
 import { Search } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,6 +24,7 @@ export default function AdminReviewsPage() {
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [reviewToDelete, setReviewToDelete] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState(Date.now());
 
   // URL-synced state via nuqs
   const [page, setPage] = useQueryState(
@@ -53,6 +55,7 @@ export default function AdminReviewsPage() {
         setReviews(result.reviews);
         setTotalCount(result.totalCount);
         setTotalPages(result.totalPages);
+        setLastUpdated(Date.now());
       } else {
         toast.error(result.error || "Failed to load reviews");
       }
@@ -101,9 +104,12 @@ export default function AdminReviewsPage() {
             Monitor and moderate customer reviews across all products.
           </p>
         </div>
-        <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
-          Total Reviews:{" "}
-          <span className="text-slate-900 dark:text-white">{totalCount}</span>
+        <div className="flex items-center gap-4">
+          <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
+            Total Reviews:{" "}
+            <span className="text-slate-900 dark:text-white">{totalCount}</span>
+          </div>
+          <LastUpdated timestamp={lastUpdated} onRefresh={fetchReviews} loading={loading} />
         </div>
       </div>
 

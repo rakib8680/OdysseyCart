@@ -11,6 +11,7 @@ import { OrderDetailSheet } from "@/components/orders/OrderDetailSheet";
 import { Pagination } from "@/components/items/Pagination";
 import { OrderListSkeleton } from "@/components/skeletons";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { LastUpdated } from "@/components/ui/LastUpdated";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Package } from "lucide-react";
@@ -47,6 +48,7 @@ export default function AdminOrdersPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(Date.now());
 
   // Detail sheet state
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
@@ -90,6 +92,7 @@ export default function AdminOrdersPage() {
         setOrders(result.orders);
         setTotalCount(result.totalCount);
         setTotalPages(result.totalPages);
+        setLastUpdated(Date.now());
       } else {
         toast.error(result.error || "Failed to load orders");
       }
@@ -161,9 +164,12 @@ export default function AdminOrdersPage() {
             View all customer orders, search, filter, and track fulfillment.
           </p>
         </div>
-        <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
-          Total Orders:{" "}
-          <span className="text-slate-900 dark:text-white">{totalCount}</span>
+        <div className="flex items-center gap-4">
+          <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
+            Total Orders:{" "}
+            <span className="text-slate-900 dark:text-white">{totalCount}</span>
+          </div>
+          <LastUpdated timestamp={lastUpdated} onRefresh={fetchOrders} loading={loading} />
         </div>
       </div>
 
