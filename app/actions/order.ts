@@ -230,14 +230,26 @@ export async function getFilteredOrders(
 // UPDATE ORDER STATUS (Admin Dashboard — for Phase 2)
 // ==========================================
 
+/** Valid order status transitions for fulfillment pipeline */
+const STATUS_TRANSITIONS: Record<string, string[]> = {
+  paid: ["shipped"],
+  shipped: ["delivered"],
+};
+
 /**
  * Updates the status of an order. Admin-only action.
  * Valid transitions: paid → shipped → delivered.
+ *
+ * Uses optimistic concurrency control: the caller passes the `updatedAt`
+ * timestamp they loaded. If the record was modified by another admin
+ * in the meantime, the atomic update will match zero documents and the
+ * caller receives a conflict error instead of a silent overwrite.
  */
 export async function updateOrderStatus(
   orderId: string,
   newStatus: "shipped" | "delivered",
   adminUid: string,
+  expectedUpdatedAt: string,
 ): Promise<{
   success: boolean;
   order: SerializedOrder | null;
@@ -251,32 +263,53 @@ export async function updateOrderStatus(
       throw new Error("Order ID and new status are required.");
     }
 
-    const order = await Order.findById(orderId);
+    // Build the list of statuses that are allowed to transition into `newStatus`.
+    // e.g. "shipped" can only come from "paid".
+    const allowedCurrentStatuses = Object.entries(STATUS_TRANSITIONS)
+      .filter(([, next]) => next.includes(newStatus))
+      .map(([from]) => from);
 
-    if (!order) {
-      return { success: false, order: null, error: "Order not found." };
-    }
-
-    // Prevent invalid transitions
-    const validTransitions: Record<string, string[]> = {
-      paid: ["shipped"],
-      shipped: ["delivered"],
+    // Atomic update with concurrency guard:
+    // 1. _id must match
+    // 2. status must be a valid predecessor (enforces transition rules)
+    // 3. updatedAt must match what the client loaded (prevents silent overwrites)
+    const filter: Record<string, any> = {
+      _id: orderId,
+      status: { $in: allowedCurrentStatuses },
+      updatedAt: new Date(expectedUpdatedAt),
     };
+    const updated = await Order.findOneAndUpdate(
+      filter,
+      { status: newStatus },
+      { new: true, lean: true },
+    );
 
-    const allowedNext = validTransitions[order.status] || [];
-    if (!allowedNext.includes(newStatus)) {
+    if (!updated) {
+      // Determine why the update failed — for a helpful error message
+      const current = await Order.findById(orderId).select("status").lean();
+
+      if (!current) {
+        return { success: false, order: null, error: "Order not found." };
+      }
+
+      const currentStatus = (current as any).status;
+      const isValidTransition = (STATUS_TRANSITIONS[currentStatus] || []).includes(newStatus);
+
+      if (!isValidTransition) {
+        return {
+          success: false,
+          order: null,
+          error: `Cannot change status from "${currentStatus}" to "${newStatus}".`,
+        };
+      }
+
+      // Status is valid but updatedAt didn't match — another admin changed it
       return {
         success: false,
         order: null,
-        error: `Cannot change status from "${order.status}" to "${newStatus}".`,
+        error: "This order was modified by another admin. Please refresh to see the latest changes.",
       };
     }
-
-    order.status = newStatus;
-    await order.save();
-
-    // Re-fetch as lean for serialization
-    const updated = await Order.findById(orderId).lean();
 
     return {
       success: true,

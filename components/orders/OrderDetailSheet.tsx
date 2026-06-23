@@ -54,6 +54,7 @@ interface OrderDetailSheetProps {
   onUpdateStatus?: (
     orderId: string,
     nextStatus: "shipped" | "delivered",
+    expectedUpdatedAt: string,
   ) => Promise<void>;
   isUpdatingStatus?: boolean;
 }
@@ -278,7 +279,7 @@ export function OrderDetailSheet({
                   {order.status === "paid" && (
                     <button
                       disabled={isUpdatingStatus}
-                      onClick={() => onUpdateStatus(order._id, "shipped")}
+                      onClick={() => onUpdateStatus(order._id, "shipped", order.updatedAt)}
                       className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg py-2 text-xs font-semibold disabled:opacity-50 transition-colors"
                     >
                       {isUpdatingStatus && (
@@ -290,7 +291,7 @@ export function OrderDetailSheet({
                   {order.status === "shipped" && (
                     <button
                       disabled={isUpdatingStatus}
-                      onClick={() => onUpdateStatus(order._id, "delivered")}
+                      onClick={() => onUpdateStatus(order._id, "delivered", order.updatedAt)}
                       className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2 text-xs font-semibold disabled:opacity-50 transition-colors"
                     >
                       {isUpdatingStatus && (

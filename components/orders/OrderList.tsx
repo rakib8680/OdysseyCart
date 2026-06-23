@@ -38,6 +38,7 @@ interface OrderListProps {
   onUpdateStatus?: (
     orderId: string,
     nextStatus: "shipped" | "delivered",
+    expectedUpdatedAt: string,
   ) => Promise<void>;
   isUpdatingStatus?: boolean;
 }

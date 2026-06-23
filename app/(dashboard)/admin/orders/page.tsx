@@ -108,12 +108,13 @@ export default function AdminOrdersPage() {
   const handleUpdateStatus = async (
     orderId: string,
     nextStatus: "shipped" | "delivered",
+    expectedUpdatedAt: string,
   ) => {
     if (!user) return;
     setIsUpdatingStatus(true);
 
     try {
-      const result = await updateOrderStatus(orderId, nextStatus, user.uid);
+      const result = await updateOrderStatus(orderId, nextStatus, user.uid, expectedUpdatedAt);
 
       if (result.success && result.order) {
         toast.success(`Order marked as ${nextStatus}!`);
