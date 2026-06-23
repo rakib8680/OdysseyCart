@@ -118,10 +118,12 @@ export default function AdminOrdersPage() {
 
       if (result.success && result.order) {
         toast.success(`Order marked as ${nextStatus}!`);
-        // Update local state to reflect the change immediately
+        // Update local state immediately for snappy UI feedback
         setOrders((prev) =>
           prev.map((o) => (o._id === orderId ? result.order! : o)),
         );
+        // Re-fetch full list to sync counts, pagination, and other admins' changes
+        await fetchOrders();
       } else {
         toast.error(result.error || "Failed to update status");
       }
