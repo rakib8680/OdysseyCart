@@ -98,5 +98,8 @@ export function useAnalytics() {
     fetchPeriod(periodRef.current, { force: true });
   }, [fetchPeriod]);
 
-  return { data: activeData, loading, period, setPeriod, refresh };
+  // Expose the cache timestamp so consumers can use the shared <LastUpdated /> component
+  const lastUpdated = cache.current[period]?.fetchedAt ?? Date.now();
+
+  return { data: activeData, loading, period, setPeriod, refresh, lastUpdated };
 }

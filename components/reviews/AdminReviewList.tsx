@@ -60,7 +60,7 @@ export function AdminReviewList({
               </TableCell>
               <TableCell className="px-6 py-4 max-w-[200px]">
                 <Link
-                  href={`/items/${review.productSlug}`}
+                  href={`/items/${review.productId}`}
                   className="flex items-center gap-1.5 text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 font-medium truncate"
                   target="_blank"
                 >

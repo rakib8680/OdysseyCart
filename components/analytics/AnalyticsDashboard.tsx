@@ -6,7 +6,7 @@ import { RevenueChart } from "@/components/analytics/RevenueChart";
 import { OrderVolumeChart } from "@/components/analytics/OrderVolumeChart";
 import { TopProductsChart } from "@/components/analytics/TopProductsChart";
 import { CustomerMetricsCard } from "@/components/analytics/CustomerMetricsCard";
-import { RefreshCw } from "lucide-react";
+import { LastUpdated } from "@/components/ui/LastUpdated";
 
 /**
  * Analytics dashboard orchestrator — a thin presentation layer that:
@@ -17,25 +17,16 @@ import { RefreshCw } from "lucide-react";
  * lives in the useAnalytics hook — this component is purely presentational.
  */
 export function AnalyticsDashboard() {
-  const { data, loading, period, setPeriod, refresh } = useAnalytics();
+  const { data, loading, period, setPeriod, refresh, lastUpdated } = useAnalytics();
 
   return (
     <div className="space-y-5">
       {/* Section Header + Period Selector + Refresh */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-slate-900">Analytics</h2>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <LastUpdated timestamp={lastUpdated} onRefresh={refresh} loading={loading} />
           <PeriodSelector value={period} onChange={setPeriod} />
-          <button
-            onClick={refresh}
-            disabled={loading}
-            className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Refresh analytics data"
-          >
-            <RefreshCw
-              className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
-            />
-          </button>
         </div>
       </div>
 
