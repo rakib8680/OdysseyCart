@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { HeartButton } from "@/components/wishlist/HeartButton";
 import { StarRating } from "@/components/reviews/StarRating";
 import {
   Card,
@@ -15,9 +16,10 @@ import { Product } from "@/lib/types/product";
 
 interface ProductCardProps {
   product: Product;
+  wishlistIds?: string[];
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, wishlistIds = [] }: ProductCardProps) {
   const imageUrl =
     product.images && product.images.length > 0
       ? product.images[0]
@@ -36,6 +38,12 @@ export default function ProductCard({ product }: ProductCardProps) {
             -{product.discount}%
           </div>
         )}
+        <div className="absolute top-3 right-3 z-10">
+          <HeartButton
+            productId={product._id}
+            initialWishlisted={wishlistIds.includes(product._id)}
+          />
+        </div>
         <img
           src={imageUrl}
           alt={product.title}

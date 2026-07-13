@@ -8,6 +8,7 @@ import KeyInformation from "@/components/product-details/KeyInformation";
 import ProductSpecs from "@/components/product-details/ProductSpecs";
 import RelatedProducts from "@/components/product-details/RelatedProducts";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { HeartButton } from "@/components/wishlist/HeartButton";
 
 export default async function ItemDetailsPage({
   params,
@@ -54,10 +55,17 @@ export default async function ItemDetailsPage({
           <KeyInformation product={product} />
           <ProductSpecs specs={product.specs || {}} />
 
-          <AddToCartButton
-            product={product}
-            className="w-full rounded-xl text-md h-14 mt-8 shadow-lg hover:shadow-emerald-600/20"
-          />
+          <div className="flex items-center gap-3 mt-8">
+            <AddToCartButton
+              product={product}
+              className="flex-1 rounded-xl text-md h-14 shadow-lg hover:shadow-emerald-600/20"
+            />
+            <HeartButton
+              productId={product._id}
+              initialWishlisted={false}
+              size="md"
+            />
+          </div>
         </div>
       </div>
 

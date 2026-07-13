@@ -5,9 +5,10 @@ import Link from "next/link";
 interface ProductGridProps {
   products: Product[];
   totalCount: number;
+  wishlistIds?: string[];
 }
 
-export function ProductGrid({ products, totalCount }: ProductGridProps) {
+export function ProductGrid({ products, totalCount, wishlistIds = [] }: ProductGridProps) {
   return (
     <>
       {/* Results count */}
@@ -36,7 +37,7 @@ export function ProductGrid({ products, totalCount }: ProductGridProps) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product) => (
-            <ProductCard key={product._id} product={product} />
+            <ProductCard key={product._id} product={product} wishlistIds={wishlistIds} />
           ))}
         </div>
       )}
