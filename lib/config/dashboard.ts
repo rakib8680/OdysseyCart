@@ -2,6 +2,7 @@ import {
   LayoutDashboard,
   Package,
   MapPin,
+  Heart,
   BarChart3,
   ShoppingBag,
   Star,
@@ -23,6 +24,7 @@ export interface MenuItem {
 export const ACCOUNT_MENU: MenuItem[] = [
   { label: "Overview", href: "/account", icon: LayoutDashboard },
   { label: "My Orders", href: "/account/orders", icon: Package },
+  { label: "Wishlist", href: "/account/wishlist", icon: Heart },
   { label: "Addresses", href: "/account/addresses", icon: MapPin },
 ];
 
@@ -46,6 +48,7 @@ export const SEGMENT_LABELS: Record<string, string> = {
   orders: "Orders",
   products: "Products",
   reviews: "Reviews",
+  wishlist: "Wishlist",
   addresses: "Addresses",
   add: "Add New",
   edit: "Edit",
