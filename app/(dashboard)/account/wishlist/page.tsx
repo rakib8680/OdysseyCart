@@ -6,7 +6,7 @@ import { useCart } from "@/contexts/CartContext";
 import { getWishlist, removeFromWishlist } from "@/app/actions/wishlist";
 import type { WishlistItem } from "@/lib/types/wishlist";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Spinner } from "@/components/ui/Spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Heart, ShoppingCart, Trash2, ImageOff } from "lucide-react";
@@ -76,24 +76,19 @@ export default function AccountWishlistPage() {
     setActionLoadingId(null);
   };
 
-  const getDiscountedPrice = (price: number, discount: number) =>
-    discount > 0 ? price * (1 - discount / 100) : price;
-
   return (
     <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-bold text-slate-900">My Wishlist</h1>
         <p className="text-sm text-slate-500 mt-1">
-          {items.length > 0
+          {!loading && items.length > 0
             ? `${items.length} saved item${items.length !== 1 ? "s" : ""}`
             : "Items you love, saved for later"}
         </p>
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-16">
-          <Spinner className="w-8 h-8 text-emerald-500" />
-        </div>
+        <WishlistSkeleton />
       ) : items.length === 0 ? (
         <EmptyState
           icon={Heart}
@@ -103,99 +98,153 @@ export default function AccountWishlistPage() {
           actionHref="/items"
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((item) => {
-            const imageUrl = item.images?.[0];
-            const isOutOfStock = item.stockQuantity <= 0;
-            const isLoading = actionLoadingId === item._id;
-            const discountedPrice = getDiscountedPrice(item.price, item.discount);
-
-            return (
-              <div
-                key={item._id}
-                className="group bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col hover:shadow-md transition-shadow"
-              >
-                {/* Image */}
-                <Link
-                  href={`/items/${item._id}`}
-                  className="block w-full aspect-[4/3] bg-slate-50 overflow-hidden relative"
-                >
-                  {imageUrl ? (
-                    <img
-                      src={imageUrl}
-                      alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <ImageOff className="w-8 h-8 text-slate-300" />
-                    </div>
-                  )}
-                  {item.discount > 0 && (
-                    <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">
-                      -{item.discount}%
-                    </div>
-                  )}
-                  {isOutOfStock && (
-                    <div className="absolute inset-0 bg-slate-900/40 flex items-center justify-center">
-                      <span className="bg-white text-slate-900 text-xs font-bold px-3 py-1.5 rounded-full">
-                        Out of Stock
-                      </span>
-                    </div>
-                  )}
-                </Link>
-
-                {/* Content */}
-                <div className="p-4 flex flex-col flex-grow">
-                  <Link
-                    href={`/items/${item._id}`}
-                    className="font-semibold text-slate-900 hover:text-emerald-600 transition-colors line-clamp-1 mb-2"
-                  >
-                    {item.title}
-                  </Link>
-
-                  <div className="flex items-baseline gap-2 mb-4">
-                    <span className="font-bold text-lg text-slate-900">
-                      ${discountedPrice.toFixed(2)}
-                    </span>
-                    {item.discount > 0 && (
-                      <span className="text-sm text-slate-400 line-through">
-                        ${item.price.toFixed(2)}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex gap-2 mt-auto">
-                    <Button
-                      onClick={() => handleMoveToCart(item)}
-                      disabled={isLoading || isOutOfStock}
-                      className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white h-9 text-sm"
-                    >
-                      {isLoading ? (
-                        <Spinner className="w-4 h-4" />
-                      ) : (
-                        <>
-                          <ShoppingCart className="w-4 h-4 mr-1.5" />
-                          Move to Cart
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => handleRemove(item._id)}
-                      disabled={isLoading}
-                      className="h-9 px-3 text-slate-500 hover:text-red-500 hover:border-red-200"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        <div className="space-y-3">
+          {items.map((item) => (
+            <WishlistRow
+              key={item._id}
+              item={item}
+              isLoading={actionLoadingId === item._id}
+              onRemove={handleRemove}
+              onMoveToCart={handleMoveToCart}
+            />
+          ))}
         </div>
       )}
+    </div>
+  );
+}
+
+// ==========================================
+// WISHLIST ROW (matches OrderCard style)
+// ==========================================
+
+interface WishlistRowProps {
+  item: WishlistItem;
+  isLoading: boolean;
+  onRemove: (productId: string) => void;
+  onMoveToCart: (item: WishlistItem) => void;
+}
+
+function WishlistRow({ item, isLoading, onRemove, onMoveToCart }: WishlistRowProps) {
+  const [imgError, setImgError] = useState(false);
+  const imageUrl = item.images?.[0];
+  const isOutOfStock = item.stockQuantity <= 0;
+  const hasDiscount = item.discount > 0;
+  const discountedPrice = hasDiscount
+    ? item.price * (1 - item.discount / 100)
+    : item.price;
+
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-xs transition-all p-3.5 sm:px-4 sm:py-3 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+      {/* Image + Product Info */}
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+        <Link
+          href={`/items/${item._id}`}
+          className="w-14 h-14 rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center border border-slate-200/60 shadow-xs flex-shrink-0"
+        >
+          {imageUrl && !imgError ? (
+            <img
+              src={imageUrl}
+              alt={item.title}
+              className="w-full h-full object-cover"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <ImageOff className="w-5 h-5 text-slate-300" />
+          )}
+        </Link>
+
+        <div className="min-w-0 flex-1">
+          <Link
+            href={`/items/${item._id}`}
+            className="text-sm font-semibold text-slate-900 hover:text-emerald-600 transition-colors line-clamp-1"
+          >
+            {item.title}
+          </Link>
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className="text-sm font-bold text-slate-900">
+              ${discountedPrice.toFixed(2)}
+            </span>
+            {hasDiscount && (
+              <span className="text-xs text-slate-400 line-through">
+                ${item.price.toFixed(2)}
+              </span>
+            )}
+            {hasDiscount && (
+              <span className="text-[10px] font-bold text-red-500 bg-red-50 px-1.5 py-0.5 rounded">
+                -{item.discount}%
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Stock Status */}
+      <div className="hidden sm:flex items-center min-w-[100px]">
+        {isOutOfStock ? (
+          <span className="text-xs font-semibold text-red-500 bg-red-50 border border-red-100 px-2.5 py-1 rounded-full">
+            Out of Stock
+          </span>
+        ) : (
+          <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full">
+            In Stock
+          </span>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-2 border-t border-slate-100 pt-3 sm:border-t-0 sm:pt-0">
+        <Button
+          onClick={() => onMoveToCart(item)}
+          disabled={isLoading || isOutOfStock}
+          size="sm"
+          className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold h-8 px-3 gap-1.5"
+        >
+          <ShoppingCart className="w-3.5 h-3.5" />
+          Move to Cart
+        </Button>
+        <button
+          onClick={() => onRemove(item._id)}
+          disabled={isLoading}
+          className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+          title="Remove from wishlist"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// LOADING SKELETON
+// ==========================================
+
+function WishlistRowSkeleton() {
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 px-4 py-3 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+      <div className="flex items-center gap-3 flex-1">
+        <Skeleton className="w-14 h-14 rounded-lg flex-shrink-0" />
+        <div className="flex-1">
+          <Skeleton className="h-4 w-40 mb-1.5" />
+          <Skeleton className="h-3.5 w-24" />
+        </div>
+      </div>
+      <Skeleton className="h-6 w-20 rounded-full hidden sm:block" />
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-8 w-28 rounded-md" />
+        <Skeleton className="h-7 w-7 rounded-md" />
+      </div>
+    </div>
+  );
+}
+
+function WishlistSkeleton() {
+  return (
+    <div className="space-y-3">
+      <WishlistRowSkeleton />
+      <WishlistRowSkeleton />
+      <WishlistRowSkeleton />
     </div>
   );
 }
