@@ -38,7 +38,11 @@ export function HeartButton({
     startTransition(async () => {
       const result = await toggleWishlistItem(user.uid, productId);
 
-      if (!result.success) {
+      if (result.success) {
+        toast.success(
+          result.wishlisted ? "Added to wishlist" : "Removed from wishlist",
+        );
+      } else {
         // Revert on failure
         setWishlisted(previousState);
         toast.error(result.error || "Something went wrong");
