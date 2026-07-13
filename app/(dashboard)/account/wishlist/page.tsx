@@ -6,7 +6,7 @@ import { useCart } from "@/contexts/CartContext";
 import { getWishlist, removeFromWishlist } from "@/app/actions/wishlist";
 import type { WishlistItem } from "@/lib/types/wishlist";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Skeleton } from "@/components/ui/skeleton";
+import { WishlistSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Heart, ShoppingCart, Trash2, ImageOff } from "lucide-react";
@@ -212,39 +212,6 @@ function WishlistRow({ item, isLoading, onRemove, onMoveToCart }: WishlistRowPro
           <Trash2 className="w-3.5 h-3.5" />
         </button>
       </div>
-    </div>
-  );
-}
-
-// ==========================================
-// LOADING SKELETON
-// ==========================================
-
-function WishlistRowSkeleton() {
-  return (
-    <div className="bg-white rounded-xl border border-slate-200 px-4 py-3 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-      <div className="flex items-center gap-3 flex-1">
-        <Skeleton className="w-14 h-14 rounded-lg flex-shrink-0" />
-        <div className="flex-1">
-          <Skeleton className="h-4 w-40 mb-1.5" />
-          <Skeleton className="h-3.5 w-24" />
-        </div>
-      </div>
-      <Skeleton className="h-6 w-20 rounded-full hidden sm:block" />
-      <div className="flex items-center gap-2">
-        <Skeleton className="h-8 w-28 rounded-md" />
-        <Skeleton className="h-7 w-7 rounded-md" />
-      </div>
-    </div>
-  );
-}
-
-function WishlistSkeleton() {
-  return (
-    <div className="space-y-3">
-      <WishlistRowSkeleton />
-      <WishlistRowSkeleton />
-      <WishlistRowSkeleton />
     </div>
   );
 }

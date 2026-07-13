@@ -3,7 +3,6 @@
 import { connectDB, toObjectId } from "@/lib/db/mongoose";
 import Wishlist from "@/lib/models/Wishlist";
 import Product from "@/lib/models/Product";
-import { addToCart } from "@/app/actions/cart";
 import { WishlistActionSchema } from "@/lib/validations/wishlist";
 import { UserIdSchema } from "@/lib/validations/cart";
 import type { WishlistItem } from "@/lib/types/wishlist";
@@ -164,42 +163,6 @@ export async function removeFromWishlist(
     return { success: true };
   } catch (error: any) {
     console.error("removeFromWishlist error:", error);
-    return { success: false, error: error.message };
-  }
-}
-
-// ==========================================
-// MOVE TO CART
-// ==========================================
-
-/**
- * Removes from wishlist + adds to cart in one action.
- * Delegates stock validation to the existing addToCart action.
- */
-export async function moveToCart(
-  userId: string,
-  productId: string,
-): Promise<{ success: boolean; error?: string }> {
-  try {
-    const { userId: validUserId, productId: validProductId } =
-      WishlistActionSchema.parse({ userId, productId });
-
-    // addToCart handles connectDB, stock validation, and cart upsert
-    const cartResult = await addToCart(validUserId, validProductId, 1);
-
-    if (!cartResult.success) {
-      return { success: false, error: cartResult.error };
-    }
-
-    // Only remove from wishlist after cart addition succeeds
-    await Wishlist.updateOne(
-      { userId: validUserId },
-      { $pull: { products: toObjectId(validProductId) } },
-    );
-
-    return { success: true };
-  } catch (error: any) {
-    console.error("moveToCart error:", error);
     return { success: false, error: error.message };
   }
 }
