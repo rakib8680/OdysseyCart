@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,7 +9,7 @@ import {
   type TDisplayNameForm,
 } from "@/lib/validations/profile";
 import { UserAvatar } from "@/components/ui/UserAvatar";
-import { UploadButton } from "@/lib/utils/uploadthing";
+import { useUploadThing } from "@/hooks/useUploadThing";
 import { FormInput } from "@/components/form/FormInput";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/Spinner";
@@ -21,7 +21,15 @@ import { Camera } from "lucide-react";
 // ==========================================
 export function ProfileSection() {
   const { user, dbUser, updateName, updateAvatar } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+
+  const { startUpload } = useUploadThing("avatarUploader", {
+    onUploadError: (error) => {
+      setIsUploading(false);
+      toast.error(error.message || "Upload failed.");
+    },
+  });
 
   const {
     register,
@@ -32,6 +40,29 @@ export function ProfileSection() {
     defaultValues: { name: user?.displayName || dbUser?.name || "" },
   });
 
+  // Avatar upload via hidden file input
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const res = await startUpload([file]);
+
+    if (res?.[0]) {
+      const result = await updateAvatar(res[0].ufsUrl);
+      if (result.success) {
+        toast.success("Avatar updated!");
+      } else {
+        toast.error(result.error || "Failed to save avatar.");
+      }
+    }
+
+    setIsUploading(false);
+    // Reset input so re-selecting the same file triggers onChange
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  // Update name
   const onSubmit = async (data: TDisplayNameForm) => {
     const result = await updateName(data.name);
     if (result.success) {
@@ -46,8 +77,13 @@ export function ProfileSection() {
       <h2 className="text-sm font-semibold text-slate-900 mb-5">Profile</h2>
 
       <div className="flex flex-col sm:flex-row items-start gap-6">
-        {/* Avatar with upload */}
-        <div className="relative group flex-shrink-0">
+        {/* Avatar with click-to-upload */}
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
+          className="relative group flex-shrink-0 cursor-pointer disabled:cursor-wait"
+        >
           <UserAvatar
             photoURL={dbUser?.avatar || user?.photoURL}
             displayName={user?.displayName}
@@ -55,8 +91,8 @@ export function ProfileSection() {
             size="lg"
           />
 
-          {/* Upload overlay */}
-          <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+          {/* Hover overlay */}
+          <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             {isUploading ? (
               <Spinner className="w-5 h-5 text-white" />
             ) : (
@@ -64,29 +100,15 @@ export function ProfileSection() {
             )}
           </div>
 
-          {/* Invisible UploadButton overlay */}
-          <div className="absolute inset-0 rounded-full overflow-hidden opacity-0">
-            <UploadButton
-              endpoint="avatarUploader"
-              onUploadBegin={() => setIsUploading(true)}
-              onClientUploadComplete={async (res) => {
-                setIsUploading(false);
-                if (res?.[0]) {
-                  const result = await updateAvatar(res[0].ufsUrl);
-                  if (result.success) {
-                    toast.success("Avatar updated!");
-                  } else {
-                    toast.error(result.error || "Failed to save avatar.");
-                  }
-                }
-              }}
-              onUploadError={(error) => {
-                setIsUploading(false);
-                toast.error(error.message || "Upload failed.");
-              }}
-            />
-          </div>
-        </div>
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
+            className="hidden"
+          />
+        </button>
 
         {/* Name form */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex-1 w-full">
@@ -118,7 +140,7 @@ export function ProfileSection() {
       </div>
 
       <p className="text-xs text-slate-400 mt-4">
-        Hover over your avatar to upload a new photo. Max 4MB, image files only.
+        Click your avatar to upload a new photo. Max 4MB, image files only.
       </p>
     </div>
   );
