@@ -13,6 +13,7 @@ import { useUploadThing } from "@/hooks/useUploadThing";
 import { FormInput } from "@/components/form/FormInput";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/Spinner";
+import { CircularProgress } from "@/components/ui/CircularProgress";
 import { toast } from "sonner";
 import { Camera } from "lucide-react";
 
@@ -23,10 +24,15 @@ export function ProfileSection() {
   const { user, dbUser, updateName, updateAvatar } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const { startUpload } = useUploadThing("avatarUploader", {
+    onUploadProgress: (p) => {
+      setUploadProgress(p);
+    },
     onUploadError: (error) => {
       setIsUploading(false);
+      setUploadProgress(0);
       toast.error(error.message || "Upload failed.");
     },
   });
@@ -46,6 +52,7 @@ export function ProfileSection() {
     if (!file) return;
 
     setIsUploading(true);
+    setUploadProgress(0);
     const res = await startUpload([file]);
 
     if (res?.[0]) {
@@ -58,6 +65,7 @@ export function ProfileSection() {
     }
 
     setIsUploading(false);
+    setUploadProgress(0);
     // Reset input so re-selecting the same file triggers onChange
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
@@ -82,7 +90,7 @@ export function ProfileSection() {
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
-          className="relative group flex-shrink-0 cursor-pointer disabled:cursor-wait"
+          className="relative group flex-shrink-0 cursor-pointer disabled:cursor-wait rounded-full overflow-hidden"
         >
           <UserAvatar
             photoURL={dbUser?.avatar || user?.photoURL}
@@ -91,10 +99,27 @@ export function ProfileSection() {
             size="lg"
           />
 
-          {/* Hover overlay */}
-          <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          {/* Overlay (always show when uploading, or on hover) */}
+          <div
+            className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
+              isUploading
+                ? "bg-black/60 opacity-100"
+                : "bg-black/40 opacity-0 group-hover:opacity-100"
+            }`}
+          >
             {isUploading ? (
-              <Spinner className="w-5 h-5 text-white" />
+              <div className="relative flex items-center justify-center w-full h-full">
+                <CircularProgress
+                  progress={uploadProgress}
+                  size={56}
+                  strokeWidth={3}
+                  trackClassName="stroke-white/10"
+                  indicatorClassName="stroke-emerald-500 drop-shadow-sm"
+                />
+                <span className="absolute text-emerald-500 text-xs font-bold tracking-wide drop-shadow-md">
+                  {uploadProgress}%
+                </span>
+              </div>
             ) : (
               <Camera className="w-5 h-5 text-white" />
             )}
