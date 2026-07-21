@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCountdown } from "@/hooks/useCountdown";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/lib/firebase/config";
 import { Button } from "@/components/ui/button";
@@ -15,20 +16,21 @@ import { Lock, ExternalLink } from "lucide-react";
 export function SecuritySection() {
   const { user } = useAuth();
   const [isSending, setIsSending] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
+  const { countdown, startCountdown } = useCountdown(
+    "password_reset_timer",
+    30,
+  );
 
   // Detect auth provider — Google users don't have a Firebase password
-  const isGoogleUser =
-    user?.providerData?.[0]?.providerId === "google.com";
+  const isGoogleUser = user?.providerData?.[0]?.providerId === "google.com";
 
   const handlePasswordReset = async () => {
     if (!user?.email) return;
 
     setIsSending(true);
-    setEmailSent(false);
     try {
       await sendPasswordResetEmail(auth, user.email);
-      setEmailSent(true);
+      startCountdown();
       toast.success("Password reset email sent! Check your inbox.");
     } catch (error: any) {
       toast.error(error.message || "Failed to send reset email.");
@@ -69,7 +71,7 @@ export function SecuritySection() {
           </p>
           <Button
             onClick={handlePasswordReset}
-            disabled={isSending || emailSent}
+            disabled={isSending || countdown > 0}
             variant="outline"
             size="sm"
             className="text-xs font-semibold h-9 px-4 gap-1.5"
@@ -79,16 +81,17 @@ export function SecuritySection() {
                 <Spinner className="w-3.5 h-3.5" />
                 Sending...
               </>
-            ) : emailSent ? (
-              "Email Sent"
+            ) : countdown > 0 ? (
+              `Resend in ${countdown}s`
             ) : (
               "Send Reset Email"
             )}
           </Button>
 
-          {emailSent && (
+          {countdown > 0 && (
             <p className="text-xs text-amber-600 mt-2 font-medium">
-              If you don't see it within a few minutes, please check your spam or junk folder.
+              If you don't see it within a few minutes, please check your spam
+              or junk folder.
             </p>
           )}
         </div>
