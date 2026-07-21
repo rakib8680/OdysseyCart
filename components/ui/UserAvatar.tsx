@@ -7,13 +7,13 @@ interface UserAvatarProps {
   photoURL?: string | null;
   displayName?: string | null;
   email?: string | null;
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "lg";
   className?: string;
 }
 
 /**
  * Reusable user avatar — shows profile photo or initials fallback.
- * Used in Navbar, DashboardSidebar, and Account Overview.
+ * Used in Navbar, DashboardSidebar, Account Overview, and Profile Settings.
  */
 export function UserAvatar({
   photoURL,
@@ -25,6 +25,7 @@ export function UserAvatar({
   const sizeClasses = {
     sm: "w-8 h-8 text-xs",
     md: "w-9 h-9 text-xs",
+    lg: "w-16 h-16 text-lg",
   };
 
   if (photoURL) {

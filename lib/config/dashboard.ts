@@ -3,6 +3,7 @@ import {
   Package,
   MapPin,
   Heart,
+  Settings,
   BarChart3,
   ShoppingBag,
   Star,
@@ -26,6 +27,7 @@ export const ACCOUNT_MENU: MenuItem[] = [
   { label: "My Orders", href: "/account/orders", icon: Package },
   { label: "Wishlist", href: "/account/wishlist", icon: Heart },
   { label: "Addresses", href: "/account/addresses", icon: MapPin },
+  { label: "Settings", href: "/account/settings", icon: Settings },
 ];
 
 // ==========================================
@@ -50,6 +52,7 @@ export const SEGMENT_LABELS: Record<string, string> = {
   reviews: "Reviews",
   wishlist: "Wishlist",
   addresses: "Addresses",
+  settings: "Settings",
   add: "Add New",
   edit: "Edit",
 };

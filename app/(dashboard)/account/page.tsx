@@ -9,6 +9,7 @@ import { ACCOUNT_MENU } from "@/lib/config/dashboard";
 const ACCOUNT_DESCRIPTIONS: Record<string, string> = {
   "/account/orders": "View your past orders and track deliveries",
   "/account/addresses": "Manage your saved shipping addresses",
+  "/account/settings": "Update your profile, password, and preferences",
 };
 
 export default function AccountPage() {

@@ -20,6 +20,7 @@ import {
 } from "firebase/auth";
 import { auth } from "@/lib/firebase/config";
 import { syncUser } from "@/app/actions/users";
+import { updateUserName, updateUserAvatar } from "@/app/actions/profile";
 
 // ---------- types ----------
 interface AuthContextType {
@@ -30,6 +31,9 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
+  updateName: (newName: string) => Promise<{ success: boolean; error?: string }>;
+  updateAvatar: (url: string) => Promise<{ success: boolean; error?: string }>;
+  refreshDbUser: () => Promise<void>;
 }
 
 // ---------- context API ----------
@@ -110,6 +114,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signOut(auth);
   };
 
+  // update display name — dual sync (Firebase + MongoDB)
+  const updateName = async (newName: string) => {
+    if (!auth.currentUser) return { success: false, error: "Not authenticated." };
+
+    const result = await updateUserName(auth.currentUser.uid, newName);
+    if (!result.success) return result;
+
+    await updateProfile(auth.currentUser, { displayName: newName });
+    setDbUser(result.user);
+    return { success: true };
+  };
+
+  // update avatar URL — dual sync (Firebase + MongoDB)
+  const updateAvatar = async (url: string) => {
+    if (!auth.currentUser) return { success: false, error: "Not authenticated." };
+
+    const result = await updateUserAvatar(auth.currentUser.uid, url);
+    if (!result.success) return result;
+
+    await updateProfile(auth.currentUser, { photoURL: url });
+    setDbUser(result.user);
+    return { success: true };
+  };
+
+  // re-fetch dbUser from server (useful after external profile changes)
+  const refreshDbUser = async () => {
+    if (!auth.currentUser) return;
+    const result = await syncUser(
+      auth.currentUser.uid,
+      auth.currentUser.email!,
+      auth.currentUser.displayName || undefined,
+    );
+    if (result.success) setDbUser(result.user);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -120,6 +159,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         loginWithGoogle,
         logout,
+        updateName,
+        updateAvatar,
+        refreshDbUser,
       }}
     >
       {children}
