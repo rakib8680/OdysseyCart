@@ -15,6 +15,7 @@ import { Lock, ExternalLink } from "lucide-react";
 export function SecuritySection() {
   const { user } = useAuth();
   const [isSending, setIsSending] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   // Detect auth provider — Google users don't have a Firebase password
   const isGoogleUser =
@@ -24,8 +25,10 @@ export function SecuritySection() {
     if (!user?.email) return;
 
     setIsSending(true);
+    setEmailSent(false);
     try {
       await sendPasswordResetEmail(auth, user.email);
+      setEmailSent(true);
       toast.success("Password reset email sent! Check your inbox.");
     } catch (error: any) {
       toast.error(error.message || "Failed to send reset email.");
@@ -66,7 +69,7 @@ export function SecuritySection() {
           </p>
           <Button
             onClick={handlePasswordReset}
-            disabled={isSending}
+            disabled={isSending || emailSent}
             variant="outline"
             size="sm"
             className="text-xs font-semibold h-9 px-4 gap-1.5"
@@ -76,10 +79,18 @@ export function SecuritySection() {
                 <Spinner className="w-3.5 h-3.5" />
                 Sending...
               </>
+            ) : emailSent ? (
+              "Email Sent"
             ) : (
               "Send Reset Email"
             )}
           </Button>
+
+          {emailSent && (
+            <p className="text-xs text-amber-600 mt-2 font-medium">
+              If you don't see it within a few minutes, please check your spam or junk folder.
+            </p>
+          )}
         </div>
       )}
     </div>
