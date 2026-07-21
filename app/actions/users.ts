@@ -22,6 +22,11 @@ export async function syncUser(
     // Check if user already exists
     let user = await User.findOne({ firebaseUid });
 
+    // Block deleted accounts from re-syncing
+    if (user?.isDeleted) {
+      return { success: false, error: "Account has been deleted." };
+    }
+
     // If not, create a new user with default 'customer' role
     if (!user) {
       user = await User.create({

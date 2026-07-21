@@ -17,8 +17,11 @@ export interface IUser extends Document {
   firebaseUid: string;
   email: string;
   name?: string;
+  avatar?: string;
   role: "customer" | "admin";
   shippingAddresses: IShippingAddress[];
+  isDeleted: boolean;
+  deletedAt?: Date;
 }
 
 const ShippingAddressSchema = new Schema<IShippingAddress>({
@@ -38,8 +41,11 @@ const UserSchema = new Schema<IUser>(
     firebaseUid: { type: String, required: true, unique: true },
     email: { type: String, required: true },
     name: { type: String, required: false },
+    avatar: { type: String },
     role: { type: String, enum: ["customer", "admin"], default: "customer" },
     shippingAddresses: { type: [ShippingAddressSchema], default: [] },
+    isDeleted: { type: Boolean, default: false },
+    deletedAt: { type: Date },
   },
   { timestamps: true },
 );
