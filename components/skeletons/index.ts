@@ -7,3 +7,4 @@ export { AdminReviewTableSkeleton } from "./AdminReviewTableSkeleton";
 export { OrderListSkeleton } from "./OrderListSkeleton";
 export { ManageTableSkeleton } from "./ManageTableSkeleton";
 export { WishlistSkeleton } from "./WishlistSkeleton";
+export { ProfileSettingsSkeleton } from "./ProfileSettingsSkeleton";
