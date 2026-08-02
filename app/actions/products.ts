@@ -1,17 +1,47 @@
 "use server";
 
+import mongoose from "mongoose";
 import { connectDB, serialize } from "@/lib/db/mongoose";
 import Product from "@/lib/models/Product";
-import User from "@/lib/models/User";
 import { revalidatePath } from "next/cache";
 import { ProductValidationSchema } from "@/lib/validations/product";
 import { SearchFiltersSchema } from "@/lib/validations/search";
-import { escapeRegex } from "@/lib/utils";
+import { escapeRegex, slugify } from "@/lib/utils";
 import { PaginatedProducts } from "@/lib/types/product";
 
 import { DB_SORT_MAP } from "@/lib/config/products";
 
 import { requireAdmin } from "@/app/actions/users";
+
+// ==========================================
+// SLUG COLLISION GUARD
+// ==========================================
+/**
+ * Generates a unique slug for a product, appending an incremental suffix
+ * (e.g. "-2", "-3") if a collision exists. Excludes `currentId` during updates
+ * so a product's own slug doesn't trigger a false collision.
+ */
+async function generateUniqueSlug(
+  title: string,
+  currentId?: string,
+): Promise<string> {
+  const baseSlug = slugify(title);
+  let slug = baseSlug;
+  let count = 1;
+
+  while (true) {
+    const existing = await Product.findOne({
+      slug,
+      ...(currentId ? { _id: { $ne: currentId } } : {}),
+    }).lean();
+
+    if (!existing) break;
+    count++;
+    slug = `${baseSlug}-${count}`;
+  }
+
+  return slug;
+}
 
 // ==========================================
 // CREATE
@@ -82,16 +112,8 @@ export async function updateProduct(id: string, data: Record<string, any>) {
       };
     }
 
-    // 3. Update using the clean, validated data
-    // Zod does not include slug, which is good. The pre-save hook will NOT regenerate slug
-    // automatically unless title changes, but Mongoose updateOne doesn't run pre-save hooks by default.
-    // Instead we will use findByIdAndUpdate to just update fields, or find and save.
-
-    // Mongoose findByIdAndUpdate is cleaner here. We'll manually update slug if title changed.
-    const newSlug = validatedData.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)+/g, "");
+    // 3. Generate collision-safe slug & update using the clean, validated data
+    const newSlug = await generateUniqueSlug(validatedData.title, id);
 
     await Product.findByIdAndUpdate(id, {
       ...validatedData,
@@ -237,12 +259,9 @@ export async function getProductBySlug(slug: string) {
 
 export async function getProductById(id: string) {
   try {
-    await connectDB();
+    if (!mongoose.Types.ObjectId.isValid(id)) return null;
 
-    const mongoose = require("mongoose");
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return null;
-    }
+    await connectDB();
 
     const product = await Product.findById(id).lean();
     if (!product) return null;
@@ -290,7 +309,10 @@ export async function getFeaturedProducts(limit = 3) {
   try {
     await connectDB();
 
-    const products = await Product.find({ isFeatured: true })
+    const products = await Product.find(
+      { isFeatured: true },
+      LISTING_PROJECTION,
+    )
       .sort({ createdAt: -1 })
       .limit(limit)
       .lean();
@@ -313,10 +335,10 @@ export async function getRelatedProducts(
   try {
     await connectDB();
 
-    const products = await Product.find({
-      category,
-      _id: { $ne: excludeId },
-    })
+    const products = await Product.find(
+      { category, _id: { $ne: excludeId } },
+      LISTING_PROJECTION,
+    )
       .sort({ createdAt: -1 })
       .limit(limit)
       .lean();
