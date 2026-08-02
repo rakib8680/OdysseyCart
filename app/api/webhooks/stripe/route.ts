@@ -4,6 +4,8 @@ import { connectDB } from "@/lib/db/mongoose";
 import Order from "@/lib/models/Order";
 import Product from "@/lib/models/Product";
 import Coupon from "@/lib/models/Coupon";
+import { serializeOrder } from "@/app/actions/order";
+import { sendOrderConfirmationEmail } from "@/lib/email/service";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -109,6 +111,12 @@ export async function POST(req: NextRequest) {
       }
 
       console.log(`Webhook: Order ${orderId} fulfilled successfully.`);
+
+      // NON-BLOCKING EMAIL DISPATCH
+      // Fire-and-forget — email failures never block webhook fulfillment
+      sendOrderConfirmationEmail(serializeOrder(order)).catch((err) =>
+        console.error(`[Email] Failed for order ${orderId}:`, err),
+      );
     } catch (error: any) {
       console.error("Webhook fulfillment error:", error);
       return NextResponse.json(

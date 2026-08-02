@@ -2,6 +2,7 @@
 
 import { connectDB } from "@/lib/db/mongoose";
 import User from "@/lib/models/User";
+import { sendWelcomeEmail } from "@/lib/email/service";
 
 export async function requireAdmin(uid?: string) {
   if (!uid) throw new Error("Unauthorized: No user ID provided");
@@ -35,6 +36,12 @@ export async function syncUser(
         name: name || email.split("@")[0],
         role: "customer",
       });
+
+      // NON-BLOCKING EMAIL DISPATCH
+      // Fire-and-forget — welcome email failures never block registration
+      sendWelcomeEmail({ email, name: user.name }).catch((err) =>
+        console.error(`[Email] Welcome email failed for ${email}:`, err),
+      );
     }
 
     // Return standard JSON object (required for Server Actions)

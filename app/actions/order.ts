@@ -5,6 +5,7 @@ import Order from "@/lib/models/Order";
 import { requireAdmin } from "@/app/actions/users";
 import type { SerializedOrder } from "@/lib/types/order";
 import { escapeRegex } from "@/lib/utils";
+import { sendOrderStatusUpdateEmail } from "@/lib/email/service";
 
 // ==========================================
 // SERIALIZATION HELPER
@@ -15,7 +16,7 @@ import { escapeRegex } from "@/lib/utils";
  * safe for passing from Server Actions to Client Components.
  * Maps ObjectIds to strings and Dates to ISO strings.
  */
-function serializeOrder(doc: any): SerializedOrder {
+export function serializeOrder(doc: any): SerializedOrder {
   return {
     _id: doc._id.toString(),
     userId: doc.userId,
@@ -311,9 +312,17 @@ export async function updateOrderStatus(
       };
     }
 
+    const serialized = serializeOrder(updated);
+
+    // NON-BLOCKING EMAIL DISPATCH
+    // Fire-and-forget — email failures never block admin status updates
+    sendOrderStatusUpdateEmail(serialized, newStatus).catch((err) =>
+      console.error(`[Email] Status update failed for order ${orderId}:`, err),
+    );
+
     return {
       success: true,
-      order: serializeOrder(updated),
+      order: serialized,
     };
   } catch (error: any) {
     console.error("Error updating order status:", error);
