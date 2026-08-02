@@ -1,4 +1,5 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
+import { slugify } from "@/lib/utils";
 
 // 1. Interface for TypeScript
 export interface TProduct extends Document {
@@ -80,10 +81,7 @@ const ProductSchema = new Schema<TProduct>(
 // 3. Auto-generate slug from title before saving
 ProductSchema.pre("validate", function () {
   if (this.title && !this.slug) {
-    this.slug = this.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric chars with hyphens
-      .replace(/(^-|-$)+/g, ""); // Remove leading/trailing hyphens
+    this.slug = slugify(this.title);
   }
 });
 
