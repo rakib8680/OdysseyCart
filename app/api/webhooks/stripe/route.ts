@@ -4,7 +4,7 @@ import { connectDB } from "@/lib/db/mongoose";
 import Order from "@/lib/models/Order";
 import Product from "@/lib/models/Product";
 import Coupon from "@/lib/models/Coupon";
-import { serializeOrder } from "@/app/actions/order";
+import { serializeOrder } from "@/lib/utils";
 import { sendOrderConfirmationEmail } from "@/lib/email/service";
 
 export async function POST(req: NextRequest) {
