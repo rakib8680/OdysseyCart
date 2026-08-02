@@ -10,6 +10,23 @@ export function formatOrderId(id: string) {
 }
 
 /**
+ * Resolves the application base URL for emails, SEO metadata, and callbacks.
+ * Precedence: NEXT_PUBLIC_APP_URL -> VERCEL_PROJECT_PRODUCTION_URL -> VERCEL_URL -> localhost:3000
+ */
+export function getBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
+  }
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return "http://localhost:3000";
+}
+
+/**
  * Escapes regex special characters in a string for safe use in MongoDB $regex queries.
  * Prevents regex injection when using user-provided search input.
  */
@@ -71,4 +88,3 @@ export function serializeOrder(doc: any): SerializedOrder {
     updatedAt: new Date(doc.updatedAt).toISOString(),
   };
 }
-

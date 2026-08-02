@@ -22,7 +22,9 @@ interface BaseEmailLayoutProps {
   children: React.ReactNode;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+import { getBaseUrl } from "@/lib/utils";
+
+const BASE_URL = getBaseUrl();
 
 export function BaseEmailLayout({
   previewText,
