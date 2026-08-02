@@ -1,11 +1,7 @@
 import { Section, Text, Button } from "react-email";
 import * as React from "react";
-import {
-  BaseEmailLayout,
-  styles,
-  colors,
-  BASE_URL,
-} from "./BaseEmailLayout";
+import { BaseEmailLayout, styles, colors } from "./BaseEmailLayout";
+import { getBaseUrl } from "@/lib/utils";
 import type { OrderStatus } from "@/lib/models/Order";
 
 // ==========================================
@@ -48,6 +44,8 @@ const STATUS_CONFIG: Record<
 function formatOrderId(id: string): string {
   return `#OD-${id.slice(-6).toUpperCase()}`;
 }
+
+const BASE_URL = getBaseUrl();
 
 export function OrderStatusUpdateEmail({
   orderId,

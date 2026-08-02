@@ -1,6 +1,7 @@
 import { Section, Text, Button } from "react-email";
 import * as React from "react";
-import { BaseEmailLayout, styles, colors, BASE_URL } from "./BaseEmailLayout";
+import { BaseEmailLayout, styles, colors } from "./BaseEmailLayout";
+import { getBaseUrl } from "@/lib/utils";
 
 // ==========================================
 // WELCOME EMAIL
@@ -17,6 +18,8 @@ const HIGHLIGHTS = [
   { emoji: "🚀", title: "Fast Shipping", description: "Quick and reliable delivery to your door" },
   { emoji: "🛡️", title: "Secure Checkout", description: "Your payment info is always protected" },
 ];
+
+const BASE_URL = getBaseUrl();
 
 export function WelcomeEmail({ name }: WelcomeEmailProps) {
   return (

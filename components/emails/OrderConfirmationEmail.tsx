@@ -1,11 +1,7 @@
 import { Section, Text, Row, Column, Img, Button } from "react-email";
 import * as React from "react";
-import {
-  BaseEmailLayout,
-  styles,
-  colors,
-  BASE_URL,
-} from "./BaseEmailLayout";
+import { BaseEmailLayout, styles, colors } from "./BaseEmailLayout";
+import { getBaseUrl } from "@/lib/utils";
 import type { SerializedOrder } from "@/lib/types/order";
 
 // ==========================================
@@ -22,6 +18,8 @@ interface OrderConfirmationEmailProps {
 function formatOrderId(id: string): string {
   return `#OD-${id.slice(-6).toUpperCase()}`;
 }
+
+const BASE_URL = getBaseUrl();
 
 export function OrderConfirmationEmail({
   order,

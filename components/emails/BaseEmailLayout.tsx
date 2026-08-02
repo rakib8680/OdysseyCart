@@ -9,6 +9,7 @@ import {
   Font,
 } from "react-email";
 import * as React from "react";
+import { getBaseUrl } from "@/lib/utils";
 
 // ==========================================
 // BASE EMAIL LAYOUT
@@ -21,8 +22,6 @@ interface BaseEmailLayoutProps {
   previewText: string;
   children: React.ReactNode;
 }
-
-import { getBaseUrl } from "@/lib/utils";
 
 const BASE_URL = getBaseUrl();
 
@@ -188,4 +187,4 @@ export const styles = {
   } as React.CSSProperties,
 } as const;
 
-export { BASE_URL };
+
