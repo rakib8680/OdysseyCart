@@ -95,7 +95,7 @@ export default function ProductCard({ product, wishlistIds = [] }: ProductCardPr
           className="w-full h-10 rounded-md text-sm"
         />
         <Link
-          href={`/items/${product._id}`}
+          href={`/items/${product.slug}`}
           className="w-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors h-10 rounded-md flex items-center justify-center text-sm font-medium"
         >
           View Details

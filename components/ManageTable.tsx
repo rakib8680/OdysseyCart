@@ -148,7 +148,7 @@ export default function ManageTable({ products, onRefresh }: ManageTableProps) {
                 <TableCell className="text-right py-4 pr-8">
                   <div className="flex justify-end gap-3 transition-opacity">
                     <Link
-                      href={`/items/${product._id}`}
+                      href={`/items/${product.slug}`}
                       className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors"
                       title="View Product"
                     >

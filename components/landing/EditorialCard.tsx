@@ -10,7 +10,7 @@ interface EditorialCardProps {
 export function EditorialCard({ product, isLarge }: EditorialCardProps) {
   return (
     <Link
-      href={`/items/${product._id}`}
+      href={`/items/${product.slug}`}
       className="group flex flex-col h-full w-full"
     >
       {/* Image Container - Borderless and clean */}
