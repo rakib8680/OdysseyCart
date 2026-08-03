@@ -1,6 +1,6 @@
 "use server";
 
-import { resend, FROM_EMAIL } from "@/lib/email/resend";
+import { resend, FROM_EMAIL, getRecipient } from "@/lib/email/resend";
 import { OrderConfirmationEmail } from "@/components/emails/OrderConfirmationEmail";
 import { OrderStatusUpdateEmail } from "@/components/emails/OrderStatusUpdateEmail";
 import { WelcomeEmail } from "@/components/emails/WelcomeEmail";
@@ -46,7 +46,7 @@ export async function sendOrderConfirmationEmail(
 
     const { data, error } = await client.emails.send({
       from: FROM_EMAIL,
-      to: order.shippingInfo.email,
+      to: getRecipient(order.shippingInfo.email),
       subject: `Order Confirmed — #OD-${order._id.slice(-6).toUpperCase()}`,
       react: OrderConfirmationEmail({ order }),
     });
@@ -85,7 +85,7 @@ export async function sendOrderStatusUpdateEmail(
 
     const { data, error } = await client.emails.send({
       from: FROM_EMAIL,
-      to: order.shippingInfo.email,
+      to: getRecipient(order.shippingInfo.email),
       subject: `Order ${statusLabel} — #OD-${order._id.slice(-6).toUpperCase()}`,
       react: OrderStatusUpdateEmail({
         orderId: order._id,
@@ -127,7 +127,7 @@ export async function sendWelcomeEmail(user: {
 
     const { data, error } = await client.emails.send({
       from: FROM_EMAIL,
-      to: user.email,
+      to: getRecipient(user.email),
       subject: "Welcome to OdysseyCart! 🎉",
       react: WelcomeEmail({ name: user.name }),
     });
