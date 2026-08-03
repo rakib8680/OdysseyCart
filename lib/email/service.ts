@@ -4,6 +4,10 @@ import { resend, FROM_EMAIL, getRecipient } from "@/lib/email/resend";
 import { OrderConfirmationEmail } from "@/components/emails/OrderConfirmationEmail";
 import { OrderStatusUpdateEmail } from "@/components/emails/OrderStatusUpdateEmail";
 import { WelcomeEmail } from "@/components/emails/WelcomeEmail";
+import {
+  ContactFormEmail,
+  type ContactFormEmailProps,
+} from "@/components/emails/ContactFormEmail";
 import type { SerializedOrder } from "@/lib/types/order";
 import type { OrderStatus } from "@/lib/models/Order";
 
@@ -146,3 +150,41 @@ export async function sendWelcomeEmail(user: {
     return { success: false, error: err.message };
   }
 }
+
+// ==========================================
+// CONTACT SUPPORT EMAIL
+// ==========================================
+/**
+ * Sends a customer support notification email to the admin/support inbox.
+ * Sets replyTo to the customer's email so staff can reply directly.
+ */
+export async function sendContactSupportEmail(
+  payload: ContactFormEmailProps,
+): Promise<EmailResult> {
+  try {
+    const client = getClient();
+    if (!client) return { success: false, error: "NO_API_KEY" };
+
+    const { data, error } = await client.emails.send({
+      from: FROM_EMAIL,
+      to: getRecipient("rakib.cst.1st@gmail.com"),
+      replyTo: payload.email,
+      subject: `[Support Request] ${payload.subject} — ${payload.name}`,
+      react: ContactFormEmail(payload),
+    });
+
+    if (error) {
+      console.error("[Email] Support email failed:", error);
+      return { success: false, error: error.message };
+    }
+
+    console.log(
+      `[Email] Support request from ${payload.email} delivered (id: ${data?.id})`,
+    );
+    return { success: true, id: data?.id };
+  } catch (err: any) {
+    console.error("[Email] Support email error:", err);
+    return { success: false, error: err.message };
+  }
+}
+
