@@ -61,13 +61,15 @@ export function FaqAccordion() {
       <div className="divide-y divide-slate-200 dark:divide-slate-800 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 overflow-hidden shadow-xs">
         {FAQ_ITEMS.map((item, idx) => {
           const isOpen = openIndex === idx;
+          const contentId = `faq-answer-${idx}`;
           return (
             <div key={idx} className="transition-colors">
               <button
                 type="button"
                 onClick={() => toggleItem(idx)}
-                className="w-full px-5 py-4 flex items-center justify-between text-left focus:outline-none focus:bg-slate-50 dark:focus:bg-slate-800/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors"
                 aria-expanded={isOpen}
+                aria-controls={contentId}
+                className="w-full px-5 py-4 flex items-center justify-between text-left focus:outline-none focus:bg-slate-50 dark:focus:bg-slate-800/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors"
               >
                 <div className="pr-4">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-0.5">
@@ -85,7 +87,10 @@ export function FaqAccordion() {
               </button>
 
               {isOpen && (
-                <div className="px-5 pb-4 pt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800/50 bg-slate-50/30 dark:bg-slate-900/20">
+                <div
+                  id={contentId}
+                  className="px-5 pb-4 pt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800/50 bg-slate-50/30 dark:bg-slate-900/20"
+                >
                   {item.answer}
                 </div>
               )}

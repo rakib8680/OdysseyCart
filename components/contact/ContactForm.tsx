@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/Spinner";
 import { FormInput } from "@/components/form/FormInput";
 import { FormTextArea } from "@/components/form/FormTextArea";
+import { FormSelect } from "@/components/form/FormSelect";
 
 export function ContactForm() {
   const { user, dbUser } = useAuth();
@@ -111,7 +112,7 @@ export function ContactForm() {
         </p>
       </div>
 
-      {/* Name & Email Inputs (Reusing FormInput component) */}
+      {/* Name & Email Inputs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormInput
           {...register("name")}
@@ -133,31 +134,14 @@ export function ContactForm() {
 
       {/* Subject Dropdown & Order Number */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Subject Category Select */}
-        <div>
-          <label
-            htmlFor="contact-subject"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
-          >
-            Inquiry Subject *
-          </label>
-          <select
-            {...register("subject")}
-            id="contact-subject"
-            className="w-full px-3 py-2 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-950 dark:focus:ring-slate-300"
-          >
-            {SUPPORT_SUBJECTS.map((subj) => (
-              <option key={subj} value={subj}>
-                {subj}
-              </option>
-            ))}
-          </select>
-          {errors.subject && (
-            <p className="mt-1 text-sm text-red-600">{errors.subject.message}</p>
-          )}
-        </div>
+        <FormSelect
+          {...register("subject")}
+          id="contact-subject"
+          label="Inquiry Subject *"
+          options={SUPPORT_SUBJECTS}
+          error={errors.subject?.message}
+        />
 
-        {/* Optional Order Number */}
         <FormInput
           {...register("orderNumber")}
           id="contact-order-number"
@@ -167,7 +151,7 @@ export function ContactForm() {
         />
       </div>
 
-      {/* Message Textarea (Reusing FormTextArea component) */}
+      {/* Message Textarea */}
       <div>
         <div className="flex justify-between items-center mb-1">
           <span className="text-xs text-slate-400 font-normal">
