@@ -11,7 +11,7 @@ export function SummaryItem({ item }: { item: CartItem }) {
   return (
     <div className="flex gap-3 py-3 first:pt-0 last:pb-0">
       {/* Thumbnail with quantity badge */}
-      <div className="relative flex-shrink-0">
+      <div className="relative shrink-0">
         <div className="w-14 h-14 rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center">
           {item.image && !imgError ? (
             <img
@@ -36,11 +36,25 @@ export function SummaryItem({ item }: { item: CartItem }) {
         <p className="text-sm font-medium text-slate-900 truncate">
           {item.title}
         </p>
+        {/* Variant Option Badges */}
+        {item.selectedOptions &&
+          Object.keys(item.selectedOptions).length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-0.5">
+              {Object.entries(item.selectedOptions).map(([key, value]) => (
+                <span
+                  key={key}
+                  className="text-[10px] font-medium text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded"
+                >
+                  {key}: {value}
+                </span>
+              ))}
+            </div>
+          )}
         <p className="text-xs text-slate-500 mt-0.5">Qty: {item.quantity}</p>
       </div>
 
       {/* Line Price */}
-      <p className="text-sm font-semibold text-slate-900 flex-shrink-0">
+      <p className="text-sm font-semibold text-slate-900 shrink-0">
         ${(item.price * item.quantity).toFixed(2)}
       </p>
     </div>

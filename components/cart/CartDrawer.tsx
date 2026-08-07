@@ -14,6 +14,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { CartItem } from "./CartItem";
 import { ShippingProgress, FREE_SHIPPING_THRESHOLD } from "./ShippingProgress";
+import { cartItemKey } from "@/lib/utils/cart";
 import { useEffect } from "react";
 
 export function CartDrawer() {
@@ -45,7 +46,7 @@ export function CartDrawer() {
     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
       <SheetContent className="flex flex-col w-full sm:max-w-lg bg-white overflow-hidden p-0">
         {/* Header */}
-        <SheetHeader className="px-3 py-3 sm:px-6 sm:py-6 border-b border-slate-100 flex-shrink-0 bg-white">
+        <SheetHeader className="px-3 py-3 sm:px-6 sm:py-6 border-b border-slate-100 shrink-0 bg-white">
           <SheetTitle className="flex items-center gap-1.5 sm:gap-2 text-base sm:text-2xl font-bold">
             <ShoppingCart className="w-4 h-4 sm:w-6 sm:h-6" />
             Your Cart
@@ -68,7 +69,7 @@ export function CartDrawer() {
                 <h3 className="text-lg sm:text-xl font-bold text-slate-900">
                   Your cart is lonely
                 </h3>
-                <p className="text-sm sm:text-base text-slate-500 max-w-[250px]">
+                <p className="text-sm sm:text-base text-slate-500 max-w-62.5">
                   Looks like you haven't added anything yet. Let's find some
                   favorites!
                 </p>
@@ -93,9 +94,9 @@ export function CartDrawer() {
               <AnimatePresence>
                 {items.map((item) => (
                   <CartItem
-                    key={item.productId}
+                    key={cartItemKey(item)}
                     item={item}
-                    isBusy={busyItems.has(item.productId)}
+                    isBusy={busyItems.has(cartItemKey(item))}
                     onUpdateQuantity={updateQuantity}
                     onRemove={removeItem}
                     onNavigate={closeCart}
@@ -108,7 +109,7 @@ export function CartDrawer() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <SheetFooter className="px-3 py-3 sm:p-6 border-t border-slate-200 flex-shrink-0 bg-slate-50 flex flex-col gap-2 sm:gap-4">
+          <SheetFooter className="px-3 py-3 sm:p-6 border-t border-slate-200 shrink-0 bg-slate-50 flex flex-col gap-2 sm:gap-4">
             <div className="flex justify-between items-center text-sm sm:text-lg font-bold text-slate-900 w-full">
               <span>Subtotal</span>
               <span>${totalPrice.toFixed(2)}</span>

@@ -7,6 +7,7 @@ import { TrustBadges } from "@/components/ui/TrustBadges";
 import { AcceptedPayments } from "@/components/ui/AcceptedPayments";
 import { SummaryItem } from "./SummaryItem";
 import { PriceLine } from "./PriceLine";
+import { cartItemKey } from "@/lib/utils/cart";
 import { Truck, Tag, Loader2 } from "lucide-react";
 import { useState } from "react";
 
@@ -58,9 +59,9 @@ export function OrderSummary({
       </div>
 
       {/* Item List */}
-      <div className="px-6 py-4 max-h-[320px] overflow-y-auto divide-y divide-slate-100">
+      <div className="px-6 py-4 max-h-80 overflow-y-auto divide-y divide-slate-100">
         {items.map((item) => (
-          <SummaryItem key={item.productId} item={item} />
+          <SummaryItem key={cartItemKey(item)} item={item} />
         ))}
       </div>
 
@@ -95,7 +96,7 @@ export function OrderSummary({
               <button
                 onClick={handleApply}
                 disabled={!couponInput.trim() || isApplyingCoupon}
-                className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[76px]"
+                className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-19"
               >
                 {isApplyingCoupon ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
