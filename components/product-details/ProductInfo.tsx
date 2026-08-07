@@ -1,18 +1,20 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Tag } from "lucide-react";
-import { Product } from "@/lib/types/product";
+import { Product, Variant } from "@/lib/types/product";
 import { StarRating } from "@/components/reviews/StarRating";
 
 interface ProductInfoProps {
   product: Product;
+  selectedVariant?: Variant | null;
 }
 
-export default function ProductInfo({ product }: ProductInfoProps) {
+export default function ProductInfo({ product, selectedVariant }: ProductInfoProps) {
   const hasDiscount = product.discount > 0;
+  const basePrice = selectedVariant?.price ?? product.price;
   const discountedPrice = hasDiscount
-    ? product.price * (1 - product.discount / 100)
-    : product.price;
+    ? basePrice * (1 - product.discount / 100)
+    : basePrice;
 
   return (
     <>

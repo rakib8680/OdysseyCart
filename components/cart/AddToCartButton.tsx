@@ -1,46 +1,86 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCart } from "@/contexts/CartContext";
-import { ShoppingCart, Loader2 } from "lucide-react";
-import { Product } from "@/lib/types/product";
+import { ShoppingCart, Loader2, SlidersHorizontal } from "lucide-react";
+import { Product, Variant } from "@/lib/types/product";
 import { cn } from "@/lib/utils";
 
+// ==========================================
+// CONSTANTS
+// ==========================================
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80";
+
+// ==========================================
+// PROPS
+// ==========================================
 interface AddToCartButtonProps {
   product: Product;
+  selectedVariant?: Variant | null; // Provided on detail page via ProductDetailClient
   className?: string;
 }
 
-export function AddToCartButton({ product, className }: AddToCartButtonProps) {
+// ==========================================
+// ADD TO CART BUTTON
+// ==========================================
+export function AddToCartButton({
+  product,
+  selectedVariant,
+  className,
+}: AddToCartButtonProps) {
   const { addItem, openCart, items, busyItems } = useCart();
+  const router = useRouter();
 
-  // Check how many of this item are currently in the cart
-  const cartItem = items.find((item) => item.productId === product._id);
+  const hasVariants = product.variants && product.variants.length > 0;
+  const needsVariantSelection = hasVariants && !selectedVariant;
+
+  // Resolve price, stock, and image based on variant or base product
+  const hasDiscount = product.discount > 0;
+  const basePrice = selectedVariant?.price ?? product.price;
+  const resolvedPrice = hasDiscount
+    ? basePrice * (1 - product.discount / 100)
+    : basePrice;
+  const resolvedStock =
+    selectedVariant?.stockQuantity ?? product.stockQuantity;
+  const resolvedImage =
+    selectedVariant?.imageIndex !== undefined
+      ? product.images?.[selectedVariant.imageIndex] ||
+        product.images?.[0] ||
+        FALLBACK_IMAGE
+      : product.images?.[0] || FALLBACK_IMAGE;
+
+  // Cart deduplication: match by (productId + variantSku)
+  const cartItem = items.find((item) =>
+    selectedVariant
+      ? item.productId === product._id &&
+        item.variantSku === selectedVariant.sku
+      : item.productId === product._id && !item.variantSku,
+  );
   const currentQuantityInCart = cartItem?.quantity || 0;
-  const isMaxLimitReached = currentQuantityInCart >= product.stockQuantity;
+  const isMaxLimitReached = currentQuantityInCart >= resolvedStock;
   const isBusy = busyItems.has(product._id);
 
-  const imageUrl =
-    product.images && product.images.length > 0
-      ? product.images[0]
-      : "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80";
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
 
-  const hasDiscount = product.discount > 0;
-  const discountedPrice = hasDiscount
-    ? product.price * (1 - product.discount / 100)
-    : product.price;
+    // Redirect to detail page if variant selection is required
+    if (needsVariantSelection) {
+      router.push(`/items/${product.slug}`);
+      return;
+    }
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevents link navigation if inside a Card
     if (isMaxLimitReached || isBusy) return;
 
-    // Fire-and-forget: optimistic update handles UI instantly
     addItem(
       {
         productId: product._id,
+        variantSku: selectedVariant?.sku,
+        selectedOptions: selectedVariant?.options,
         title: product.title,
-        price: discountedPrice,
-        image: imageUrl,
-        stockQuantity: product.stockQuantity,
+        price: resolvedPrice,
+        image: resolvedImage,
+        stockQuantity: resolvedStock,
       },
       1,
     );
@@ -49,8 +89,12 @@ export function AddToCartButton({ product, className }: AddToCartButtonProps) {
 
   return (
     <button
-      onClick={handleAddToCart}
-      disabled={isBusy || product.stockQuantity === 0 || isMaxLimitReached}
+      onClick={handleClick}
+      disabled={
+        isBusy ||
+        (!needsVariantSelection &&
+          (resolvedStock === 0 || isMaxLimitReached))
+      }
       className={cn(
         "bg-slate-900 text-white hover:bg-emerald-600 transition-colors flex items-center justify-center font-bold disabled:opacity-50 disabled:cursor-not-allowed group/btn shadow-sm",
         className,
@@ -58,7 +102,12 @@ export function AddToCartButton({ product, className }: AddToCartButtonProps) {
     >
       {isBusy ? (
         <Loader2 className="w-5 h-5 animate-spin" />
-      ) : product.stockQuantity === 0 ? (
+      ) : needsVariantSelection ? (
+        <>
+          <SlidersHorizontal className="w-5 h-5 mr-2" />
+          Select Options
+        </>
+      ) : resolvedStock === 0 ? (
         "Out of Stock"
       ) : isMaxLimitReached ? (
         "Max Limit in Cart"

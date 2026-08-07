@@ -9,13 +9,8 @@ import {
   getProductById,
   getRelatedProducts,
 } from "@/app/actions/products";
-import ProductGallery from "@/components/product-details/ProductGallery";
-import ProductInfo from "@/components/product-details/ProductInfo";
-import KeyInformation from "@/components/product-details/KeyInformation";
-import ProductSpecs from "@/components/product-details/ProductSpecs";
+import ProductDetailClient from "@/components/product-details/ProductDetailClient";
 import RelatedProducts from "@/components/product-details/RelatedProducts";
-import { AddToCartButton } from "@/components/cart/AddToCartButton";
-import { HeartButton } from "@/components/wishlist/HeartButton";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -94,27 +89,7 @@ export default async function ItemDetailsPage({ params }: PageProps) {
         Back to Collection
       </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-        <ProductGallery product={product} />
-
-        <div className="flex flex-col justify-start">
-          <ProductInfo product={product} />
-          <KeyInformation product={product} />
-          <ProductSpecs specs={product.specs || {}} />
-
-          <div className="flex items-center gap-3 mt-8">
-            <AddToCartButton
-              product={product}
-              className="flex-1 rounded-xl text-md h-14 shadow-lg hover:shadow-emerald-600/20"
-            />
-            <HeartButton
-              productId={product._id}
-              initialWishlisted={false}
-              size="md"
-            />
-          </div>
-        </div>
-      </div>
+      <ProductDetailClient product={product} />
 
       <ReviewSection product={product} />
 
@@ -122,3 +97,4 @@ export default async function ItemDetailsPage({ params }: PageProps) {
     </div>
   );
 }
+
