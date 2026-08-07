@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db/mongoose";
 import Cart from "@/lib/models/Cart";
 import Product from "@/lib/models/Product";
 import { CartItem } from "@/lib/types/cart";
+import { resolveVariantDetails } from "@/lib/utils/cart";
 
 // ==========================================
 // GET CHECKOUT CART (Server-verified prices)
@@ -43,26 +44,11 @@ export async function getCheckoutCart(
         // Product was deleted — skip it
         if (!product) return null;
 
-        // Resolve variant-level overrides when applicable
-        let livePrice = product.price;
-        let liveStock = product.stockQuantity;
-        let liveImage = product.images?.[0] || item.image || "";
-
-        if (item.variantSku && product.variants) {
-          const variant = product.variants.find(
-            (v: any) => v.sku === item.variantSku,
-          );
-          if (variant) {
-            if (variant.price) livePrice = variant.price;
-            liveStock = variant.stockQuantity;
-            if (
-              variant.imageIndex !== undefined &&
-              product.images?.[variant.imageIndex]
-            ) {
-              liveImage = product.images[variant.imageIndex];
-            }
-          }
-        }
+        const {
+          price: livePrice,
+          stockQuantity: liveStock,
+          image: liveImage,
+        } = resolveVariantDetails(product, item.variantSku);
 
         return {
           productId: product._id.toString(),

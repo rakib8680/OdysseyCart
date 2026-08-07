@@ -9,7 +9,7 @@ import {
   MergeCartSchema,
   UserIdSchema,
 } from "@/lib/validations/cart";
-import { findCartIndex } from "@/lib/utils/cart";
+import { findCartIndex, resolveVariantDetails } from "@/lib/utils/cart";
 
 // ==========================================
 // HELPERS
@@ -29,7 +29,7 @@ async function getPopulatedItems(cart: any): Promise<CartItem[]> {
 
   await Cart.populate(cart, {
     path: "items.productId",
-    select: "stockQuantity variants",
+    select: "price stockQuantity variants images",
     model: Product,
   });
 
@@ -40,22 +40,17 @@ async function getPopulatedItems(cart: any): Promise<CartItem[]> {
         : null;
     const productId = product?._id?.toString() || item.productId.toString();
 
-    // Resolve stock: variant-level → product-level → 0
-    let stockQuantity = 0;
-    if (item.variantSku && product?.variants) {
-      const variant = product.variants.find(
-        (v: any) => v.sku === item.variantSku,
-      );
-      stockQuantity = variant?.stockQuantity ?? 0;
-    } else {
-      stockQuantity = product?.stockQuantity ?? 0;
-    }
+    const { stockQuantity } = product
+      ? resolveVariantDetails(product, item.variantSku)
+      : { stockQuantity: 0 };
 
     return {
       productId,
       variantSku: item.variantSku || undefined,
       selectedOptions: item.selectedOptions
-        ? Object.fromEntries(item.selectedOptions)
+        ? (item.selectedOptions instanceof Map
+            ? Object.fromEntries(item.selectedOptions)
+            : item.selectedOptions)
         : undefined,
       title: item.title,
       price: item.price,
@@ -112,25 +107,13 @@ export async function addToCart(
     const product = await Product.findById(validProductId).lean();
     if (!product) return { success: false, error: "Product not found" };
 
-    // Resolve stock and price based on variant or base product
-    let availableStock = product.stockQuantity;
-    let resolvedPrice = product.price;
-    let resolvedImage = product.images?.[0] || "";
-
     if (validVariantSku && product.variants) {
-      const variant = product.variants.find(
-        (v: any) => v.sku === validVariantSku,
-      );
-      if (!variant) return { success: false, error: "Variant not found" };
-      availableStock = variant.stockQuantity;
-      if (variant.price) resolvedPrice = variant.price;
-      if (
-        variant.imageIndex !== undefined &&
-        product.images?.[variant.imageIndex]
-      ) {
-        resolvedImage = product.images[variant.imageIndex];
-      }
+      const variantExists = product.variants.some((v: any) => v.sku === validVariantSku);
+      if (!variantExists) return { success: false, error: "Variant not found" };
     }
+
+    const { price: resolvedPrice, stockQuantity: availableStock, image: resolvedImage } =
+      resolveVariantDetails(product, validVariantSku);
 
     // Check stock availability
     if (availableStock < validQuantity) {
