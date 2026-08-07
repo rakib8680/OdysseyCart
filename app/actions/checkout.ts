@@ -12,6 +12,7 @@ import { CartItem } from "@/lib/types/cart";
  * Fetches the user's cart with LIVE prices from the Products collection.
  * Unlike the regular getCart (which snapshots prices at add-time),
  * this re-reads prices to ensure the checkout total is accurate.
+ * Supports variant-level price/stock resolution.
  */
 export async function getCheckoutCart(
   userId: string,
@@ -25,10 +26,10 @@ export async function getCheckoutCart(
       return { success: true, items: [] };
     }
 
-    // Fetch live product data for every item in the cart
+    // Fetch live product data for every item in the cart (include variants)
     const productIds = cart.items.map((item: any) => item.productId);
     const products = await Product.find({ _id: { $in: productIds } })
-      .select("_id title price images stockQuantity")
+      .select("_id title price images stockQuantity variants")
       .lean();
 
     // Build a lookup map for O(1) access
@@ -42,13 +43,35 @@ export async function getCheckoutCart(
         // Product was deleted — skip it
         if (!product) return null;
 
+        // Resolve variant-level overrides when applicable
+        let livePrice = product.price;
+        let liveStock = product.stockQuantity;
+        let liveImage = product.images?.[0] || item.image || "";
+
+        if (item.variantSku && product.variants) {
+          const variant = product.variants.find(
+            (v: any) => v.sku === item.variantSku,
+          );
+          if (variant) {
+            if (variant.price) livePrice = variant.price;
+            liveStock = variant.stockQuantity;
+            if (variant.imageIndex !== undefined && product.images?.[variant.imageIndex]) {
+              liveImage = product.images[variant.imageIndex];
+            }
+          }
+        }
+
         return {
           productId: product._id.toString(),
+          variantSku: item.variantSku || undefined,
+          selectedOptions: item.selectedOptions
+            ? Object.fromEntries(item.selectedOptions)
+            : undefined,
           title: product.title,
-          price: product.price, // LIVE price from DB, not stale snapshot
-          image: product.images?.[0] || item.image || "",
-          quantity: Math.min(item.quantity, product.stockQuantity), // Clamp to available stock
-          stockQuantity: product.stockQuantity,
+          price: livePrice,
+          image: liveImage,
+          quantity: Math.min(item.quantity, liveStock),
+          stockQuantity: liveStock,
         };
       })
       .filter(Boolean) as CartItem[];
@@ -59,3 +82,4 @@ export async function getCheckoutCart(
     return { success: false, items: [], error: error.message };
   }
 }
+

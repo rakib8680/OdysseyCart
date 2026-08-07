@@ -58,6 +58,8 @@ export async function createOrUpdatePaymentIntent(
     // Map CartItem[] → TOrderItem[] shape (converts string productId to ObjectId)
     const orderItems = verifiedItems.map((item) => ({
       productId: new mongoose.Types.ObjectId(item.productId),
+      variantSku: item.variantSku || undefined,
+      selectedOptions: item.selectedOptions || undefined,
       title: item.title,
       price: item.price,
       image: item.image,

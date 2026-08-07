@@ -71,19 +71,37 @@ export async function POST(req: NextRequest) {
       }
 
       //SAFE STOCK DECREMENT (FLOOR AT ZERO)
-      // Added stockQuantity: { $gte: item.quantity } to the filter.
-      // This makes the decrement conditional — if stock is somehow already 0
-      // (e.g. from a duplicate event), the updateOne simply matches nothing
-      // instead of pushing stockQuantity into negative territory.
-      const bulkOps = order.items.map((item: any) => ({
-        updateOne: {
-          filter: {
-            _id: item.productId,
-            stockQuantity: { $gte: item.quantity },
+      // For variant items: uses arrayFilters + positional operator to target
+      // the exact variant sub-document's stockQuantity.
+      // For base items: uses the existing product-level stockQuantity.
+      const bulkOps = order.items.map((item: any) => {
+        if (item.variantSku) {
+          // Variant-level atomic decrement using positional operator
+          return {
+            updateOne: {
+              filter: {
+                _id: item.productId,
+                "variants.sku": item.variantSku,
+                "variants.stockQuantity": { $gte: item.quantity },
+              },
+              update: {
+                $inc: { "variants.$.stockQuantity": -item.quantity },
+              },
+            },
+          };
+        }
+
+        // Base product stock decrement (non-variant)
+        return {
+          updateOne: {
+            filter: {
+              _id: item.productId,
+              stockQuantity: { $gte: item.quantity },
+            },
+            update: { $inc: { stockQuantity: -item.quantity } },
           },
-          update: { $inc: { stockQuantity: -item.quantity } },
-        },
-      }));
+        };
+      });
 
       if (bulkOps.length > 0) {
         const bulkResult = await Product.bulkWrite(bulkOps);
