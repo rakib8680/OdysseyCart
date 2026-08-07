@@ -7,6 +7,8 @@ export type OrderStatus = "pending" | "paid" | "paid-stock-issue" | "failed" | "
 
 export interface TOrderItem {
   productId: mongoose.Types.ObjectId;
+  variantSku?: string;
+  selectedOptions?: Record<string, string>;
   title: string;
   price: number;
   image: string;
@@ -43,6 +45,8 @@ export interface TOrder extends Document {
 const OrderItemSchema = new Schema<TOrderItem>(
   {
     productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
+    variantSku: { type: String },
+    selectedOptions: { type: Map, of: String },
     title: { type: String, required: true },
     price: { type: Number, required: true },
     image: { type: String, default: "" },

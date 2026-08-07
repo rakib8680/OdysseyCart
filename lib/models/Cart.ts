@@ -3,6 +3,8 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 // 1. Interface for TypeScript
 export interface TCartItem {
   productId: mongoose.Types.ObjectId;
+  variantSku?: string; // Variant SKU for composite cart key
+  selectedOptions?: Record<string, string>; // e.g. { Color: "Black", Size: "M" }
   title: string;
   price: number;
   image: string;
@@ -20,6 +22,8 @@ export interface TCart extends Document {
 const CartItemSchema = new Schema<TCartItem>(
   {
     productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
+    variantSku: { type: String, default: undefined },
+    selectedOptions: { type: Map, of: String, default: undefined },
     title: { type: String, required: true },
     price: { type: Number, required: true },
     image: { type: String, default: "" },

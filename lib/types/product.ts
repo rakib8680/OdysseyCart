@@ -1,6 +1,27 @@
 // Shared product type used across all components.
 // This is the shape of a product after it's been serialized
 // from Mongoose (via JSON.parse(JSON.stringify())).
+
+// ==========================================
+// SERIALIZED VARIANT TYPES (Client-Safe)
+// ==========================================
+export interface VariantOption {
+  name: string; // e.g. "Color", "Size"
+  values: string[]; // e.g. ["Midnight Black", "Silver"]
+}
+
+export interface Variant {
+  sku: string; // Unique identifier e.g. "TSHIRT-BLK-M"
+  title: string; // Display label e.g. "Black / Medium"
+  options: Record<string, string>; // { Color: "Black", Size: "Medium" }
+  price?: number; // Override price (falls back to base product price)
+  stockQuantity: number; // Per-variant inventory counter
+  imageIndex?: number; // Maps variant to product.images[] index
+}
+
+// ==========================================
+// PRODUCT INTERFACE
+// ==========================================
 export interface Product {
   _id: string;
   title: string;
@@ -28,6 +49,8 @@ export interface Product {
     width: number;
     height: number;
   };
+  options: VariantOption[];
+  variants: Variant[];
   createdAt: string;
   updatedAt: string;
 }

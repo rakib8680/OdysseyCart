@@ -4,6 +4,8 @@
 
 export interface CartItem {
   productId: string;
+  variantSku?: string; // Variant SKU for composite cart key
+  selectedOptions?: Record<string, string>; // e.g. { Color: "Black", Size: "M" }
   title: string;
   price: number;
   image: string;

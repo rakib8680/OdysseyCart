@@ -1,6 +1,23 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import { slugify } from "@/lib/utils";
 
+// ==========================================
+// VARIANT INTERFACES
+// ==========================================
+export interface TVariantOption {
+  name: string; // e.g. "Color", "Size"
+  values: string[]; // e.g. ["Midnight Black", "Silver"]
+}
+
+export interface TVariant {
+  sku: string; // Unique identifier e.g. "TSHIRT-BLK-M"
+  title: string; // Display label e.g. "Black / Medium"
+  options: Map<string, string>; // { Color: "Black", Size: "Medium" }
+  price?: number; // Override price (falls back to base product price)
+  stockQuantity: number; // Per-variant inventory counter
+  imageIndex?: number; // Maps variant to product.images[] index
+}
+
 // 1. Interface for TypeScript
 export interface TProduct extends Document {
   title: string;
@@ -28,12 +45,40 @@ export interface TProduct extends Document {
     width: number;
     height: number;
   };
+  options: TVariantOption[];
+  variants: TVariant[];
 
   createdAt: Date;
   updatedAt: Date;
 }
 
 // 2. Mongoose Schema
+// ==========================================
+// VARIANT SUB-SCHEMAS
+// ==========================================
+const VariantOptionSchema = new Schema<TVariantOption>(
+  {
+    name: { type: String, required: true },
+    values: { type: [String], required: true },
+  },
+  { _id: false },
+);
+
+const VariantSchema = new Schema<TVariant>(
+  {
+    sku: { type: String, required: true },
+    title: { type: String, required: true },
+    options: { type: Map, of: String, required: true },
+    price: { type: Number },
+    stockQuantity: { type: Number, required: true, default: 0 },
+    imageIndex: { type: Number, default: 0 },
+  },
+  { _id: false },
+);
+
+// ==========================================
+// PRODUCT SCHEMA
+// ==========================================
 const ProductSchema = new Schema<TProduct>(
   {
     title: { type: String, required: true },
@@ -72,6 +117,8 @@ const ProductSchema = new Schema<TProduct>(
       width: { type: Number, default: 0 },
       height: { type: Number, default: 0 },
     },
+    options: { type: [VariantOptionSchema], default: [] },
+    variants: { type: [VariantSchema], default: [] },
   },
   {
     timestamps: true,
