@@ -167,6 +167,8 @@ const LISTING_PROJECTION = {
   averageRating: 1,
   numReviews: 1,
   createdAt: 1,
+  options: 1,
+  variants: 1,
 };
 
 export async function getFilteredProducts(

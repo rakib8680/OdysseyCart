@@ -18,6 +18,24 @@ export interface ProductFormData {
   dimensionLength: number;
   dimensionWidth: number;
   dimensionHeight: number;
+  // Variant fields — managed outside react-hook-form via useState
+  options: VariantOptionForm[];
+  variants: VariantForm[];
+}
+
+// Admin form shapes for variant management
+export interface VariantOptionForm {
+  name: string;
+  values: string[]; // e.g. ["S", "M", "L"]
+}
+
+export interface VariantForm {
+  sku: string;
+  title: string;
+  options: Record<string, string>; // e.g. { Size: "M", Color: "Black" }
+  price?: number;
+  stockQuantity: number;
+  imageIndex: number;
 }
 
 // Reusable input styles

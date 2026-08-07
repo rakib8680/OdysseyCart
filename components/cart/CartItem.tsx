@@ -5,11 +5,16 @@ import Link from "next/link";
 import { Minus, Plus, Trash2, Loader2, ImageOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { CartItem as CartItemType } from "@/lib/types/cart";
+import { VariantBadges } from "@/components/ui/VariantBadges";
 
 interface CartItemProps {
   item: CartItemType;
   isBusy: boolean;
-  onUpdateQuantity: (productId: string, quantity: number, variantSku?: string) => void;
+  onUpdateQuantity: (
+    productId: string,
+    quantity: number,
+    variantSku?: string,
+  ) => void;
   onRemove: (productId: string, variantSku?: string) => void;
   onNavigate: () => void;
 }
@@ -73,18 +78,7 @@ export function CartItem({
             </h4>
           </Link>
           {/* Variant Option Badges */}
-          {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-1">
-              {Object.entries(item.selectedOptions).map(([key, value]) => (
-                <span
-                  key={key}
-                  className="text-[10px] sm:text-xs font-medium text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded"
-                >
-                  {key}: {value}
-                </span>
-              ))}
-            </div>
-          )}
+          <VariantBadges options={item.selectedOptions} className="mt-1" />
           <p className="font-bold text-emerald-600 mt-0.5 sm:mt-1 text-xs sm:text-base">
             ${item.price.toFixed(2)}
           </p>
@@ -109,7 +103,13 @@ export function CartItem({
       <div className="flex items-center justify-between mt-2 pt-2 sm:mt-3 sm:pt-3 border-t border-slate-50">
         <div className="flex items-center bg-slate-50 rounded-md sm:rounded-lg p-0.5 sm:p-1 border border-slate-200">
           <button
-            onClick={() => onUpdateQuantity(item.productId, item.quantity - 1, item.variantSku)}
+            onClick={() =>
+              onUpdateQuantity(
+                item.productId,
+                item.quantity - 1,
+                item.variantSku,
+              )
+            }
             disabled={isBusy}
             className="p-1 sm:p-1.5 hover:bg-white rounded transition-colors cursor-pointer text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed"
             aria-label="Decrease quantity"
@@ -120,7 +120,13 @@ export function CartItem({
             {item.quantity}
           </span>
           <button
-            onClick={() => onUpdateQuantity(item.productId, item.quantity + 1, item.variantSku)}
+            onClick={() =>
+              onUpdateQuantity(
+                item.productId,
+                item.quantity + 1,
+                item.variantSku,
+              )
+            }
             disabled={
               isBusy ||
               (item.stockQuantity !== undefined &&

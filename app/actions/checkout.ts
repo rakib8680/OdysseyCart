@@ -55,7 +55,10 @@ export async function getCheckoutCart(
           if (variant) {
             if (variant.price) livePrice = variant.price;
             liveStock = variant.stockQuantity;
-            if (variant.imageIndex !== undefined && product.images?.[variant.imageIndex]) {
+            if (
+              variant.imageIndex !== undefined &&
+              product.images?.[variant.imageIndex]
+            ) {
               liveImage = product.images[variant.imageIndex];
             }
           }
@@ -82,4 +85,3 @@ export async function getCheckoutCart(
     return { success: false, items: [], error: error.message };
   }
 }
-

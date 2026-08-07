@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ImageOff } from "lucide-react";
 import { CartItem } from "@/lib/types/cart";
+import { VariantBadges } from "@/components/ui/VariantBadges";
 
 /** Single item row in the summary list — with quantity badge overlay */
 export function SummaryItem({ item }: { item: CartItem }) {
@@ -37,19 +38,7 @@ export function SummaryItem({ item }: { item: CartItem }) {
           {item.title}
         </p>
         {/* Variant Option Badges */}
-        {item.selectedOptions &&
-          Object.keys(item.selectedOptions).length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-0.5">
-              {Object.entries(item.selectedOptions).map(([key, value]) => (
-                <span
-                  key={key}
-                  className="text-[10px] font-medium text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded"
-                >
-                  {key}: {value}
-                </span>
-              ))}
-            </div>
-          )}
+        <VariantBadges options={item.selectedOptions} className="mt-0.5" />
         <p className="text-xs text-slate-500 mt-0.5">Qty: {item.quantity}</p>
       </div>
 

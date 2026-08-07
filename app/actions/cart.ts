@@ -124,7 +124,10 @@ export async function addToCart(
       if (!variant) return { success: false, error: "Variant not found" };
       availableStock = variant.stockQuantity;
       if (variant.price) resolvedPrice = variant.price;
-      if (variant.imageIndex !== undefined && product.images?.[variant.imageIndex]) {
+      if (
+        variant.imageIndex !== undefined &&
+        product.images?.[variant.imageIndex]
+      ) {
         resolvedImage = product.images[variant.imageIndex];
       }
     }
@@ -159,17 +162,14 @@ export async function addToCart(
     }
 
     // Check if the product+variant already exists in the cart
-    const existingIndex = findCartIndex(
-      toCartKeys(cart.items),
-      { productId: validProductId, variantSku: validVariantSku },
-    );
+    const existingIndex = findCartIndex(toCartKeys(cart.items), {
+      productId: validProductId,
+      variantSku: validVariantSku,
+    });
 
     if (existingIndex > -1) {
       // Check if combined quantity exceeds stock
-      if (
-        cart.items[existingIndex].quantity + validQuantity >
-        availableStock
-      ) {
+      if (cart.items[existingIndex].quantity + validQuantity > availableStock) {
         return {
           success: false,
           error: "Cannot add more than available stock",
@@ -213,10 +213,10 @@ export async function updateCartItemQuantity(
     const cart = await Cart.findOne({ userId: validUserId });
     if (!cart) return { success: false, error: "Cart not found" };
 
-    const itemIndex = findCartIndex(
-      toCartKeys(cart.items),
-      { productId: validProductId, variantSku },
-    );
+    const itemIndex = findCartIndex(toCartKeys(cart.items), {
+      productId: validProductId,
+      variantSku,
+    });
 
     if (itemIndex === -1) {
       return { success: false, error: "Item not found in cart" };
@@ -256,10 +256,10 @@ export async function removeFromCart(
     const cart = await Cart.findOne({ userId: validUserId });
     if (!cart) return { success: false, error: "Cart not found" };
 
-    const itemIndex = findCartIndex(
-      toCartKeys(cart.items),
-      { productId: validProductId, variantSku },
-    );
+    const itemIndex = findCartIndex(toCartKeys(cart.items), {
+      productId: validProductId,
+      variantSku,
+    });
     if (itemIndex > -1) {
       cart.items.splice(itemIndex, 1);
     }
@@ -327,7 +327,10 @@ export async function mergeCart(userId: string, localItems: CartItem[]) {
     // Merge strategy: local items take priority for quantity
     for (const localItem of validLocalItems) {
       const existingIndex = findCartIndex(
-        cart.items.map((i: any) => ({ productId: i.productId.toString(), variantSku: i.variantSku })),
+        cart.items.map((i: any) => ({
+          productId: i.productId.toString(),
+          variantSku: i.variantSku,
+        })),
         { productId: localItem.productId, variantSku: localItem.variantSku },
       );
 

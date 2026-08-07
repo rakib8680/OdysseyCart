@@ -10,8 +10,11 @@ import { Loader2 } from "lucide-react";
 import BasicInfoSection from "@/components/form/BasicInfoSection";
 import PricingSection from "@/components/form/PricingSection";
 import SpecsSection from "@/components/form/SpecsSection";
+import VariantSection from "@/components/form/VariantSection";
 import {
   ProductFormData,
+  VariantOptionForm,
+  VariantForm,
   inputStyles,
   labelStyles,
   specsToString,
@@ -26,6 +29,14 @@ export default function AddProductForm({ initialData }: ProductFormProps) {
   const { user } = useAuth();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Variant state managed outside standard react-hook-form inputs
+  const [options, setOptions] = useState<VariantOptionForm[]>(
+    initialData?.options || []
+  );
+  const [variants, setVariants] = useState<VariantForm[]>(
+    initialData?.variants || []
+  );
 
   const isEditing = !!initialData;
 
@@ -109,6 +120,8 @@ export default function AddProductForm({ initialData }: ProductFormProps) {
           width: Number(data.dimensionWidth) || 0,
           height: Number(data.dimensionHeight) || 0,
         },
+        options,
+        variants,
       };
 
       const result = isEditing
@@ -191,6 +204,16 @@ export default function AddProductForm({ initialData }: ProductFormProps) {
             />
           </div>
         </div>
+      </div>
+
+      {/* Variant Section — Full Width */}
+      <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+        <VariantSection
+          options={options}
+          setOptions={setOptions}
+          variants={variants}
+          setVariants={setVariants}
+        />
       </div>
 
       {/* Actions — full width */}
