@@ -7,6 +7,7 @@ import {
   removeFromCart,
   clearCart as clearCartAction,
 } from "@/app/actions/cart";
+import { cartItemKey, findCartIndex } from "@/lib/utils/cart";
 import { toast } from "sonner";
 
 const STORAGE_KEY = "odyssey_cart";
@@ -17,7 +18,7 @@ const STORAGE_KEY = "odyssey_cart";
  *   - Logged-in → Optimistic UI update → Server Action (MongoDB) → Rollback on failure
  *   - Guest → Local state manipulation (auto-saved by useCartPersistence)
  *
- * Tracks busy state per-item to disable UI controls during server calls.
+ * Tracks busy state per-item using composite key (productId + variantSku).
  */
 export function useCartActions(
   user: User | null,
@@ -26,30 +27,29 @@ export function useCartActions(
 ) {
   const [busyItems, setBusyItems] = useState<Set<string>>(new Set());
 
-  // Helper to mark an item as busy/idle
-  const markBusy = useCallback((productId: string) => {
-    setBusyItems((prev) => new Set(prev).add(productId));
+  // Helper to mark an item as busy/idle using composite key
+  const markBusy = useCallback((key: string) => {
+    setBusyItems((prev) => new Set(prev).add(key));
   }, []);
 
-  const markIdle = useCallback((productId: string) => {
+  const markIdle = useCallback((key: string) => {
     setBusyItems((prev) => {
       const next = new Set(prev);
-      next.delete(productId);
+      next.delete(key);
       return next;
     });
   }, []);
 
   const addItem = async (product: AddToCartInput, quantity: number = 1) => {
-    markBusy(product.productId);
+    const key = cartItemKey(product);
+    markBusy(key);
     try {
       if (user) {
         // Snapshot for rollback on failure
         const snapshot = [...items];
 
         // Optimistic: update UI + toast immediately
-        const existingIndex = items.findIndex(
-          (i) => i.productId === product.productId,
-        );
+        const existingIndex = findCartIndex(items, product);
         if (existingIndex > -1) {
           const updated = [...items];
           updated[existingIndex] = {
@@ -63,7 +63,13 @@ export function useCartActions(
         toast.success("Added to cart");
 
         // Server sync in background — reconcile or rollback
-        const res = await addToCart(user.uid, product.productId, quantity);
+        const res = await addToCart(
+          user.uid,
+          product.productId,
+          quantity,
+          product.variantSku,
+          product.selectedOptions,
+        );
         if (res.success) {
           setItems(res.items || []);
         } else {
@@ -71,9 +77,7 @@ export function useCartActions(
           toast.error(res.error || "Failed to add item");
         }
       } else {
-        const existingIndex = items.findIndex(
-          (i) => i.productId === product.productId,
-        );
+        const existingIndex = findCartIndex(items, product);
 
         if (existingIndex > -1) {
           const updated = [...items];
@@ -91,29 +95,39 @@ export function useCartActions(
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
-      markIdle(product.productId);
+      markIdle(key);
     }
   };
 
-  const updateQuantity = async (productId: string, quantity: number) => {
-    markBusy(productId);
+  const updateQuantity = async (
+    productId: string,
+    quantity: number,
+    variantSku?: string,
+  ) => {
+    const key = cartItemKey({ productId, variantSku });
+    markBusy(key);
     try {
       if (user) {
         // Optimistic update
         const snapshot = [...items];
 
         if (quantity <= 0) {
-          setItems(items.filter((item) => item.productId !== productId));
+          setItems(items.filter((item) => cartItemKey(item) !== key));
         } else {
           setItems(
             items.map((item) =>
-              item.productId === productId ? { ...item, quantity } : item,
+              cartItemKey(item) === key ? { ...item, quantity } : item,
             ),
           );
         }
 
         // Server sync
-        const res = await updateCartItemQuantity(user.uid, productId, quantity);
+        const res = await updateCartItemQuantity(
+          user.uid,
+          productId,
+          quantity,
+          variantSku,
+        );
         if (res.success) {
           setItems(res.items || []);
         } else {
@@ -122,11 +136,11 @@ export function useCartActions(
         }
       } else {
         if (quantity <= 0) {
-          setItems(items.filter((item) => item.productId !== productId));
+          setItems(items.filter((item) => cartItemKey(item) !== key));
         } else {
           setItems(
             items.map((item) =>
-              item.productId === productId ? { ...item, quantity } : item,
+              cartItemKey(item) === key ? { ...item, quantity } : item,
             ),
           );
         }
@@ -134,20 +148,21 @@ export function useCartActions(
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
-      markIdle(productId);
+      markIdle(key);
     }
   };
 
-  const removeItem = async (productId: string) => {
-    markBusy(productId);
+  const removeItem = async (productId: string, variantSku?: string) => {
+    const key = cartItemKey({ productId, variantSku });
+    markBusy(key);
     try {
       if (user) {
         // Optimistic: remove immediately
         const snapshot = [...items];
-        setItems(items.filter((item) => item.productId !== productId));
+        setItems(items.filter((item) => cartItemKey(item) !== key));
 
         // Server sync
-        const res = await removeFromCart(user.uid, productId);
+        const res = await removeFromCart(user.uid, productId, variantSku);
         if (res.success) {
           setItems(res.items || []);
           toast.success("Item removed");
@@ -156,13 +171,13 @@ export function useCartActions(
           toast.error(res.error || "Failed to remove item");
         }
       } else {
-        setItems(items.filter((item) => item.productId !== productId));
+        setItems(items.filter((item) => cartItemKey(item) !== key));
         toast.success("Item removed");
       }
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
-      markIdle(productId);
+      markIdle(key);
     }
   };
 

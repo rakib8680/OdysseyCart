@@ -10,8 +10,8 @@ import { useCartActions } from "@/hooks/cart/useCartActions";
 interface CartContextType {
   items: CartItem[];
   addItem: (product: AddToCartInput, quantity?: number) => Promise<void>;
-  updateQuantity: (productId: string, quantity: number) => Promise<void>;
-  removeItem: (productId: string) => Promise<void>;
+  updateQuantity: (productId: string, quantity: number, variantSku?: string) => Promise<void>;
+  removeItem: (productId: string, variantSku?: string) => Promise<void>;
   clearCart: () => Promise<void>;
   itemCount: number;
   totalPrice: number;

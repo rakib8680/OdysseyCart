@@ -9,30 +9,54 @@ import {
   MergeCartSchema,
   UserIdSchema,
 } from "@/lib/validations/cart";
+import { findCartIndex } from "@/lib/utils/cart";
 
-// Helper to inject live stockQuantity from the Products collection
-async function getPopulatedItems(cart: any) {
+// ==========================================
+// HELPERS
+// ==========================================
+
+/** Maps Mongoose cart items to plain key objects for findCartIndex */
+function toCartKeys(items: any[]) {
+  return items.map((i: any) => ({
+    productId: i.productId?.toString() || i.productId,
+    variantSku: i.variantSku,
+  }));
+}
+
+/** Inject live stockQuantity from Products collection into cart items */
+async function getPopulatedItems(cart: any): Promise<CartItem[]> {
   if (!cart || !cart.items || cart.items.length === 0) return [];
 
   await Cart.populate(cart, {
     path: "items.productId",
-    select: "stockQuantity",
+    select: "stockQuantity variants",
     model: Product,
   });
 
   return cart.items.map((item: any) => {
-    // Safely extract stock if populated, else default to 0
-    const stockQuantity =
+    const product =
       item.productId && typeof item.productId === "object"
-        ? item.productId.stockQuantity
-        : 0;
-    const productId =
-      item.productId && item.productId._id
-        ? item.productId._id.toString()
-        : item.productId.toString();
+        ? item.productId
+        : null;
+    const productId = product?._id?.toString() || item.productId.toString();
+
+    // Resolve stock: variant-level → product-level → 0
+    let stockQuantity = 0;
+    if (item.variantSku && product?.variants) {
+      const variant = product.variants.find(
+        (v: any) => v.sku === item.variantSku,
+      );
+      stockQuantity = variant?.stockQuantity ?? 0;
+    } else {
+      stockQuantity = product?.stockQuantity ?? 0;
+    }
 
     return {
       productId,
+      variantSku: item.variantSku || undefined,
+      selectedOptions: item.selectedOptions
+        ? Object.fromEntries(item.selectedOptions)
+        : undefined,
       title: item.title,
       price: item.price,
       image: item.image,
@@ -71,13 +95,16 @@ export async function addToCart(
   userId: string,
   productId: string,
   quantity: number = 1,
+  variantSku?: string,
+  selectedOptions?: Record<string, string>,
 ) {
   try {
     const {
       userId: validUserId,
       productId: validProductId,
+      variantSku: validVariantSku,
       quantity: validQuantity,
-    } = CartActionSchema.parse({ userId, productId, quantity });
+    } = CartActionSchema.parse({ userId, productId, variantSku, quantity });
 
     await connectDB();
 
@@ -85,60 +112,74 @@ export async function addToCart(
     const product = await Product.findById(validProductId).lean();
     if (!product) return { success: false, error: "Product not found" };
 
+    // Resolve stock and price based on variant or base product
+    let availableStock = product.stockQuantity;
+    let resolvedPrice = product.price;
+    let resolvedImage = product.images?.[0] || "";
+
+    if (validVariantSku && product.variants) {
+      const variant = product.variants.find(
+        (v: any) => v.sku === validVariantSku,
+      );
+      if (!variant) return { success: false, error: "Variant not found" };
+      availableStock = variant.stockQuantity;
+      if (variant.price) resolvedPrice = variant.price;
+      if (variant.imageIndex !== undefined && product.images?.[variant.imageIndex]) {
+        resolvedImage = product.images[variant.imageIndex];
+      }
+    }
+
     // Check stock availability
-    if (product.stockQuantity < validQuantity) {
+    if (availableStock < validQuantity) {
       return { success: false, error: "Not enough stock available" };
     }
 
     // Find or create the user's cart
     let cart = await Cart.findOne({ userId: validUserId });
 
+    const newItem = {
+      productId: product._id,
+      variantSku: validVariantSku || undefined,
+      selectedOptions: selectedOptions || undefined,
+      title: product.title,
+      price: resolvedPrice,
+      image: resolvedImage,
+      quantity: validQuantity,
+    };
+
     if (!cart) {
       // First item — create a new cart
       cart = await Cart.create({
         userId: validUserId,
-        items: [
-          {
-            productId: product._id,
-            title: product.title,
-            price: product.price,
-            image: product.images?.[0] || "",
-            quantity: validQuantity,
-          },
-        ],
+        items: [newItem],
       });
 
       const items = await getPopulatedItems(cart);
       return { success: true, items };
     }
 
-    // Check if the product already exists in the cart
-    const existingIndex = cart.items.findIndex(
-      (item) => item.productId.toString() === validProductId,
+    // Check if the product+variant already exists in the cart
+    const existingIndex = findCartIndex(
+      toCartKeys(cart.items),
+      { productId: validProductId, variantSku: validVariantSku },
     );
 
     if (existingIndex > -1) {
       // Check if combined quantity exceeds stock
       if (
         cart.items[existingIndex].quantity + validQuantity >
-        product.stockQuantity
+        availableStock
       ) {
         return {
           success: false,
           error: "Cannot add more than available stock",
         };
       }
-      // Product exists — increase quantity
+      // Product+variant exists — increase quantity
       cart.items[existingIndex].quantity += validQuantity;
     } else {
-      // New product — push to items array
-      cart.items.push({
-        productId: product._id,
-        title: product.title,
-        price: product.price,
-        image: product.images?.[0] || "",
-        quantity: validQuantity,
-      });
+      // New product or new variant — push to items array
+      cart.items.push(newItem);
     }
 
     await cart.save();
@@ -158,6 +199,7 @@ export async function updateCartItemQuantity(
   userId: string,
   productId: string,
   quantity: number,
+  variantSku?: string,
 ) {
   try {
     const {
@@ -171,8 +213,9 @@ export async function updateCartItemQuantity(
     const cart = await Cart.findOne({ userId: validUserId });
     if (!cart) return { success: false, error: "Cart not found" };
 
-    const itemIndex = cart.items.findIndex(
-      (item) => item.productId.toString() === validProductId,
+    const itemIndex = findCartIndex(
+      toCartKeys(cart.items),
+      { productId: validProductId, variantSku },
     );
 
     if (itemIndex === -1) {
@@ -199,7 +242,11 @@ export async function updateCartItemQuantity(
 // ==========================================
 // REMOVE FROM CART
 // ==========================================
-export async function removeFromCart(userId: string, productId: string) {
+export async function removeFromCart(
+  userId: string,
+  productId: string,
+  variantSku?: string,
+) {
   try {
     const { userId: validUserId, productId: validProductId } =
       CartActionSchema.parse({ userId, productId, quantity: 1 });
@@ -209,9 +256,13 @@ export async function removeFromCart(userId: string, productId: string) {
     const cart = await Cart.findOne({ userId: validUserId });
     if (!cart) return { success: false, error: "Cart not found" };
 
-    cart.items = cart.items.filter(
-      (item) => item.productId.toString() !== validProductId,
+    const itemIndex = findCartIndex(
+      toCartKeys(cart.items),
+      { productId: validProductId, variantSku },
     );
+    if (itemIndex > -1) {
+      cart.items.splice(itemIndex, 1);
+    }
 
     await cart.save();
 
@@ -261,6 +312,8 @@ export async function mergeCart(userId: string, localItems: CartItem[]) {
       // No DB cart exists — create one from the local items
       const mappedItems = validLocalItems.map((item) => ({
         productId: toObjectId(item.productId),
+        variantSku: item.variantSku || undefined,
+        selectedOptions: item.selectedOptions || undefined,
         title: item.title,
         price: item.price,
         image: item.image,
@@ -273,8 +326,9 @@ export async function mergeCart(userId: string, localItems: CartItem[]) {
 
     // Merge strategy: local items take priority for quantity
     for (const localItem of validLocalItems) {
-      const existingIndex = cart.items.findIndex(
-        (dbItem) => dbItem.productId.toString() === localItem.productId,
+      const existingIndex = findCartIndex(
+        cart.items.map((i: any) => ({ productId: i.productId.toString(), variantSku: i.variantSku })),
+        { productId: localItem.productId, variantSku: localItem.variantSku },
       );
 
       if (existingIndex > -1) {
@@ -287,6 +341,8 @@ export async function mergeCart(userId: string, localItems: CartItem[]) {
         // Item only in local storage — add it to the DB cart
         cart.items.push({
           productId: toObjectId(localItem.productId),
+          variantSku: localItem.variantSku || undefined,
+          selectedOptions: localItem.selectedOptions || undefined,
           title: localItem.title,
           price: localItem.price,
           image: localItem.image,
