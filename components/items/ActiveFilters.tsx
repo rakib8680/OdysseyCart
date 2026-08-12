@@ -1,15 +1,10 @@
 "use client";
 
 import { X } from "lucide-react";
+import { ProductFilters } from "@/lib/types/product";
 
 interface ActiveFiltersProps {
-  filters: {
-    search: string;
-    category: string;
-    minPrice: string;
-    maxPrice: string;
-    sort: string;
-  };
+  filters: ProductFilters;
   onClear: (updates: Record<string, string | number>) => void;
   onReset: () => void;
 }
@@ -17,6 +12,7 @@ interface ActiveFiltersProps {
 /**
  * Displays active filter chips with individual clear buttons.
  * Provides quick visual feedback of what's currently filtered.
+ * Reuses `ProductFilters` type definition.
  */
 export function ActiveFilters({ filters, onClear, onReset }: ActiveFiltersProps) {
   const chips: { label: string; onRemove: () => void }[] = [];
@@ -67,6 +63,7 @@ export function ActiveFilters({ filters, onClear, onReset }: ActiveFiltersProps)
         >
           {chip.label}
           <button
+            type="button"
             onClick={chip.onRemove}
             className="hover:bg-slate-200 rounded-full p-0.5 transition-colors cursor-pointer"
           >
@@ -77,6 +74,7 @@ export function ActiveFilters({ filters, onClear, onReset }: ActiveFiltersProps)
 
       {chips.length > 1 && (
         <button
+          type="button"
           onClick={onReset}
           className="text-sm text-red-600 hover:text-red-700 font-medium ml-1 cursor-pointer"
         >

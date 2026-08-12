@@ -64,13 +64,12 @@ export type SortOption =
   | "name-az"
   | "name-za";
 
-export interface FilterState {
+export interface ProductFilters {
   search: string;
   category: string;
   minPrice: string;
   maxPrice: string;
-  sortBy: SortOption;
-  showFilters: boolean;
+  sort: string;
 }
 
 // Server response shape for paginated product queries

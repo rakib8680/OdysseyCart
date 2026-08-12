@@ -23,27 +23,27 @@ export default async function ItemsPage({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen">
-      {/* Full-width hero banner */}
-      <CollectionHero
-        activeCategory={params.category || undefined}
-        totalCount={result.totalCount}
-      />
+      <div className="container max-w-7xl mx-auto px-4 md:px-8 pt-8 pb-6">
+        {/* Editorial hero header */}
+        <CollectionHero
+          activeCategory={params.category || undefined}
+          showingCount={result.products.length}
+          totalCount={result.totalCount}
+        />
 
-      {/* Content container */}
-      <div className="container max-w-7xl mx-auto px-4 md:px-8 py-8">
-        {/* Client Component — controls URL filters */}
-        <ItemsFilter categories={categories} />
+        {/* Client Component — controls URL filters & 2-column layout */}
+        <ItemsFilter categories={categories}>
+          {/* Server-rendered product grid */}
+          <ProductGrid products={result.products} />
 
-        {/* Server-rendered product grid */}
-        <ProductGrid products={result.products} />
-
-        {/* Pagination (only when needed) */}
-        {result.totalPages > 1 && (
-          <Pagination
-            currentPage={result.currentPage}
-            totalPages={result.totalPages}
-          />
-        )}
+          {/* Pagination (only when needed) */}
+          {result.totalPages > 1 && (
+            <Pagination
+              currentPage={result.currentPage}
+              totalPages={result.totalPages}
+            />
+          )}
+        </ItemsFilter>
       </div>
     </div>
   );

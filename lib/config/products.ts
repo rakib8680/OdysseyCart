@@ -5,11 +5,15 @@ export interface SortConfig {
   label: string;
 }
 
+export interface PricePreset {
+  label: string;
+  min: string;
+  max: string;
+}
+
 /**
  * Shared product sorting configuration.
- * Used by:
- * - Client: `FilterPanel` to render sort options dynamically
- * - Server: Mapping options to MongoDB sort criteria
+ * Used by client filter UI & toolbar.
  */
 export const SORT_CONFIG: SortConfig[] = [
   { value: "newest", label: "Newest First" },
@@ -18,6 +22,17 @@ export const SORT_CONFIG: SortConfig[] = [
   { value: "price-high", label: "Price: High → Low" },
   { value: "name-az", label: "Name: A → Z" },
   { value: "name-za", label: "Name: Z → A" },
+];
+
+/**
+ * Shared quick price range filter presets.
+ * Used by client filter components.
+ */
+export const PRICE_PRESETS: PricePreset[] = [
+  { label: "Under $50", min: "", max: "50" },
+  { label: "$50 – $100", min: "50", max: "100" },
+  { label: "$100 – $200", min: "100", max: "200" },
+  { label: "$200+", min: "200", max: "" },
 ];
 
 /**
