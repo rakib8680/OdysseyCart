@@ -76,12 +76,12 @@ export default function ProductGallery({
 
       {/* Thumbnail Strip */}
       {images.length > 1 && (
-        <div className="grid grid-cols-4 gap-3 mt-4">
-          {images.slice(0, 4).map((img: string, i: number) => (
+        <div className="flex items-center gap-3 mt-4 overflow-x-auto pb-1">
+          {images.map((img: string, i: number) => (
             <button
               key={i}
               onClick={() => setSelectedIndex(i)}
-              className={`aspect-square bg-slate-50 rounded-xl border overflow-hidden p-2 transition-all cursor-pointer ${
+              className={`w-20 h-20 shrink-0 aspect-square bg-slate-50 rounded-xl border overflow-hidden p-2 transition-all cursor-pointer ${
                 selectedIndex === i
                   ? "border-emerald-500 ring-2 ring-emerald-500/20"
                   : "border-slate-200 hover:border-slate-300"
