@@ -19,6 +19,7 @@ interface AddToCartButtonProps {
   product: Product;
   selectedVariant?: Variant | null; // Provided on detail page via ProductDetailClient
   className?: string;
+  compactText?: boolean; // When true, uses compact "Add" / "Select" labels on mobile screens
 }
 
 // ==========================================
@@ -28,6 +29,7 @@ export function AddToCartButton({
   product,
   selectedVariant,
   className,
+  compactText = false,
 }: AddToCartButtonProps) {
   const { addItem, openCart, items, busyItems } = useCart();
   const router = useRouter();
@@ -41,8 +43,7 @@ export function AddToCartButton({
   const resolvedPrice = hasDiscount
     ? basePrice * (1 - product.discount / 100)
     : basePrice;
-  const resolvedStock =
-    selectedVariant?.stockQuantity ?? product.stockQuantity;
+  const resolvedStock = selectedVariant?.stockQuantity ?? product.stockQuantity;
   const resolvedImage =
     selectedVariant?.imageIndex !== undefined
       ? product.images?.[selectedVariant.imageIndex] ||
@@ -94,29 +95,64 @@ export function AddToCartButton({
       onClick={handleClick}
       disabled={
         isBusy ||
-        (!needsVariantSelection &&
-          (resolvedStock === 0 || isMaxLimitReached))
+        (!needsVariantSelection && (resolvedStock === 0 || isMaxLimitReached))
       }
       className={cn(
-        "bg-slate-900 text-white hover:bg-emerald-600 transition-colors flex items-center justify-center font-bold disabled:opacity-50 disabled:cursor-not-allowed group/btn shadow-sm",
+        "bg-slate-900 text-white hover:bg-emerald-600 transition-colors flex items-center justify-center font-bold disabled:opacity-50 disabled:cursor-not-allowed group/btn shadow-xs whitespace-nowrap",
         className,
       )}
     >
       {isBusy ? (
-        <Loader2 className="w-5 h-5 animate-spin" />
+        <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin shrink-0" />
       ) : needsVariantSelection ? (
         <>
-          <SlidersHorizontal className="w-5 h-5 mr-2" />
-          Select Options
+          <SlidersHorizontal className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 shrink-0" />
+          <span className="truncate">
+            {compactText ? (
+              <>
+                <span className="sm:hidden">Select</span>
+                <span className="hidden sm:inline">Select Options</span>
+              </>
+            ) : (
+              "Select Options"
+            )}
+          </span>
         </>
       ) : resolvedStock === 0 ? (
-        "Out of Stock"
+        <span className="truncate">
+          {compactText ? (
+            <>
+              <span className="sm:hidden">Sold Out</span>
+              <span className="hidden sm:inline">Out of Stock</span>
+            </>
+          ) : (
+            "Out of Stock"
+          )}
+        </span>
       ) : isMaxLimitReached ? (
-        "Max Limit in Cart"
+        <span className="truncate text-[10px] sm:text-xs">
+          {compactText ? (
+            <>
+              <span className="sm:hidden">Max Limit</span>
+              <span className="hidden sm:inline">Max Limit in Cart</span>
+            </>
+          ) : (
+            "Max Limit"
+          )}
+        </span>
       ) : (
         <>
-          <ShoppingCart className="w-5 h-5 mr-2 group-hover/btn:-translate-y-0.5 transition-transform" />
-          Add to Cart
+          <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 shrink-0 group-hover/btn:-translate-y-0.5 transition-transform" />
+          <span className="truncate">
+            {compactText ? (
+              <>
+                <span className="sm:hidden">Add</span>
+                <span className="hidden sm:inline">Add to Cart</span>
+              </>
+            ) : (
+              "Add to Cart"
+            )}
+          </span>
         </>
       )}
     </button>

@@ -46,3 +46,9 @@ export const DB_SORT_MAP: Record<SortOption, Record<string, 1 | -1>> = {
   "name-az": { title: 1 },
   "name-za": { title: -1 },
 };
+
+/**
+ * LocalStorage key for persisting catalog layout view mode preference.
+ */
+export const CATALOG_VIEW_MODE_STORAGE_KEY = "odyssey_catalog_view_mode";
+

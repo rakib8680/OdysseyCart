@@ -1,8 +1,6 @@
 import { getFilteredProducts, getCategories } from "@/app/actions/products";
 import { CollectionHero } from "@/components/items/CollectionHero";
 import { ItemsFilter } from "@/components/items/ItemsFilter";
-import { Pagination } from "@/components/items/Pagination";
-import { ProductGrid } from "@/components/items/ProductGrid";
 import { productFilterCache } from "@/lib/search-params";
 
 export const metadata = { title: "Collection | OdysseyCart" };
@@ -31,19 +29,13 @@ export default async function ItemsPage({ searchParams }: PageProps) {
           totalCount={result.totalCount}
         />
 
-        {/* Client Component — controls URL filters & 2-column layout */}
-        <ItemsFilter categories={categories}>
-          {/* Server-rendered product grid */}
-          <ProductGrid products={result.products} />
-
-          {/* Pagination (only when needed) */}
-          {result.totalPages > 1 && (
-            <Pagination
-              currentPage={result.currentPage}
-              totalPages={result.totalPages}
-            />
-          )}
-        </ItemsFilter>
+        {/* Client Component — controls URL filters, view mode & 2-column layout */}
+        <ItemsFilter
+          categories={categories}
+          products={result.products}
+          totalPages={result.totalPages}
+          currentPage={result.currentPage}
+        />
       </div>
     </div>
   );

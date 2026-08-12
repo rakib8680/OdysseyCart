@@ -55,7 +55,8 @@ export interface Product {
   updatedAt: string;
 }
 
-// Shared types for the Items page
+export type ViewMode = "grid" | "list";
+
 export type SortOption =
   | "newest"
   | "oldest"

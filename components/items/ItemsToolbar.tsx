@@ -2,9 +2,10 @@
 
 import { SearchBar } from "./SearchBar";
 import { MobileFilterDrawer } from "./MobileFilterDrawer";
+import { ItemsViewToggle } from "./ItemsViewToggle";
 import { FormSelect } from "@/components/form/FormSelect";
 import { SORT_CONFIG } from "@/lib/config/products";
-import { ProductFilters } from "@/lib/types/product";
+import { ProductFilters, ViewMode } from "@/lib/types/product";
 
 interface ItemsToolbarProps {
   search: string;
@@ -12,6 +13,8 @@ interface ItemsToolbarProps {
   categories: string[];
   filters: ProductFilters;
   activeFilterCount: number;
+  viewMode: ViewMode;
+  onViewModeChange: (mode: ViewMode) => void;
   onSearchChange: (value: string) => void;
   onFilterChange: (updates: Record<string, string>) => void;
   onReset: () => void;
@@ -19,8 +22,8 @@ interface ItemsToolbarProps {
 
 /**
  * Top Items Toolbar Component.
- * Orchestrates debounced search bar, mobile filter drawer button, and desktop quick-sort dropdown.
- * Reuses centralized `FormSelect` from components/form and `ProductFilters` from lib/types/product.
+ * Orchestrates debounced search bar, mobile filter drawer button, quick-sort dropdown,
+ * and view mode layout switcher (Grid vs. List).
  */
 export function ItemsToolbar({
   search,
@@ -28,19 +31,21 @@ export function ItemsToolbar({
   categories,
   filters,
   activeFilterCount,
+  viewMode,
+  onViewModeChange,
   onSearchChange,
   onFilterChange,
   onReset,
 }: ItemsToolbarProps) {
   return (
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-6">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-4">
       {/* Search Input */}
       <SearchBar
         search={search}
         onSearchChange={onSearchChange}
       />
 
-      {/* Right Controls: Mobile Drawer + Desktop Sort */}
+      {/* Right Controls: Mobile Drawer + Desktop Sort + View Toggle */}
       <div className="flex items-center gap-2 justify-between sm:justify-end">
         {/* Mobile Filter Drawer Button */}
         <MobileFilterDrawer
@@ -51,8 +56,8 @@ export function ItemsToolbar({
           onReset={onReset}
         />
 
-        {/* Desktop Quick Sort Dropdown using FormSelect */}
-        <div className="hidden lg:block w-44">
+        {/* Quick Sort Dropdown using FormSelect */}
+        <div className="w-40 sm:w-44">
           <FormSelect
             label=""
             id="desktop-sort-select"
@@ -69,6 +74,12 @@ export function ItemsToolbar({
             ))}
           </FormSelect>
         </div>
+
+        {/* View Mode Toggle (Grid vs. List) */}
+        <ItemsViewToggle
+          viewMode={viewMode}
+          onViewModeChange={onViewModeChange}
+        />
       </div>
     </div>
   );

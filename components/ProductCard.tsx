@@ -19,7 +19,10 @@ interface ProductCardProps {
   wishlistIds?: string[];
 }
 
-export default function ProductCard({ product, wishlistIds = [] }: ProductCardProps) {
+export default function ProductCard({
+  product,
+  wishlistIds = [],
+}: ProductCardProps) {
   const imageUrl =
     product.images && product.images.length > 0
       ? product.images[0]
@@ -32,7 +35,7 @@ export default function ProductCard({ product, wishlistIds = [] }: ProductCardPr
 
   return (
     <Card className="group h-full p-0 gap-0 border border-slate-200 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col bg-white">
-      <div className="w-full aspect-[4/3] bg-slate-50 overflow-hidden relative border-b border-slate-100">
+      <div className="w-full aspect-4/3 bg-slate-50 overflow-hidden relative border-b border-slate-100">
         {hasDiscount && (
           <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full z-10">
             -{product.discount}%
@@ -76,7 +79,7 @@ export default function ProductCard({ product, wishlistIds = [] }: ProductCardPr
         )}
         <CardTitle className="text-xl">{product.title}</CardTitle>
       </CardHeader>
-      <CardContent className="p-5 pt-0 flex-grow flex flex-col gap-3">
+      <CardContent className="p-5 pt-0 grow flex flex-col gap-3">
         {product.numReviews > 0 && (
           <StarRating
             rating={product.averageRating || 0}
