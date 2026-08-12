@@ -1,19 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { HeartButton } from "@/components/wishlist/HeartButton";
 import { StarRating } from "@/components/reviews/StarRating";
 import { ProductStatusBadges } from "@/components/items/ProductStatusBadges";
 import { Eye } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Product } from "@/lib/types/product";
 
 interface ProductCardProps {
@@ -22,11 +15,18 @@ interface ProductCardProps {
   onQuickView?: (product: Product) => void;
 }
 
+/**
+ * Grid Product Card Component.
+ * Clicking anywhere on the card navigates to the product detail page,
+ * while interactive buttons perform their respective isolated actions.
+ */
 export default function ProductCard({
   product,
   wishlistIds = [],
   onQuickView,
 }: ProductCardProps) {
+  const router = useRouter();
+
   const imageUrl =
     product.images && product.images.length > 0
       ? product.images[0]
@@ -37,103 +37,156 @@ export default function ProductCard({
     ? product.price * (1 - product.discount / 100)
     : product.price;
 
+  // Navigate to product details unless clicking a button or link
+  const handleCardClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest("button") || target.closest("a")) return;
+    router.push(`/items/${product.slug}`);
+  };
+
   return (
-    <Card className="group h-full p-0 gap-0 border border-slate-200 hover:border-slate-300 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col bg-white">
-      {/* Product Image Container */}
-      <div className="w-full aspect-4/3 bg-slate-50 overflow-hidden relative border-b border-slate-100">
-        {/* Dynamic Badges */}
-        <div className="absolute top-3 left-3 z-10">
+    <div
+      onClick={handleCardClick}
+      className="group h-full   transition-all duration-300 rounded-xl overflow-hidden flex flex-col bg-white cursor-pointer"
+    >
+      {/* 1. Product Image Wrapper (Aspect Square) */}
+      <div className="w-full aspect-square bg-slate-50 overflow-hidden relative border-b border-slate-100/60">
+        {/* Dynamic Status Badges (Scaled down on mobile) */}
+        <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 z-10 scale-75 sm:scale-90 origin-top-left">
           <ProductStatusBadges product={product} />
         </div>
 
-        {/* Action Overlay: Wishlist + Quick View */}
-        <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
+        {/* Floating Wishlist Button */}
+        <div
+          className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 z-10 scale-80 sm:scale-100 origin-top-right"
+          onClick={(e) => e.stopPropagation()}
+        >
           <HeartButton
             productId={product._id}
             initialWishlisted={wishlistIds.includes(product._id)}
           />
-          {onQuickView && (
-            <button
-              type="button"
-              onClick={() => onQuickView(product)}
-              title="Quick View"
-              aria-label="Quick View Product"
-              className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-xs text-slate-700 hover:text-slate-900 hover:bg-white shadow-xs border border-slate-200/80 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
-            >
-              <Eye className="w-4 h-4" />
-            </button>
-          )}
         </div>
 
+        {/* Product Image */}
         <img
           src={imageUrl}
           alt={product.title}
           className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
         />
+
+        {/* DESKTOP ONLY: Hover Action Overlay on Image */}
+        <div
+          className="hidden sm:flex absolute bottom-2.5 left-2.5 right-2.5 z-20 items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1.5 group-hover:translate-y-0"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <AddToCartButton
+            product={product}
+            compactText
+            className="flex-1 h-9 bg-slate-900 text-white hover:bg-emerald-600 font-semibold text-[11px] uppercase tracking-wider rounded-lg shadow-xs border-0 transition-colors px-2"
+          />
+          {onQuickView && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onQuickView(product);
+              }}
+              title="Quick View"
+              aria-label="Quick View Product"
+              className="w-9 h-9 shrink-0 rounded-lg bg-white/95 text-slate-800 shadow-xs border border-slate-200/80 hover:bg-slate-900 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+            >
+              <Eye className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
 
-      <CardHeader className="p-5 pb-3">
-        <div className="flex justify-between items-start mb-2">
-          <Badge
-            variant="secondary"
-            className="bg-emerald-50 text-emerald-700 border-emerald-100"
+      {/* 2. Product Details Section */}
+      <div className="p-2.5 sm:p-3.5 flex flex-col justify-between flex-1 space-y-1.5 bg-white">
+        {/* Brand & Title */}
+        <div>
+          {product.brand && (
+            <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium mb-0.5 truncate">
+              {product.brand}
+            </p>
+          )}
+          <Link
+            href={`/items/${product.slug}`}
+            className="block transition-colors"
           >
-            {product.category}
-          </Badge>
-          <div className="text-right">
-            <span className="font-semibold text-lg text-slate-900">
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-1 leading-snug">
+              {product.title}
+            </h3>
+          </Link>
+        </div>
+
+        {/* Pricing & Responsive Ratings */}
+        <div className="space-y-1 pt-0.5">
+          <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
+            <span className="font-extrabold text-xs sm:text-base text-slate-900">
               ${discountedPrice.toFixed(2)}
             </span>
             {hasDiscount && (
-              <span className="block text-xs text-slate-400 line-through">
-                ${product.price.toFixed(2)}
-              </span>
+              <>
+                <span className="text-[10px] sm:text-[11px] text-slate-400 line-through">
+                  ${product.price.toFixed(2)}
+                </span>
+                <span className="bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1 sm:px-1.5 py-0.2 rounded-full">
+                  -{product.discount}%
+                </span>
+              </>
             )}
           </div>
+
+          {/* Scaled Review Stars */}
+          {product.numReviews > 0 && (
+            <>
+              <div className="block sm:hidden">
+                <StarRating
+                  rating={product.averageRating || 0}
+                  size="xs"
+                  showCount
+                  count={product.numReviews}
+                />
+              </div>
+              <div className="hidden sm:block">
+                <StarRating
+                  rating={product.averageRating || 0}
+                  size="sm"
+                  showCount
+                  count={product.numReviews}
+                />
+              </div>
+            </>
+          )}
         </div>
 
-        {product.brand && (
-          <p className="text-xs text-slate-400 font-medium mb-1">
-            {product.brand}
-          </p>
-        )}
-
-        <Link
-          href={`/items/${product.slug}`}
-          className="block group-hover:text-blue-600 transition-colors"
+        {/* MOBILE ONLY: Action Buttons at Card Bottom */}
+        <div
+          className="flex sm:hidden items-center gap-1.5 pt-1.5 mt-auto"
+          onClick={(e) => e.stopPropagation()}
         >
-          <CardTitle className="text-xl line-clamp-1">
-            {product.title}
-          </CardTitle>
-        </Link>
-      </CardHeader>
-
-      <CardContent className="p-5 pt-0 grow flex flex-col gap-3">
-        {product.numReviews > 0 && (
-          <StarRating
-            rating={product.averageRating || 0}
-            size="sm"
-            showCount
-            count={product.numReviews}
+          <AddToCartButton
+            product={product}
+            compactText
+            className="flex-1 h-7.5 bg-slate-900 text-white font-semibold text-[10px] uppercase tracking-wider rounded-md border-0 transition-colors px-1"
           />
-        )}
-        <p className="text-sm text-slate-500 line-clamp-2">
-          {product.shortDescription}
-        </p>
-      </CardContent>
-
-      <CardFooter className="p-5 pt-0 mt-auto border-0 bg-white flex flex-col gap-2">
-        <AddToCartButton
-          product={product}
-          className="w-full h-10 rounded-md text-sm"
-        />
-        <Link
-          href={`/items/${product.slug}`}
-          className="w-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors h-10 rounded-md flex items-center justify-center text-sm font-medium"
-        >
-          View Details
-        </Link>
-      </CardFooter>
-    </Card>
+          {onQuickView && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onQuickView(product);
+              }}
+              title="Quick View"
+              aria-label="Quick View Product"
+              className="w-7.5 h-7.5 shrink-0 rounded-md bg-white text-slate-700 border border-slate-200 hover:bg-slate-900 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+            >
+              <Eye className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

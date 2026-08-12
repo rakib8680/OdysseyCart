@@ -30,7 +30,7 @@ const FALLBACK_IMAGE =
 
 /**
  * Reusable Product Quick View Modal Dialog Component.
- * Fixed height image bounds and hidden scrollbars to eliminate layout shift and sliders.
+ * Responsive sizing: Compact, scroll-free layout on mobile devices; full layout on desktop.
  */
 export function ProductQuickViewModal({
   product,
@@ -80,38 +80,38 @@ export function ProductQuickViewModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-3xl p-0 overflow-hidden bg-white rounded-2xl border border-slate-200 shadow-2xl">
+      <DialogContent className="w-[94vw] max-w-md sm:max-w-3xl p-0 overflow-hidden bg-white rounded-xl sm:rounded-2xl border border-slate-200 shadow-2xl">
         <div className="grid grid-cols-1 md:grid-cols-2 max-h-[85vh] overflow-y-auto overflow-x-hidden">
-          {/* 1. Left Image Gallery */}
-          <div className="relative bg-slate-50 p-4 sm:p-6 flex flex-col justify-between items-center border-b md:border-b-0 md:border-r border-slate-100 overflow-hidden">
-            <div className="absolute top-4 left-4 z-10">
+          {/* 1. Left Image Gallery (Compact on Mobile) */}
+          <div className="relative bg-slate-50 p-3 sm:p-6 flex flex-col justify-between items-center border-b md:border-b-0 md:border-r border-slate-100 overflow-hidden">
+            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 scale-85 sm:scale-100 origin-top-left">
               <ProductStatusBadges product={product} />
             </div>
-            <div className="absolute top-4 right-4 z-10">
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 scale-85 sm:scale-100 origin-top-right">
               <HeartButton
                 productId={product._id}
                 initialWishlisted={wishlistIds.includes(product._id)}
               />
             </div>
 
-            {/* Fixed Aspect Image Container */}
-            <div className="w-full aspect-square relative flex items-center justify-center overflow-hidden rounded-xl bg-white p-2 border border-slate-200/60 shadow-2xs my-auto">
+            {/* Compact Aspect Image Container */}
+            <div className="w-full aspect-4/3 sm:aspect-square max-h-48 sm:max-h-none relative flex items-center justify-center overflow-hidden rounded-lg sm:rounded-xl bg-white p-2 border border-slate-200/60 shadow-2xs my-auto">
               <img
                 src={activeImage}
                 alt={product.title}
-                className="w-full h-full object-cover rounded-lg mix-blend-multiply transition-all duration-300"
+                className="w-full h-full object-cover rounded-md sm:rounded-lg mix-blend-multiply transition-all duration-300"
               />
             </div>
 
-            {/* Thumbnail Row (Clean & Slider-Free) */}
+            {/* Thumbnail Row */}
             {images.length > 1 && (
-              <div className="flex items-center justify-center flex-wrap gap-2 mt-4 max-w-full py-1 scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex items-center justify-center flex-wrap gap-1.5 sm:gap-2 mt-2 sm:mt-4 max-w-full py-1 scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 {images.map((img, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => setSelectedImageIndex(idx)}
-                    className={`w-11 h-11 rounded-lg border-2 overflow-hidden shrink-0 transition-all cursor-pointer ${
+                    className={`w-9 h-9 sm:w-11 sm:h-11 rounded-md sm:rounded-lg border-2 overflow-hidden shrink-0 transition-all cursor-pointer ${
                       selectedImageIndex === idx
                         ? "border-slate-900 ring-2 ring-slate-900/20"
                         : "border-slate-200 opacity-70 hover:opacity-100"
@@ -129,28 +129,28 @@ export function ProductQuickViewModal({
           </div>
 
           {/* 2. Right Product Info & Actions */}
-          <div className="p-6 flex flex-col justify-between space-y-4">
-            <DialogHeader className="space-y-2 text-left">
+          <div className="p-4 sm:p-6 flex flex-col justify-between space-y-3 sm:space-y-4">
+            <DialogHeader className="space-y-1.5 sm:space-y-2 text-left">
               <div className="flex items-center gap-2">
                 <Badge
                   variant="secondary"
-                  className="bg-emerald-50 text-emerald-700 border-emerald-100 text-xs"
+                  className="bg-emerald-50 text-emerald-700 border-emerald-100 text-[10px] sm:text-xs"
                 >
                   {product.category}
                 </Badge>
                 {product.brand && (
-                  <span className="text-xs text-slate-400 font-medium">
+                  <span className="text-[10px] sm:text-xs text-slate-400 font-medium">
                     {product.brand}
                   </span>
                 )}
               </div>
 
-              <DialogTitle className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight">
+              <DialogTitle className="text-base sm:text-2xl font-bold text-slate-900 leading-tight">
                 {product.title}
               </DialogTitle>
 
               {product.numReviews > 0 && (
-                <div className="pt-1">
+                <div className="pt-0.5">
                   <StarRating
                     rating={product.averageRating || 0}
                     size="sm"
@@ -160,25 +160,25 @@ export function ProductQuickViewModal({
                 </div>
               )}
 
-              <DialogDescription className="text-xs sm:text-sm text-slate-500 line-clamp-3 pt-1">
+              <DialogDescription className="text-xs sm:text-sm text-slate-500 line-clamp-2 sm:line-clamp-3 pt-0.5">
                 {product.shortDescription}
               </DialogDescription>
             </DialogHeader>
 
             {/* Pricing Section */}
-            <div className="space-y-1 py-2 border-y border-slate-100">
+            <div className="space-y-0.5 py-1.5 sm:py-2 border-y border-slate-100">
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-extrabold text-slate-900">
+                <span className="text-lg sm:text-2xl font-extrabold text-slate-900">
                   ${discountedPrice.toFixed(2)}
                 </span>
                 {hasDiscount && (
-                  <span className="text-sm text-slate-400 line-through">
+                  <span className="text-xs sm:text-sm text-slate-400 line-through">
                     ${basePrice.toFixed(2)}
                   </span>
                 )}
               </div>
               {hasDiscount && (
-                <p className="text-xs font-semibold text-emerald-600">
+                <p className="text-[10px] sm:text-xs font-semibold text-emerald-600">
                   Save ${(basePrice - discountedPrice).toFixed(2)} (
                   {product.discount}% OFF)
                 </p>
@@ -187,7 +187,7 @@ export function ProductQuickViewModal({
 
             {/* Inline Variant Picker */}
             {hasVariants && (
-              <div className="py-2 border-b border-slate-100">
+              <div className="py-1.5 sm:py-2 border-b border-slate-100">
                 <VariantPicker
                   options={product.options!}
                   variants={product.variants!}
@@ -198,17 +198,17 @@ export function ProductQuickViewModal({
             )}
 
             {/* Action Footer */}
-            <div className="space-y-3 pt-2">
+            <div className="space-y-2 sm:space-y-3 pt-1 sm:pt-2">
               <AddToCartButton
                 product={product}
                 selectedVariant={selectedVariant}
-                className="w-full h-11 rounded-xl text-sm font-bold shadow-sm"
+                className="w-full h-9 sm:h-11 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold shadow-sm"
               />
 
               <Link
                 href={`/items/${product.slug}`}
                 onClick={onClose}
-                className="w-full h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors"
+                className="w-full h-8.5 sm:h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg sm:rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors"
               >
                 <span>View Full Details</span>
                 <ExternalLink className="w-3.5 h-3.5" />
