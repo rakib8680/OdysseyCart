@@ -40,9 +40,9 @@ async function getPopulatedItems(cart: any): Promise<CartItem[]> {
         : null;
     const productId = product?._id?.toString() || item.productId.toString();
 
-    const { stockQuantity } = product
+    const { price, stockQuantity, image } = product
       ? resolveVariantDetails(product, item.variantSku)
-      : { stockQuantity: 0 };
+      : { price: item.price, stockQuantity: 0, image: item.image };
 
     return {
       productId,
@@ -53,8 +53,8 @@ async function getPopulatedItems(cart: any): Promise<CartItem[]> {
             : item.selectedOptions)
         : undefined,
       title: item.title,
-      price: item.price,
-      image: item.image,
+      price,
+      image,
       quantity: item.quantity,
       stockQuantity,
     };

@@ -36,6 +36,11 @@ export default function VariantSection({
   const handleAddOption = () => {
     if (!optionName.trim() || !optionValues.trim()) return;
 
+    // Guard against duplicate option names
+    if (options.some((o) => o.name.toLowerCase() === optionName.trim().toLowerCase())) {
+      return;
+    }
+
     const values = optionValues
       .split(",")
       .map((v) => v.trim())
