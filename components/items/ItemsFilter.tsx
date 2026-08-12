@@ -43,7 +43,7 @@ export function ItemsFilter({ categories, children }: ItemsFilterProps) {
   };
 
   const handleFilterChange = (updates: Record<string, string>) => {
-    setFilters({ ...updates, page: 1 });
+    setFilters((prev) => ({ ...prev, ...updates, page: 1 }));
   };
 
   return (
@@ -64,7 +64,7 @@ export function ItemsFilter({ categories, children }: ItemsFilterProps) {
       {activeFilterCount > 0 && (
         <ActiveFilters
           filters={filters}
-          onClear={setFilters}
+          onClear={handleFilterChange}
           onReset={resetFilters}
         />
       )}

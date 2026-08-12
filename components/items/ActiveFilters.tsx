@@ -5,7 +5,7 @@ import { ProductFilters } from "@/lib/types/product";
 
 interface ActiveFiltersProps {
   filters: ProductFilters;
-  onClear: (updates: Record<string, string | number>) => void;
+  onClear: (updates: Record<string, string>) => void;
   onReset: () => void;
 }
 
@@ -20,35 +20,35 @@ export function ActiveFilters({ filters, onClear, onReset }: ActiveFiltersProps)
   if (filters.search) {
     chips.push({
       label: `Search: "${filters.search}"`,
-      onRemove: () => onClear({ search: "", page: 1 }),
+      onRemove: () => onClear({ search: "" }),
     });
   }
 
   if (filters.category) {
     chips.push({
       label: `Category: ${filters.category}`,
-      onRemove: () => onClear({ category: "", page: 1 }),
+      onRemove: () => onClear({ category: "" }),
     });
   }
 
   if (filters.minPrice) {
     chips.push({
       label: `Min: $${filters.minPrice}`,
-      onRemove: () => onClear({ minPrice: "", page: 1 }),
+      onRemove: () => onClear({ minPrice: "" }),
     });
   }
 
   if (filters.maxPrice) {
     chips.push({
       label: `Max: $${filters.maxPrice}`,
-      onRemove: () => onClear({ maxPrice: "", page: 1 }),
+      onRemove: () => onClear({ maxPrice: "" }),
     });
   }
 
   if (filters.sort && filters.sort !== "newest") {
     chips.push({
       label: `Sort: ${filters.sort}`,
-      onRemove: () => onClear({ sort: "newest", page: 1 }),
+      onRemove: () => onClear({ sort: "newest" }),
     });
   }
 

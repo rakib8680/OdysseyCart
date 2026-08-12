@@ -5,7 +5,7 @@ import { FormInput } from "@/components/form/FormInput";
 import { FormSelect } from "@/components/form/FormSelect";
 import { SORT_CONFIG, PRICE_PRESETS } from "@/lib/config/products";
 import { ProductFilters } from "@/lib/types/product";
-import { useDebounce } from "@/hooks/useDebounce";
+import { useDebouncedCallback } from "@/hooks/useDebounce";
 import { Check, RotateCcw, DollarSign, Tag } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +21,7 @@ export interface FilterSectionsProps {
  * Reusable Filter Sections Component.
  * Pure UI component used identically by both DesktopSidebar and MobileFilterDrawer
  * to guarantee strict DRY code principles.
- * Reuses centralized `FormInput` and `FormSelect` from components/form.
+ * Reuses centralized `FormInput`, `FormSelect`, and custom `useDebouncedCallback` hook.
  */
 export function FilterSections({
   filters,
@@ -30,14 +30,11 @@ export function FilterSections({
   onFilterChange,
   onReset,
 }: FilterSectionsProps) {
-  // Local state for debouncing price range inputs
+  // Local state for price range input displays
   const [localMin, setLocalMin] = useState(filters.minPrice);
   const [localMax, setLocalMax] = useState(filters.maxPrice);
 
-  const debouncedMin = useDebounce(localMin, 350);
-  const debouncedMax = useDebounce(localMax, 350);
-
-  // Sync local inputs when URL filter changes externally (e.g., reset or presets)
+  // Sync local inputs when URL search params change externally (presets, active pill clear, reset)
   useEffect(() => {
     setLocalMin(filters.minPrice);
   }, [filters.minPrice]);
@@ -46,18 +43,40 @@ export function FilterSections({
     setLocalMax(filters.maxPrice);
   }, [filters.maxPrice]);
 
-  // Push debounced price changes to URL params
-  useEffect(() => {
-    if (debouncedMin !== filters.minPrice) {
-      onFilterChange({ minPrice: debouncedMin });
-    }
-  }, [debouncedMin, filters.minPrice, onFilterChange]);
+  // Industry-standard debounced callbacks for input typing
+  const debouncedMinChange = useDebouncedCallback((val: string) => {
+    onFilterChange({ minPrice: val });
+  }, 350);
 
-  useEffect(() => {
-    if (debouncedMax !== filters.maxPrice) {
-      onFilterChange({ maxPrice: debouncedMax });
-    }
-  }, [debouncedMax, filters.maxPrice, onFilterChange]);
+  const debouncedMaxChange = useDebouncedCallback((val: string) => {
+    onFilterChange({ maxPrice: val });
+  }, 350);
+
+  // Clear pending typing timers when preset or clear links are clicked
+  const cancelPendingDebounces = () => {
+    debouncedMinChange.cancel();
+    debouncedMaxChange.cancel();
+  };
+
+  const handleMinInputChange = (val: string) => {
+    setLocalMin(val);
+    debouncedMinChange(val);
+  };
+
+  const handleMaxInputChange = (val: string) => {
+    setLocalMax(val);
+    debouncedMaxChange(val);
+  };
+
+  const handlePricePreset = (min: string, max: string) => {
+    cancelPendingDebounces();
+    onFilterChange({ minPrice: min, maxPrice: max });
+  };
+
+  const handleClearPrice = () => {
+    cancelPendingDebounces();
+    onFilterChange({ minPrice: "", maxPrice: "" });
+  };
 
   return (
     <div className="space-y-6 text-sm">
@@ -115,7 +134,7 @@ export function FilterSections({
           {(filters.minPrice || filters.maxPrice) && (
             <button
               type="button"
-              onClick={() => onFilterChange({ minPrice: "", maxPrice: "" })}
+              onClick={handleClearPrice}
               className="text-[11px] font-medium text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
             >
               Clear
@@ -134,7 +153,7 @@ export function FilterSections({
             step="1"
             className="h-9 text-xs bg-white"
             value={localMin}
-            onChange={(e) => setLocalMin(e.target.value)}
+            onChange={(e) => handleMinInputChange(e.target.value)}
           />
           <FormInput
             label="Max ($)"
@@ -145,7 +164,7 @@ export function FilterSections({
             step="1"
             className="h-9 text-xs bg-white"
             value={localMax}
-            onChange={(e) => setLocalMax(e.target.value)}
+            onChange={(e) => handleMaxInputChange(e.target.value)}
           />
         </div>
 
@@ -158,9 +177,7 @@ export function FilterSections({
               <button
                 key={preset.label}
                 type="button"
-                onClick={() =>
-                  onFilterChange({ minPrice: preset.min, maxPrice: preset.max })
-                }
+                onClick={() => handlePricePreset(preset.min, preset.max)}
                 className={cn(
                   "px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-colors text-center border cursor-pointer",
                   isPresetActive
@@ -200,7 +217,10 @@ export function FilterSections({
         <div className="pt-2">
           <button
             type="button"
-            onClick={onReset}
+            onClick={() => {
+              cancelPendingDebounces();
+              onReset();
+            }}
             className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors cursor-pointer border border-red-100"
           >
             <RotateCcw className="w-3.5 h-3.5" />
