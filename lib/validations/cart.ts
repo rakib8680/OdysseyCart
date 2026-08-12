@@ -6,6 +6,7 @@ export const CartActionSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
   productId: z.string().min(1, "Product ID is required"),
   variantSku: z.string().optional(),
+  selectedOptions: z.record(z.string(), z.string()).optional(),
   quantity: z.coerce.number().int().default(1),
 });
 

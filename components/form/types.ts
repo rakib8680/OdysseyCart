@@ -18,9 +18,6 @@ export interface ProductFormData {
   dimensionLength: number;
   dimensionWidth: number;
   dimensionHeight: number;
-  // Variant fields — managed outside react-hook-form via useState
-  options: VariantOptionForm[];
-  variants: VariantForm[];
 }
 
 // Admin form shapes for variant management
