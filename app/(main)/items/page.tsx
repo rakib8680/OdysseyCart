@@ -1,4 +1,5 @@
 import { getFilteredProducts, getCategories } from "@/app/actions/products";
+import { CollectionHero } from "@/components/items/CollectionHero";
 import { ItemsFilter } from "@/components/items/ItemsFilter";
 import { Pagination } from "@/components/items/Pagination";
 import { ProductGrid } from "@/components/items/ProductGrid";
@@ -21,23 +22,29 @@ export default async function ItemsPage({ searchParams }: PageProps) {
   ]);
 
   return (
-    <div className="container max-w-7xl mx-auto px-4 md:px-8 py-16 min-h-screen">
-      {/* Client Component — controls URL filters */}
-      <ItemsFilter categories={categories} />
-
-      {/* Server-rendered product grid */}
-      <ProductGrid
-        products={result.products}
+    <div className="min-h-screen">
+      {/* Full-width hero banner */}
+      <CollectionHero
+        activeCategory={params.category || undefined}
         totalCount={result.totalCount}
       />
 
-      {/* Pagination (only when needed) */}
-      {result.totalPages > 1 && (
-        <Pagination
-          currentPage={result.currentPage}
-          totalPages={result.totalPages}
-        />
-      )}
+      {/* Content container */}
+      <div className="container max-w-7xl mx-auto px-4 md:px-8 py-8">
+        {/* Client Component — controls URL filters */}
+        <ItemsFilter categories={categories} />
+
+        {/* Server-rendered product grid */}
+        <ProductGrid products={result.products} />
+
+        {/* Pagination (only when needed) */}
+        {result.totalPages > 1 && (
+          <Pagination
+            currentPage={result.currentPage}
+            totalPages={result.totalPages}
+          />
+        )}
+      </div>
     </div>
   );
 }

@@ -29,10 +29,10 @@ export function CollectionHero({
     : "Explore our premium selection of gear and accessories.";
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white border-b border-slate-100">
+    <section className="relative overflow-hidden bg-linear-to-b from-slate-50 to-white border-b border-slate-100">
       {/* Geometric accents — consistent with homepage hero */}
-      <div className="absolute top-0 right-0 -mr-32 -mt-32 w-[500px] h-[500px] rounded-full border border-emerald-100/50 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 -ml-24 -mb-24 w-[350px] h-[350px] rounded-full border border-slate-200/40 pointer-events-none" />
+      <div className="absolute top-0 right-0 -mr-32 -mt-32 w-125 h-125 rounded-full border border-emerald-100/50 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 -ml-24 -mb-24 w-87.5 h-87.5 rounded-full border border-slate-200/40 pointer-events-none" />
 
       <div className="container max-w-7xl mx-auto px-4 md:px-8 pt-10 pb-8 md:pt-14 md:pb-10 relative z-10">
         {/* Breadcrumb */}
@@ -40,10 +40,7 @@ export function CollectionHero({
           aria-label="Breadcrumb"
           className="hidden sm:flex items-center gap-1.5 text-sm text-slate-400 mb-6"
         >
-          <Link
-            href="/"
-            className="hover:text-slate-600 transition-colors"
-          >
+          <Link href="/" className="hover:text-slate-600 transition-colors">
             Home
           </Link>
           <ChevronRight className="w-3.5 h-3.5" />

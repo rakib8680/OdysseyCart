@@ -40,17 +40,8 @@ export function ItemsFilter({ categories }: ItemsFilterProps) {
 
   return (
     <>
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
-        <div>
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-2">
-            Collection
-          </h1>
-          <p className="text-slate-500">
-            Explore our premium selection of gear and accessories.
-          </p>
-        </div>
-
+      {/* Search + Filter Toggle */}
+      <div className="flex items-center justify-between mb-6 gap-4">
         <SearchBar
           search={filters.search}
           onSearchChange={(value) => setFilters({ search: value, page: 1 })}
