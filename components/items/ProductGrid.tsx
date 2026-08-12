@@ -2,9 +2,12 @@
 
 import ProductCard from "@/components/ProductCard";
 import { ProductListItemCard } from "@/components/items/ProductListItemCard";
+import { ProductQuickViewModal } from "@/components/items/ProductQuickViewModal";
+import { useQuickView } from "@/hooks/useQuickView";
 import { Product, ViewMode } from "@/lib/types/product";
 import Link from "next/link";
 import { PackageSearch } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ProductGridProps {
   products: Product[];
@@ -14,13 +17,16 @@ interface ProductGridProps {
 
 /**
  * Product Catalog Renderer Component.
- * Dynamically switches between 3-Column Responsive Grid View and Side-by-Side List View.
+ * Dynamically switches between Grid and List views with staggered Framer Motion entrance animations,
+ * and integrates the central Quick View Modal overlay.
  */
 export function ProductGrid({
   products,
   wishlistIds = [],
   viewMode = "grid",
 }: ProductGridProps) {
+  const { activeProduct, isOpen, openQuickView, closeQuickView } = useQuickView();
+
   if (products.length === 0) {
     return (
       <div className="text-center py-20 px-4 text-slate-500 bg-slate-50/80 rounded-2xl border border-dashed border-slate-200 flex flex-col items-center justify-center">
@@ -43,31 +49,67 @@ export function ProductGrid({
     );
   }
 
-  // 1. LIST VIEW LAYOUT
-  if (viewMode === "list") {
-    return (
-      <div className="space-y-4">
-        {products.map((product) => (
-          <ProductListItemCard
-            key={product._id}
-            product={product}
-            wishlistIds={wishlistIds}
-          />
-        ))}
-      </div>
-    );
-  }
-
-  // 2. GRID VIEW LAYOUT (Default)
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {products.map((product) => (
-        <ProductCard
-          key={product._id}
-          product={product}
-          wishlistIds={wishlistIds}
-        />
-      ))}
-    </div>
+    <>
+      <AnimatePresence mode="wait">
+        {/* 1. LIST VIEW LAYOUT */}
+        {viewMode === "list" ? (
+          <motion.div
+            key="catalog-list-view"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="space-y-4"
+          >
+            {products.map((product, idx) => (
+              <motion.div
+                key={product._id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: idx * 0.03 }}
+              >
+                <ProductListItemCard
+                  product={product}
+                  wishlistIds={wishlistIds}
+                  onQuickView={openQuickView}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          /* 2. GRID VIEW LAYOUT */
+          <motion.div
+            key="catalog-grid-view"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {products.map((product, idx) => (
+              <motion.div
+                key={product._id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: idx * 0.03 }}
+              >
+                <ProductCard
+                  product={product}
+                  wishlistIds={wishlistIds}
+                  onQuickView={openQuickView}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 3. CENTRAL QUICK VIEW MODAL OVERLAY */}
+      <ProductQuickViewModal
+        product={activeProduct}
+        isOpen={isOpen}
+        onClose={closeQuickView}
+        wishlistIds={wishlistIds}
+      />
+    </>
   );
 }

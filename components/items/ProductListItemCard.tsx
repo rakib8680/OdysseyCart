@@ -5,22 +5,25 @@ import { Eye } from "lucide-react";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { HeartButton } from "@/components/wishlist/HeartButton";
 import { StarRating } from "@/components/reviews/StarRating";
+import { ProductStatusBadges } from "@/components/items/ProductStatusBadges";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/lib/types/product";
 
 interface ProductListItemCardProps {
   product: Product;
   wishlistIds?: string[];
+  onQuickView?: (product: Product) => void;
 }
 
 /**
  * Product List Item Card Component.
  * Uniform-height horizontal side-by-side list view card.
- * Designed to maintain consistent height across all items, clean price formatting, and compact mobile action controls.
+ * Integrates dynamic status badges and quick-view overlay triggers.
  */
 export function ProductListItemCard({
   product,
   wishlistIds = [],
+  onQuickView,
 }: ProductListItemCardProps) {
   const imageUrl =
     product.images && product.images.length > 0
@@ -39,17 +42,30 @@ export function ProductListItemCard({
     <div className="group border border-slate-200/80 hover:border-slate-300 hover:shadow-md transition-all duration-200 rounded-xl bg-white overflow-hidden flex flex-row items-stretch h-36 sm:h-52">
       {/* 1. Left Image Container */}
       <div className="relative w-28 sm:w-56 shrink-0 h-full bg-slate-50 border-r border-slate-100 overflow-hidden">
-        {hasDiscount && (
-          <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-red-500 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full z-10">
-            -{product.discount}%
-          </div>
-        )}
-        <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10">
+        {/* Dynamic Badges */}
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
+          <ProductStatusBadges product={product} />
+        </div>
+
+        {/* Action Overlay: Wishlist + Quick View */}
+        <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 flex flex-col gap-1.5">
           <HeartButton
             productId={product._id}
             initialWishlisted={wishlistIds.includes(product._id)}
           />
+          {onQuickView && (
+            <button
+              type="button"
+              onClick={() => onQuickView(product)}
+              title="Quick View"
+              aria-label="Quick View Product"
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 backdrop-blur-xs text-slate-700 hover:text-slate-900 hover:bg-white shadow-xs border border-slate-200/80 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+            >
+              <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </button>
+          )}
         </div>
+
         <img
           src={imageUrl}
           alt={product.title}
@@ -57,7 +73,7 @@ export function ProductListItemCard({
         />
       </div>
 
-      {/* 2. Right Body Container (Mobile: Stacked Details + Full-Width Price/Action Row | Desktop: Split Columns) */}
+      {/* 2. Right Body Container */}
       <div className="flex-1 min-w-0 p-3 sm:p-5 flex flex-col sm:flex-row justify-between gap-2 sm:gap-4 overflow-hidden">
         {/* Product Info (Title, Category, Rating, Description) */}
         <div className="flex-1 min-w-0 flex flex-col justify-between space-y-1 sm:space-y-0">
@@ -102,7 +118,7 @@ export function ProductListItemCard({
             )}
           </div>
 
-          {/* Star Rating & Short Description */}
+          {/* Rating & Description */}
           <div className="space-y-1">
             {product.numReviews > 0 && (
               <StarRating
@@ -118,7 +134,7 @@ export function ProductListItemCard({
           </div>
         </div>
 
-        {/* Price & Action Row (Mobile: Bottom row inside right container | Desktop: Separate right column) */}
+        {/* Price & Action Row */}
         <div className="shrink-0 sm:w-48 flex flex-row sm:flex-col justify-between sm:justify-center items-center sm:items-stretch gap-2 pt-1.5 sm:pt-0 border-t border-slate-100 sm:border-t-0 sm:border-l sm:pl-5 sm:bg-slate-50/50 sm:-my-5 sm:-mr-5 sm:p-5">
           <div>
             <div className="flex items-baseline gap-1 sm:gap-1.5">

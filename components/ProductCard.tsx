@@ -4,6 +4,8 @@ import Link from "next/link";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { HeartButton } from "@/components/wishlist/HeartButton";
 import { StarRating } from "@/components/reviews/StarRating";
+import { ProductStatusBadges } from "@/components/items/ProductStatusBadges";
+import { Eye } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -17,11 +19,13 @@ import { Product } from "@/lib/types/product";
 interface ProductCardProps {
   product: Product;
   wishlistIds?: string[];
+  onQuickView?: (product: Product) => void;
 }
 
 export default function ProductCard({
   product,
   wishlistIds = [],
+  onQuickView,
 }: ProductCardProps) {
   const imageUrl =
     product.images && product.images.length > 0
@@ -30,29 +34,44 @@ export default function ProductCard({
 
   const hasDiscount = product.discount > 0;
   const discountedPrice = hasDiscount
-    ? product.price * (1 - product.discount! / 100)
+    ? product.price * (1 - product.discount / 100)
     : product.price;
 
   return (
-    <Card className="group h-full p-0 gap-0 border border-slate-200 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col bg-white">
+    <Card className="group h-full p-0 gap-0 border border-slate-200 hover:border-slate-300 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col bg-white">
+      {/* Product Image Container */}
       <div className="w-full aspect-4/3 bg-slate-50 overflow-hidden relative border-b border-slate-100">
-        {hasDiscount && (
-          <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full z-10">
-            -{product.discount}%
-          </div>
-        )}
-        <div className="absolute top-3 right-3 z-10">
+        {/* Dynamic Badges */}
+        <div className="absolute top-3 left-3 z-10">
+          <ProductStatusBadges product={product} />
+        </div>
+
+        {/* Action Overlay: Wishlist + Quick View */}
+        <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
           <HeartButton
             productId={product._id}
             initialWishlisted={wishlistIds.includes(product._id)}
           />
+          {onQuickView && (
+            <button
+              type="button"
+              onClick={() => onQuickView(product)}
+              title="Quick View"
+              aria-label="Quick View Product"
+              className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-xs text-slate-700 hover:text-slate-900 hover:bg-white shadow-xs border border-slate-200/80 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+            >
+              <Eye className="w-4 h-4" />
+            </button>
+          )}
         </div>
+
         <img
           src={imageUrl}
           alt={product.title}
-          className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-700"
+          className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
         />
       </div>
+
       <CardHeader className="p-5 pb-3">
         <div className="flex justify-between items-start mb-2">
           <Badge
@@ -72,13 +91,23 @@ export default function ProductCard({
             )}
           </div>
         </div>
+
         {product.brand && (
           <p className="text-xs text-slate-400 font-medium mb-1">
             {product.brand}
           </p>
         )}
-        <CardTitle className="text-xl">{product.title}</CardTitle>
+
+        <Link
+          href={`/items/${product.slug}`}
+          className="block group-hover:text-blue-600 transition-colors"
+        >
+          <CardTitle className="text-xl line-clamp-1">
+            {product.title}
+          </CardTitle>
+        </Link>
       </CardHeader>
+
       <CardContent className="p-5 pt-0 grow flex flex-col gap-3">
         {product.numReviews > 0 && (
           <StarRating
@@ -92,6 +121,7 @@ export default function ProductCard({
           {product.shortDescription}
         </p>
       </CardContent>
+
       <CardFooter className="p-5 pt-0 mt-auto border-0 bg-white flex flex-col gap-2">
         <AddToCartButton
           product={product}
