@@ -99,7 +99,6 @@ export function CartDrawer() {
                     isBusy={busyItems.has(cartItemKey(item))}
                     onUpdateQuantity={updateQuantity}
                     onRemove={removeItem}
-                    onNavigate={closeCart}
                   />
                 ))}
               </AnimatePresence>

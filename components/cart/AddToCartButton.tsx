@@ -59,7 +59,9 @@ export function AddToCartButton({
   );
   const currentQuantityInCart = cartItem?.quantity || 0;
   const isMaxLimitReached = currentQuantityInCart >= resolvedStock;
-  const isBusy = busyItems.has(product._id);
+  const isBusy = busyItems.has(
+    selectedVariant ? `${product._id}:${selectedVariant.sku}` : product._id,
+  );
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();

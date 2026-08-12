@@ -104,7 +104,7 @@ export function ReviewStep({
 
       {/* Security Badge */}
       <div className="bg-emerald-50 text-emerald-800 p-4 rounded-xl flex items-start gap-3">
-        <ShieldCheck className="w-5 h-5 flex-shrink-0 mt-0.5" />
+        <ShieldCheck className="w-5 h-5 shrink-0 mt-0.5" />
         <p className="text-sm">
           Your payment is securely processed by Stripe. We never store your
           credit card details.

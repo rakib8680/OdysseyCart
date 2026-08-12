@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Minus, Plus, Trash2, Loader2, ImageOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { CartItem as CartItemType } from "@/lib/types/cart";
@@ -16,7 +15,6 @@ interface CartItemProps {
     variantSku?: string,
   ) => void;
   onRemove: (productId: string, variantSku?: string) => void;
-  onNavigate: () => void;
 }
 
 export function CartItem({
@@ -24,10 +22,8 @@ export function CartItem({
   isBusy,
   onUpdateQuantity,
   onRemove,
-  onNavigate,
 }: CartItemProps) {
   const [imgError, setImgError] = useState(false);
-  const productHref = `/items/${item.productId}`;
 
   return (
     <motion.div
@@ -48,12 +44,8 @@ export function CartItem({
     >
       {/* Top row: Thumbnail + Info + Delete */}
       <div className="flex gap-2 sm:gap-4 items-start">
-        {/* Clickable Thumbnail */}
-        <Link
-          href={productHref}
-          onClick={onNavigate}
-          className="w-12 h-12 sm:w-20 sm:h-20 bg-slate-50 rounded-lg sm:rounded-xl overflow-hidden shrink-0 border border-slate-100 hover:border-slate-300 transition-all hover:shadow-md flex items-center justify-center"
-        >
+        {/* Thumbnail */}
+        <div className="w-12 h-12 sm:w-20 sm:h-20 bg-slate-50 rounded-lg sm:rounded-xl overflow-hidden shrink-0 border border-slate-100 flex items-center justify-center">
           {imgError ? (
             <ImageOff className="w-6 h-6 sm:w-8 sm:h-8 text-slate-300" />
           ) : (
@@ -61,22 +53,16 @@ export function CartItem({
               src={item.image}
               alt={item.title}
               onError={() => setImgError(true)}
-              className="w-full h-full object-cover mix-blend-multiply transition-transform duration-200 hover:scale-110"
+              className="w-full h-full object-cover mix-blend-multiply"
             />
           )}
-        </Link>
+        </div>
 
-        {/* Details with clickable title */}
+        {/* Details */}
         <div className="flex-1 min-w-0">
-          <Link
-            href={productHref}
-            onClick={onNavigate}
-            className="block group/link"
-          >
-            <h4 className="font-semibold text-xs sm:text-base text-slate-900 line-clamp-2 leading-snug group-hover/link:text-emerald-600 transition-colors">
-              {item.title}
-            </h4>
-          </Link>
+          <h4 className="font-semibold text-xs sm:text-base text-slate-900 line-clamp-2 leading-snug">
+            {item.title}
+          </h4>
           {/* Variant Option Badges */}
           <VariantBadges options={item.selectedOptions} className="mt-1" />
           <p className="font-bold text-emerald-600 mt-0.5 sm:mt-1 text-xs sm:text-base">
