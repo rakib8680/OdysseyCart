@@ -5,6 +5,7 @@ import { Loader2, ShieldCheck, MapPin, Package, Lock } from "lucide-react";
 import { CartItem } from "@/lib/types/cart";
 import { OrderTotals } from "@/lib/utils/pricing";
 import { TShippingForm } from "@/lib/validations/checkout";
+import { cartItemKey } from "@/lib/utils/cart";
 import { SummaryItem } from "./SummaryItem";
 
 interface ReviewStepProps {
@@ -96,7 +97,7 @@ export function ReviewStep({
         </div>
         <div className="divide-y divide-slate-100 pl-2">
           {cartItems.map((item) => (
-            <SummaryItem key={item.productId} item={item} />
+            <SummaryItem key={cartItemKey(item)} item={item} />
           ))}
         </div>
       </div>

@@ -54,7 +54,9 @@ export async function getCheckoutCart(
           productId: product._id.toString(),
           variantSku: item.variantSku || undefined,
           selectedOptions: item.selectedOptions
-            ? Object.fromEntries(item.selectedOptions)
+            ? (item.selectedOptions instanceof Map
+                ? Object.fromEntries(item.selectedOptions)
+                : item.selectedOptions)
             : undefined,
           title: product.title,
           price: livePrice,
