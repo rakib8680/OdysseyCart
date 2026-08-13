@@ -1,20 +1,46 @@
-import { useState, useCallback } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { FALLBACK_PRODUCT_IMAGE } from "@/lib/constants/images";
 
 /**
- * Lightweight hook for client-side image error recovery.
- * If a remote image URL returns a 404 or fails to load,
- * this silently swaps to the centralized fallback placeholder.
- * Includes infinite-loop protection to prevent re-triggering on fallback failure.
+ * Bulletproof image fallback hook.
+ *
+ * Handles TWO failure scenarios:
+ * 1. **Pre-hydration failure** (hard reload): The browser loads the `<img>` from server HTML
+ *    and the image 404s BEFORE React hydrates and attaches `onError`. We catch this with
+ *    a `useEffect` that checks `img.complete && img.naturalWidth === 0` after mount.
+ * 2. **Post-hydration failure** (client navigation): Standard `onError` handler swaps the src.
+ *
+ * Uses a `data-fallback` attribute as an infinite-loop guard instead of URL string comparison
+ * to avoid browser URL encoding mismatches.
  */
-export function useImageFallback(initialSrc: string) {
-  const [src, setSrc] = useState(initialSrc);
+export function useImageFallback() {
+  const imgRef = useRef<HTMLImageElement>(null);
 
-  const onError = useCallback(() => {
-    if (src !== FALLBACK_PRODUCT_IMAGE) {
-      setSrc(FALLBACK_PRODUCT_IMAGE);
+  // Post-hydration check: detect images that already failed before React attached onError
+  useEffect(() => {
+    const img = imgRef.current;
+    if (
+      img &&
+      img.complete &&
+      img.naturalWidth === 0 &&
+      !img.dataset.fallbackApplied
+    ) {
+      img.dataset.fallbackApplied = "true";
+      img.src = FALLBACK_PRODUCT_IMAGE;
     }
-  }, [src]);
+  }, []);
 
-  return { src, onError };
+  // Standard onError for images that fail after hydration is complete
+  const onError = useCallback(
+    (e: React.SyntheticEvent<HTMLImageElement>) => {
+      const target = e.currentTarget;
+      if (!target.dataset.fallbackApplied) {
+        target.dataset.fallbackApplied = "true";
+        target.src = FALLBACK_PRODUCT_IMAGE;
+      }
+    },
+    [],
+  );
+
+  return { imgRef, onError };
 }

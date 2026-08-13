@@ -27,9 +27,8 @@ export function ProductListItemCard({
   wishlistIds = [],
   onQuickView,
 }: ProductListItemCardProps) {
-  const { src: imageUrl, onError: onImageError } = useImageFallback(
-    getProductImageUrl(product.images)
-  );
+  const imageUrl = getProductImageUrl(product.images);
+  const { imgRef, onError: onImageError } = useImageFallback();
 
   const hasDiscount = product.discount > 0;
   const discountedPrice = hasDiscount
@@ -68,6 +67,7 @@ export function ProductListItemCard({
         </div>
 
         <img
+          ref={imgRef}
           src={imageUrl}
           alt={product.title}
           onError={onImageError}

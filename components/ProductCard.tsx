@@ -28,9 +28,8 @@ export default function ProductCard({
   onQuickView,
 }: ProductCardProps) {
   const router = useRouter();
-  const { src: imageUrl, onError: onImageError } = useImageFallback(
-    getProductImageUrl(product.images)
-  );
+  const imageUrl = getProductImageUrl(product.images);
+  const { imgRef, onError: onImageError } = useImageFallback();
 
   const hasDiscount = product.discount > 0;
   const discountedPrice = hasDiscount
@@ -69,6 +68,7 @@ export default function ProductCard({
 
         {/* Product Image */}
         <img
+          ref={imgRef}
           src={imageUrl}
           alt={product.title}
           onError={onImageError}

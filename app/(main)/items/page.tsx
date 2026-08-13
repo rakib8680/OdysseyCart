@@ -46,7 +46,7 @@ export default async function ItemsPage({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen">
-      <div className="container max-w-7xl mx-auto px-4 md:px-8 pt-8 pb-6">
+      <div className="container max-w-7xl mx-auto px-4 md:px-8 pt-8 pb-36">
         {/* Editorial hero header */}
         <CollectionHero
           activeCategory={params.category || undefined}
