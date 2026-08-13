@@ -1,6 +1,11 @@
 import { Product } from "@/lib/types/product";
 
-export type ProductBadgeType = "new" | "bestseller" | "sale";
+export type ProductBadgeType =
+  | "out_of_stock"
+  | "low_stock"
+  | "sale"
+  | "new"
+  | "bestseller";
 
 export interface ProductBadgeInfo {
   type: ProductBadgeType;
@@ -14,7 +19,20 @@ export interface ProductBadgeInfo {
 export function getProductBadges(product: Product): ProductBadgeInfo[] {
   const badges: ProductBadgeInfo[] = [];
 
-  // 1. Sale Badge (Highest Priority if discount exists)
+  // 1. Stock Status Badges (Highest Priority)
+  if (product.stockQuantity === 0) {
+    badges.push({
+      type: "out_of_stock",
+      label: "Out of Stock",
+    });
+  } else if (product.stockQuantity > 0 && product.stockQuantity <= 3) {
+    badges.push({
+      type: "low_stock",
+      label: `Only ${product.stockQuantity} left`,
+    });
+  }
+
+  // 2. Sale Badge (If discount exists)
   if (product.discount > 0) {
     badges.push({
       type: "sale",
@@ -22,7 +40,7 @@ export function getProductBadges(product: Product): ProductBadgeInfo[] {
     });
   }
 
-  // 2. New Badge (Created within last 30 days, with valid date guard)
+  // 3. New Badge (Created within last 30 days, with valid date guard)
   if (product.createdAt) {
     const createdDate = new Date(product.createdAt).getTime();
     const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
@@ -34,7 +52,7 @@ export function getProductBadges(product: Product): ProductBadgeInfo[] {
     }
   }
 
-  // 3. Bestseller Badge (Must have actual reviews + high rating density)
+  // 4. Bestseller Badge (Must have actual reviews + high rating density)
   const numReviews = product.numReviews || 0;
   const averageRating = product.averageRating || 0;
 
