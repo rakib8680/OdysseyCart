@@ -59,9 +59,10 @@ export default function AccountWishlistPage() {
         {
           productId: item._id,
           title: item.title,
-          price: item.discount > 0
-            ? item.price * (1 - item.discount / 100)
-            : item.price,
+          price:
+            item.discount > 0
+              ? item.price * (1 - item.discount / 100)
+              : item.price,
           image: item.images?.[0] || "",
         },
         1,
@@ -125,7 +126,12 @@ interface WishlistRowProps {
   onMoveToCart: (item: WishlistItem) => void;
 }
 
-function WishlistRow({ item, isLoading, onRemove, onMoveToCart }: WishlistRowProps) {
+function WishlistRow({
+  item,
+  isLoading,
+  onRemove,
+  onMoveToCart,
+}: WishlistRowProps) {
   const [imgError, setImgError] = useState(false);
   const imageUrl = item.images?.[0];
   const isOutOfStock = item.stockQuantity <= 0;
@@ -140,7 +146,7 @@ function WishlistRow({ item, isLoading, onRemove, onMoveToCart }: WishlistRowPro
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <Link
           href={`/items/${item._id}`}
-          className="w-14 h-14 rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center border border-slate-200/60 shadow-xs flex-shrink-0"
+          className="w-14 h-14 rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center border border-slate-200/60 shadow-xs shrink-0"
         >
           {imageUrl && !imgError ? (
             <img
@@ -180,7 +186,7 @@ function WishlistRow({ item, isLoading, onRemove, onMoveToCart }: WishlistRowPro
       </div>
 
       {/* Stock Status */}
-      <div className="hidden sm:flex items-center min-w-[100px]">
+      <div className="hidden sm:flex items-center min-w-25">
         {isOutOfStock ? (
           <span className="text-xs font-semibold text-red-500 bg-red-50 border border-red-100 px-2.5 py-1 rounded-full">
             Out of Stock

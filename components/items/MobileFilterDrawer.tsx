@@ -16,8 +16,6 @@ export type MobileFilterDrawerProps = FilterSectionsProps;
 
 /**
  * Mobile Filter Drawer Component.
- * Slide-over drawer for mobile viewports (`lg:hidden`), built using the project's
- * reusable `Sheet` primitive (`components/ui/sheet.tsx`) and `FilterSections`.
  */
 export function MobileFilterDrawer({
   filters,
@@ -50,7 +48,7 @@ export function MobileFilterDrawer({
         className="w-80 sm:w-96 p-0 flex flex-col h-full bg-white"
       >
         {/* Header */}
-        <SheetHeader className="p-4 border-b border-slate-100 flex flex-row items-center justify-between">
+        <SheetHeader className="p-4 pr-12 border-b border-slate-100 flex flex-row items-center justify-between">
           <div className="flex items-center gap-2">
             <SlidersHorizontal className="w-4 h-4 text-slate-800" />
             <SheetTitle className="text-sm font-bold text-slate-900">

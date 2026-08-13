@@ -27,8 +27,6 @@ interface ProductQuickViewModalProps {
   wishlistIds?: string[];
 }
 
-
-
 /**
  * Reusable Product Quick View Modal Dialog Component.
  * Responsive sizing: Compact, scroll-free layout on mobile devices; full layout on desktop.
@@ -79,14 +77,14 @@ export function ProductQuickViewModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="w-[94vw] max-w-md sm:max-w-3xl p-0 overflow-hidden bg-white rounded-xl sm:rounded-2xl border border-slate-200 shadow-2xl">
+      <DialogContent className="w-[90vw] max-w-md sm:max-w-3xl p-0 overflow-hidden bg-white rounded-xl sm:rounded-2xl border border-slate-200 shadow-2xl">
         <div className="grid grid-cols-1 md:grid-cols-2 max-h-[85vh] overflow-y-auto overflow-x-hidden">
           {/* 1. Left Image Gallery (Compact on Mobile) */}
           <div className="relative bg-slate-50 p-3 sm:p-6 flex flex-col justify-between items-center border-b md:border-b-0 md:border-r border-slate-100 overflow-hidden">
-            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 scale-85 sm:scale-100 origin-top-left">
+            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10   origin-top-left">
               <ProductStatusBadges product={product} />
             </div>
-            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 scale-85 sm:scale-100 origin-top-right">
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10   origin-top-right">
               <HeartButton
                 productId={product._id}
                 initialWishlisted={wishlistIds.includes(product._id)}
