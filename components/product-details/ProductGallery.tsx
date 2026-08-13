@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { Star, ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 import { Product } from "@/lib/types/product";
 import { getProductImages } from "@/lib/utils/productImages";
+import { useImageFallback, handleImageError } from "@/hooks/useImageFallback";
 
 
 
@@ -26,6 +27,7 @@ export default function ProductGallery({
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const { imgRef: mainImgRef, onError: onMainImageError } = useImageFallback();
 
   // Sync gallery when variant picker changes the active image
   useEffect(() => {
@@ -62,8 +64,10 @@ export default function ProductGallery({
           Click to zoom
         </div>
         <img
+          ref={mainImgRef}
           src={images[selectedIndex]}
           alt={product.title}
+          onError={onMainImageError}
           className="w-full h-full object-contain rounded-xl mix-blend-multiply max-h-125 transition-opacity duration-300"
         />
       </div>
@@ -84,6 +88,7 @@ export default function ProductGallery({
               <img
                 src={img}
                 alt={`${product.title} - ${i + 1}`}
+                onError={handleImageError}
                 className="w-full h-full object-contain mix-blend-multiply"
               />
             </button>
@@ -199,6 +204,7 @@ function LightboxModal({
         alt={`${alt} - ${currentIndex + 1}`}
         className="max-w-[90vw] max-h-[85vh] object-contain select-none"
         onClick={(e) => e.stopPropagation()}
+        onError={handleImageError}
       />
 
       {/* Thumbnail Strip */}
@@ -220,6 +226,7 @@ function LightboxModal({
               <img
                 src={img}
                 alt={`Thumbnail ${i + 1}`}
+                onError={handleImageError}
                 className="w-full h-full object-cover"
               />
             </button>

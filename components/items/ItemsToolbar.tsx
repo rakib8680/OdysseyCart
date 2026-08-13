@@ -40,10 +40,7 @@ export function ItemsToolbar({
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-4">
       {/* Search Input */}
-      <SearchBar
-        search={search}
-        onSearchChange={onSearchChange}
-      />
+      <SearchBar search={search} onSearchChange={onSearchChange} />
 
       {/* Right Controls: Mobile Drawer + Desktop Sort + View Toggle */}
       <div className="flex items-center gap-2 justify-between sm:justify-end">

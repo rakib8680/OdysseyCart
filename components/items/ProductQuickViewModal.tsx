@@ -18,6 +18,7 @@ import { ProductStatusBadges } from "@/components/items/ProductStatusBadges";
 import VariantPicker from "@/components/product-details/VariantPicker";
 import { ExternalLink } from "lucide-react";
 import { getProductImages } from "@/lib/utils/productImages";
+import { useImageFallback, handleImageError } from "@/hooks/useImageFallback";
 
 interface ProductQuickViewModalProps {
   product: Product | null;
@@ -40,6 +41,7 @@ export function ProductQuickViewModal({
 }: ProductQuickViewModalProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  const { imgRef: mainImgRef, onError: onMainImageError } = useImageFallback();
 
   // Reset local state when active product changes
   useEffect(() => {
@@ -94,8 +96,10 @@ export function ProductQuickViewModal({
             {/* Compact Aspect Image Container */}
             <div className="w-full aspect-4/3 sm:aspect-square max-h-48 sm:max-h-none relative flex items-center justify-center overflow-hidden rounded-lg sm:rounded-xl bg-white p-2 border border-slate-200/60 shadow-2xs my-auto">
               <img
+                ref={mainImgRef}
                 src={activeImage}
                 alt={product.title}
+                onError={onMainImageError}
                 className="w-full h-full object-cover rounded-md sm:rounded-lg mix-blend-multiply transition-all duration-300"
               />
             </div>
@@ -117,6 +121,7 @@ export function ProductQuickViewModal({
                     <img
                       src={img}
                       alt={`Thumbnail ${idx + 1}`}
+                      onError={handleImageError}
                       className="w-full h-full object-cover mix-blend-multiply"
                     />
                   </button>
