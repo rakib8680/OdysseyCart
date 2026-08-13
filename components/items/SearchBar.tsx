@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { useDebounce } from "@/hooks/useDebounce";
+import { useDebouncedCallback } from "@/hooks/useDebounce";
 import { Search } from "lucide-react";
 
 interface SearchBarProps {
@@ -12,24 +12,28 @@ interface SearchBarProps {
 
 /**
  * Debounced Search Bar Component.
- * Encapsulates search input logic with 300ms debounce to minimize URL updates.
+ * Encapsulates search input logic with 300ms debounced callback to prevent race conditions
+ * during external resets/pill clearing and minimize unnecessary URL updates.
  */
 export function SearchBar({ search, onSearchChange }: SearchBarProps) {
-  // Local state for debouncing — prevents server request on every keystroke
   const [localSearch, setLocalSearch] = useState(search);
-  const debouncedLocalSearch = useDebounce(localSearch, 300);
 
-  // Sync local state when external search changes (e.g. reset filters)
+  // Industry-standard debounced callback for input typing
+  const debouncedSearchChange = useDebouncedCallback((val: string) => {
+    onSearchChange(val);
+  }, 300);
+
+  // Sync local state and cancel pending debounces when search prop changes externally (e.g. pill clear, reset)
   useEffect(() => {
     setLocalSearch(search);
-  }, [search]);
+    debouncedSearchChange.cancel();
+  }, [search, debouncedSearchChange]);
 
-  // Update parent when debounced value changes
-  useEffect(() => {
-    if (debouncedLocalSearch !== search) {
-      onSearchChange(debouncedLocalSearch);
-    }
-  }, [debouncedLocalSearch, search, onSearchChange]);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setLocalSearch(val);
+    debouncedSearchChange(val);
+  };
 
   return (
     <div className="relative w-full md:w-auto flex-1 max-w-md">
@@ -39,7 +43,7 @@ export function SearchBar({ search, onSearchChange }: SearchBarProps) {
         placeholder="Search products by name or description..."
         className="w-full pl-10 h-10 text-xs sm:text-sm bg-white"
         value={localSearch}
-        onChange={(e) => setLocalSearch(e.target.value)}
+        onChange={handleChange}
       />
     </div>
   );
