@@ -1,10 +1,13 @@
 import { Package, Shield, Zap, Globe } from "lucide-react";
 
-export const metadata = {
-  title: "About | OdysseyCart",
+import { constructMetadata } from "@/lib/utils/seo";
+
+export const metadata = constructMetadata({
+  title: "About Us",
   description:
     "Learn about OdysseyCart — a premium e-commerce destination built for people who appreciate quality, design, and exceptional service.",
-};
+  url: "/about",
+});
 
 const stats = [
   { value: "50k+", label: "Happy Customers" },

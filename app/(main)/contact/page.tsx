@@ -4,11 +4,14 @@ import { ContactInfo } from "@/components/contact/ContactInfo";
 import { FaqAccordion } from "@/components/contact/FaqAccordion";
 import { MessageSquare, Headset } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Contact Us & Support — OdysseyCart",
+import { constructMetadata } from "@/lib/utils/seo";
+
+export const metadata: Metadata = constructMetadata({
+  title: "Contact & Support",
   description:
     "Have a question about an order, product, or return? Reach out to our OdysseyCart customer support team or browse our frequently asked questions.",
-};
+  url: "/contact",
+});
 
 export default function ContactPage() {
   return (
@@ -26,7 +29,9 @@ export default function ContactPage() {
           </h1>
 
           <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-            Have questions about an ongoing order, product availability, or custom requests? Our dedicated team is committed to providing prompt, attentive support.
+            Have questions about an ongoing order, product availability, or
+            custom requests? Our dedicated team is committed to providing
+            prompt, attentive support.
           </p>
         </div>
 

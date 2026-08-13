@@ -1,13 +1,38 @@
+import type { Metadata } from "next";
 import { getFilteredProducts, getCategories } from "@/app/actions/products";
 import { CollectionHero } from "@/components/items/CollectionHero";
 import { ItemsFilter } from "@/components/items/ItemsFilter";
 import { productFilterCache } from "@/lib/search-params";
-
-export const metadata = { title: "Collection | OdysseyCart" };
+import { constructMetadata } from "@/lib/utils/seo";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | undefined>>;
 };
+
+// Dynamic SEO metadata generator synced with active URL filter state
+export async function generateMetadata({
+  searchParams,
+}: PageProps): Promise<Metadata> {
+  const params = productFilterCache.parse(await searchParams);
+
+  let title = "All Products - Collection";
+  let description =
+    "Browse our full catalog of premium products, accessories, tech, and furniture on OdysseyCart.";
+
+  if (params.category) {
+    title = `${params.category} Collection`;
+    description = `Explore our curated ${params.category} collection. Quality items with fast shipping and easy returns.`;
+  } else if (params.search) {
+    title = `Search: "${params.search}"`;
+    description = `Search results for "${params.search}" on OdysseyCart. Discover matching top-rated products.`;
+  }
+
+  return constructMetadata({
+    title,
+    description,
+    url: "/items",
+  });
+}
 
 export default async function ItemsPage({ searchParams }: PageProps) {
   // Parse URL search params on the server using the shared cache

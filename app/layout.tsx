@@ -8,10 +8,9 @@ const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "OdysseyCart",
-  description: "The best place to buy premium products",
-};
+import { constructMetadata } from "@/lib/utils/seo";
+
+export const metadata: Metadata = constructMetadata();
 
 export default function RootLayout({
   children,

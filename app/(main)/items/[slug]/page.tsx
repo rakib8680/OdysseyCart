@@ -12,6 +12,8 @@ import {
 import ProductDetailClient from "@/components/product-details/ProductDetailClient";
 import RelatedProducts from "@/components/product-details/RelatedProducts";
 
+import { constructMetadata } from "@/lib/utils/seo";
+
 type PageProps = { params: Promise<{ slug: string }> };
 
 // ==========================================
@@ -24,22 +26,15 @@ export async function generateMetadata({
   const product = await getProductBySlug(slug);
 
   if (!product) {
-    return { title: "Product Not Found | OdysseyCart" };
+    return constructMetadata({ title: "Product Not Found" });
   }
 
-  return {
-    title: `${product.title} | OdysseyCart`,
+  return constructMetadata({
+    title: product.title,
     description: product.shortDescription,
-    openGraph: {
-      title: product.title,
-      description: product.shortDescription,
-      images: product.images?.[0] ? [{ url: product.images[0] }] : [],
-      url: `/items/${product.slug}`,
-    },
-    alternates: {
-      canonical: `/items/${product.slug}`,
-    },
-  };
+    image: product.images?.[0],
+    url: `/items/${product.slug}`,
+  });
 }
 
 // ==========================================
