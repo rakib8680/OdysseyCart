@@ -3,12 +3,9 @@
 import { useState, useCallback, useEffect } from "react";
 import { Star, ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 import { Product } from "@/lib/types/product";
+import { getProductImages } from "@/lib/utils/productImages";
 
-// ==========================================
-// CONSTANTS
-// ==========================================
-const FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80";
+
 
 // ==========================================
 // PROPS
@@ -25,10 +22,7 @@ export default function ProductGallery({
   product,
   activeImageIndex,
 }: ProductGalleryProps) {
-  const images =
-    product.images && product.images.length > 0
-      ? product.images
-      : [FALLBACK_IMAGE];
+  const images = getProductImages(product.images);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);

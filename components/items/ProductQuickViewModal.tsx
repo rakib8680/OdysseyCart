@@ -17,6 +17,7 @@ import { HeartButton } from "@/components/wishlist/HeartButton";
 import { ProductStatusBadges } from "@/components/items/ProductStatusBadges";
 import VariantPicker from "@/components/product-details/VariantPicker";
 import { ExternalLink } from "lucide-react";
+import { getProductImages } from "@/lib/utils/productImages";
 
 interface ProductQuickViewModalProps {
   product: Product | null;
@@ -25,8 +26,7 @@ interface ProductQuickViewModalProps {
   wishlistIds?: string[];
 }
 
-const FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80";
+
 
 /**
  * Reusable Product Quick View Modal Dialog Component.
@@ -60,10 +60,7 @@ export function ProductQuickViewModal({
 
   if (!product) return null;
 
-  const images =
-    product.images && product.images.length > 0
-      ? product.images
-      : [FALLBACK_IMAGE];
+  const images = getProductImages(product.images);
   const activeImage = images[selectedImageIndex] || images[0];
 
   const hasVariants =

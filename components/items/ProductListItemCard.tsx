@@ -8,6 +8,8 @@ import { StarRating } from "@/components/reviews/StarRating";
 import { ProductStatusBadges } from "@/components/items/ProductStatusBadges";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/lib/types/product";
+import { getProductImageUrl } from "@/lib/utils/productImages";
+import { useImageFallback } from "@/hooks/useImageFallback";
 
 interface ProductListItemCardProps {
   product: Product;
@@ -25,10 +27,9 @@ export function ProductListItemCard({
   wishlistIds = [],
   onQuickView,
 }: ProductListItemCardProps) {
-  const imageUrl =
-    product.images && product.images.length > 0
-      ? product.images[0]
-      : "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80";
+  const { src: imageUrl, onError: onImageError } = useImageFallback(
+    getProductImageUrl(product.images)
+  );
 
   const hasDiscount = product.discount > 0;
   const discountedPrice = hasDiscount
@@ -69,6 +70,7 @@ export function ProductListItemCard({
         <img
           src={imageUrl}
           alt={product.title}
+          onError={onImageError}
           className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
         />
       </div>

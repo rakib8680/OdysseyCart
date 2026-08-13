@@ -5,19 +5,14 @@ import { useCart } from "@/contexts/CartContext";
 import { ShoppingCart, Loader2, SlidersHorizontal } from "lucide-react";
 import { Product, Variant } from "@/lib/types/product";
 import { cn } from "@/lib/utils";
-
-// ==========================================
-// CONSTANTS
-// ==========================================
-const FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80";
+import { FALLBACK_PRODUCT_IMAGE } from "@/lib/constants/images";
 
 // ==========================================
 // PROPS
 // ==========================================
 interface AddToCartButtonProps {
   product: Product;
-  selectedVariant?: Variant | null; // Provided on detail page via ProductDetailClient
+  selectedVariant?: Variant | null;
   className?: string;
   compactText?: boolean; // When true, uses compact "Add" / "Select" labels on mobile screens
 }
@@ -48,8 +43,8 @@ export function AddToCartButton({
     selectedVariant?.imageIndex !== undefined
       ? product.images?.[selectedVariant.imageIndex] ||
         product.images?.[0] ||
-        FALLBACK_IMAGE
-      : product.images?.[0] || FALLBACK_IMAGE;
+        FALLBACK_PRODUCT_IMAGE
+      : product.images?.[0] || FALLBACK_PRODUCT_IMAGE;
 
   // Cart deduplication: match by (productId + variantSku)
   const cartItem = items.find((item) =>

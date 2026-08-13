@@ -8,6 +8,8 @@ import { StarRating } from "@/components/reviews/StarRating";
 import { ProductStatusBadges } from "@/components/items/ProductStatusBadges";
 import { Eye } from "lucide-react";
 import { Product } from "@/lib/types/product";
+import { getProductImageUrl } from "@/lib/utils/productImages";
+import { useImageFallback } from "@/hooks/useImageFallback";
 
 interface ProductCardProps {
   product: Product;
@@ -26,11 +28,9 @@ export default function ProductCard({
   onQuickView,
 }: ProductCardProps) {
   const router = useRouter();
-
-  const imageUrl =
-    product.images && product.images.length > 0
-      ? product.images[0]
-      : "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80";
+  const { src: imageUrl, onError: onImageError } = useImageFallback(
+    getProductImageUrl(product.images)
+  );
 
   const hasDiscount = product.discount > 0;
   const discountedPrice = hasDiscount
@@ -71,6 +71,7 @@ export default function ProductCard({
         <img
           src={imageUrl}
           alt={product.title}
+          onError={onImageError}
           className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
         />
 
