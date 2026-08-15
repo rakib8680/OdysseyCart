@@ -3,6 +3,7 @@
 import { useQueryStates } from "nuqs";
 import { productFilterParsers } from "@/lib/search-params";
 import { useViewMode } from "@/hooks/useViewMode";
+import { useWishlistIds } from "@/hooks/useWishlistIds";
 import { ItemsToolbar } from "./ItemsToolbar";
 import { DesktopSidebar } from "./DesktopSidebar";
 import { ActiveFilters } from "./ActiveFilters";
@@ -35,6 +36,7 @@ export function ItemsFilter({
   });
 
   const { viewMode, setViewMode } = useViewMode("grid");
+  const wishlistIds = useWishlistIds();
 
   // Count non-default active filters (excluding page)
   const activeFilterCount = [
@@ -106,7 +108,11 @@ export function ItemsFilter({
           />
 
           {/* Product Catalog Renderer (Grid vs. List View) */}
-          <ProductGrid products={products} viewMode={viewMode} />
+          <ProductGrid
+            products={products}
+            wishlistIds={wishlistIds}
+            viewMode={viewMode}
+          />
 
           {/* Pagination (only when needed) */}
           {totalPages > 1 && (

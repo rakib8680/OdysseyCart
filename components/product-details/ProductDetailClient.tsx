@@ -9,6 +9,7 @@ import KeyInformation from "@/components/product-details/KeyInformation";
 import ProductSpecs from "@/components/product-details/ProductSpecs";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { HeartButton } from "@/components/wishlist/HeartButton";
+import { useWishlistIds } from "@/hooks/useWishlistIds";
 
 // ==========================================
 // PROPS
@@ -25,6 +26,7 @@ export default function ProductDetailClient({
   product,
 }: ProductDetailClientProps) {
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  const wishlistIds = useWishlistIds();
 
   const hasVariants = product.variants && product.variants.length > 0;
   const activeImageIndex = selectedVariant?.imageIndex;
@@ -57,7 +59,7 @@ export default function ProductDetailClient({
           />
           <HeartButton
             productId={product._id}
-            initialWishlisted={false}
+            initialWishlisted={wishlistIds.includes(product._id)}
             size="md"
           />
         </div>

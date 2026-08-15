@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toggleWishlistItem } from "@/app/actions/wishlist";
@@ -21,6 +21,11 @@ export function HeartButton({
   const { user } = useAuth();
   const [wishlisted, setWishlisted] = useState(initialWishlisted);
   const [isPending, startTransition] = useTransition();
+
+  // Sync when parent fetches real wishlist data after mount
+  useEffect(() => {
+    setWishlisted(initialWishlisted);
+  }, [initialWishlisted]);
 
   const iconSize = size === "sm" ? "w-4 h-4" : "w-5 h-5";
   const buttonSize = size === "sm" ? "p-1.5" : "p-2";
