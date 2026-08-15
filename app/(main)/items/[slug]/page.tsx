@@ -59,8 +59,12 @@ export default async function ItemDetailsPage({ params }: PageProps) {
     notFound();
   }
 
-  // Fetch related items — filtered and limited at the DB level
-  const relatedItems = await getRelatedProducts(product.category, product._id);
+  // Fetch related items — filtered and limited at the DB level (4 items for full-width grid)
+  const relatedItems = await getRelatedProducts(
+    product.category,
+    product._id,
+    4,
+  );
 
   return (
     <div className="container max-w-6xl mx-auto px-4 md:px-8 py-16">
@@ -92,4 +96,3 @@ export default async function ItemDetailsPage({ params }: PageProps) {
     </div>
   );
 }
-
