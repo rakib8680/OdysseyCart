@@ -4,6 +4,7 @@ import { ProductCatalog } from "@/components/items/ProductCatalog";
 import { ItemsGridSkeleton } from "@/components/skeletons";
 import { productFilterCache } from "@/lib/search-params";
 import { constructMetadata } from "@/lib/utils/seo";
+import { getViewModeServer } from "@/lib/utils/viewMode";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | undefined>>;
@@ -38,11 +39,14 @@ export default async function ItemsPage({ searchParams }: PageProps) {
   // Parse URL search params on the server using the shared cache
   const params = productFilterCache.parse(await searchParams);
 
+  // Read view mode from cookie for zero-flash skeleton rendering
+  const viewMode = await getViewModeServer();
+
   return (
     <div className="min-h-screen">
       <div className="container max-w-7xl mx-auto px-4 md:px-8 pt-8 pb-36">
         {/* Instant skeleton → streams ProductCatalog when DB queries complete */}
-        <Suspense fallback={<ItemsGridSkeleton />}>
+        <Suspense fallback={<ItemsGridSkeleton viewMode={viewMode} />}>
           <ProductCatalog params={params} />
         </Suspense>
       </div>
