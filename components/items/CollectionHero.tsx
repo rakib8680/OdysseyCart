@@ -7,7 +7,7 @@ import Link from "next/link";
 interface CollectionHeroProps {
   activeCategory?: string;
   showingCount?: number;
-  totalCount: number;
+  totalCount?: number;
 }
 
 // ==========================================
@@ -19,6 +19,9 @@ interface CollectionHeroProps {
  * (pill badge → bold title → subtitle → contextual info).
  *
  * Pure Server Component — no client-side state needed.
+ * When rendered outside <Suspense> (without counts), the static shell
+ * appears instantly. The dynamic "Showing X of Y" count streams in
+ * separately via ProductCatalog.
  */
 export function CollectionHero({
   activeCategory,
@@ -30,7 +33,9 @@ export function CollectionHero({
     ? `Browse our curated ${activeCategory.toLowerCase()} selection.`
     : "Explore our premium selection of gear and accessories.";
 
-  const displayShowing = showingCount !== undefined ? showingCount : totalCount;
+  const hasCounts = totalCount !== undefined;
+  const displayShowing =
+    showingCount !== undefined ? showingCount : totalCount ?? 0;
 
   return (
     <div className="space-y-4 mb-8">
@@ -77,19 +82,22 @@ export function CollectionHero({
         {subtitle}
       </p>
 
-      {/* Divider + Result Count */}
-      <div className="flex items-center gap-3 pt-2">
-        <div className="h-px flex-1 max-w-16 bg-slate-200" />
-        <p className="text-sm text-slate-400">
-          Showing{" "}
-          <span className="font-semibold text-slate-700">
-            {displayShowing}
-          </span>{" "}
-          of{" "}
-          <span className="font-semibold text-slate-700">{totalCount}</span>{" "}
-          {totalCount === 1 ? "product" : "products"}
-        </p>
-      </div>
+      {/* Divider + Result Count — only rendered when DB data is available */}
+      {hasCounts && (
+        <div className="flex items-center gap-3 pt-2">
+          <div className="h-px flex-1 max-w-16 bg-slate-200" />
+          <p className="text-sm text-slate-400">
+            Showing{" "}
+            <span className="font-semibold text-slate-700">
+              {displayShowing}
+            </span>{" "}
+            of{" "}
+            <span className="font-semibold text-slate-700">{totalCount}</span>{" "}
+            {totalCount === 1 ? "product" : "products"}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
+

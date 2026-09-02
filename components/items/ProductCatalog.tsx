@@ -1,5 +1,4 @@
 import { getFilteredProducts, getCategories } from "@/app/actions/products";
-import { CollectionHero } from "./CollectionHero";
 import { ItemsFilter } from "./ItemsFilter";
 
 // ==========================================
@@ -14,12 +13,10 @@ interface ProductCatalogProps {
 // ==========================================
 /**
  * Async Server Component that performs the heavy database queries
- * (getFilteredProducts + getCategories) and renders the full catalog UI.
+ * (getFilteredProducts + getCategories) and renders the dynamic catalog UI.
  *
- * Designed to be wrapped in <Suspense> so the parent page shell renders
- * instantly while this component streams in when the DB queries complete.
- *
- * This is the **only** component in the items page that awaits data.
+ * Placed inside <Suspense> while the parent page shell (CollectionHero)
+ * renders instantly. Streams in result count + search toolbar + sidebar + grid.
  */
 export async function ProductCatalog({ params }: ProductCatalogProps) {
   // Fetch filtered products + categories in parallel
@@ -29,13 +26,22 @@ export async function ProductCatalog({ params }: ProductCatalogProps) {
   ]);
 
   return (
-    <>
-      {/* Editorial hero header — needs totalCount from DB */}
-      <CollectionHero
-        activeCategory={(params.category as string) || undefined}
-        showingCount={result.products.length}
-        totalCount={result.totalCount}
-      />
+    <div className="space-y-6">
+      {/* Result Count Indicator — streams in smoothly under the static hero header */}
+      <div className="-mt-4 mb-6 flex items-center gap-3">
+        <div className="h-px flex-1 max-w-16 bg-slate-200" />
+        <p className="text-sm text-slate-400">
+          Showing{" "}
+          <span className="font-semibold text-slate-700">
+            {result.products.length}
+          </span>{" "}
+          of{" "}
+          <span className="font-semibold text-slate-700">
+            {result.totalCount}
+          </span>{" "}
+          {result.totalCount === 1 ? "product" : "products"}
+        </p>
+      </div>
 
       {/* Client Component — controls URL filters, view mode & 2-column layout */}
       <ItemsFilter
@@ -44,6 +50,6 @@ export async function ProductCatalog({ params }: ProductCatalogProps) {
         totalPages={result.totalPages}
         currentPage={result.currentPage}
       />
-    </>
+    </div>
   );
 }

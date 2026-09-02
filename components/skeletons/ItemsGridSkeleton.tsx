@@ -128,35 +128,15 @@ export function ItemsGridSkeleton({
   const activeViewMode = propViewMode || hookViewMode;
 
   return (
-    <div className="min-h-screen">
-      <div className="container max-w-7xl mx-auto px-4 md:px-8 pt-8 pb-36 space-y-6">
-        {/* 1. Collection Hero Section Skeleton */}
-        <div className="space-y-4 mb-8">
-          {/* Breadcrumb Navigation */}
-          <div className="hidden sm:flex items-center gap-2">
-            <Skeleton className="h-4 w-12 rounded-md" />
-            <Skeleton className="h-3.5 w-3.5 rounded-full" />
-            <Skeleton className="h-4 w-20 rounded-md" />
-          </div>
+    <div className="space-y-6">
+      {/* 1. Result Count Line Skeleton */}
+      <div className="-mt-4 mb-6 flex items-center gap-3">
+        <Skeleton className="h-px flex-1 max-w-16" />
+        <Skeleton className="h-4 w-36 rounded-md" />
+      </div>
 
-          {/* Pill Badge */}
-          <Skeleton className="h-6 w-36 rounded-full" />
-
-          {/* Hero Title */}
-          <Skeleton className="h-9 sm:h-11 lg:h-12 w-56 sm:w-80 md:w-96 rounded-xl" />
-
-          {/* Subtitle */}
-          <Skeleton className="h-5 w-full max-w-lg rounded-md" />
-
-          {/* Divider + Result Count */}
-          <div className="flex items-center gap-3 pt-2">
-            <Skeleton className="h-px w-16" />
-            <Skeleton className="h-4 w-36 rounded-md" />
-          </div>
-        </div>
-
-        {/* 2. Top Toolbar Skeleton (Search Bar, Mobile Filter Trigger, Sort, View Toggle) */}
-        <div className="flex items-center gap-3 p-2 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
+      {/* 2. Top Toolbar Skeleton (Search Bar, Mobile Filter Trigger, Sort, View Toggle) */}
+      <div className="flex items-center gap-3 p-2 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
           {/* Search Input Box */}
           <div className="relative flex-1 min-w-0">
             <Skeleton className="h-10 sm:h-11 w-full rounded-xl" />
@@ -261,6 +241,5 @@ export function ItemsGridSkeleton({
           </div>
         </div>
       </div>
-    </div>
   );
 }

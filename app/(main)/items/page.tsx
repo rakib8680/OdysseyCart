@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { ProductCatalog } from "@/components/items/ProductCatalog";
+import { CollectionHero } from "@/components/items/CollectionHero";
 import { ItemsGridSkeleton } from "@/components/skeletons";
 import { productFilterCache } from "@/lib/search-params";
 import { constructMetadata } from "@/lib/utils/seo";
@@ -45,7 +46,12 @@ export default async function ItemsPage({ searchParams }: PageProps) {
   return (
     <div className="min-h-screen">
       <div className="container max-w-7xl mx-auto px-4 md:px-8 pt-8 pb-36">
-        {/* Instant skeleton → streams ProductCatalog when DB queries complete */}
+        {/* Static Shell: Hero banner (Breadcrumbs, Title, Subtitle) renders instantly in 0ms */}
+        <CollectionHero
+          activeCategory={(params.category as string) || undefined}
+        />
+
+        {/* Dynamic Data Stream: Only the filter toolbar, sidebar & product grid stream inside Suspense */}
         <Suspense fallback={<ItemsGridSkeleton viewMode={viewMode} />}>
           <ProductCatalog params={params} />
         </Suspense>
