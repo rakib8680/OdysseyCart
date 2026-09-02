@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Product, Variant } from "@/lib/types/product";
 import ProductGallery from "@/components/product-details/ProductGallery";
 import ProductInfo from "@/components/product-details/ProductInfo";
@@ -27,6 +27,11 @@ export default function ProductDetailClient({
 }: ProductDetailClientProps) {
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const wishlistIds = useWishlistIds();
+
+  // Instant scroll-to-top guarantee on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
 
   const hasVariants = product.variants && product.variants.length > 0;
   const activeImageIndex = selectedVariant?.imageIndex;

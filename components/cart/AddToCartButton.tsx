@@ -64,7 +64,7 @@ export function AddToCartButton({
 
     // Redirect to detail page if variant selection is required
     if (needsVariantSelection) {
-      router.push(`/items/${product.slug}`);
+      router.push(`/items/${product.slug}`, { scroll: true });
       return;
     }
 

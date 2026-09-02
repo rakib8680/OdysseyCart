@@ -40,7 +40,8 @@ export default function ProductCard({
   const handleCardClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
     if (target.closest("button") || target.closest("a")) return;
-    router.push(`/items/${product.slug}`);
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    router.push(`/items/${product.slug}`, { scroll: true });
   };
 
   return (

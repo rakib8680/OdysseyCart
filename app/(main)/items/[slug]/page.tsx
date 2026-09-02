@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import mongoose from "mongoose";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { ReviewSection } from "@/components/reviews/ReviewSection";
-import { notFound } from "next/navigation";
 import {
   getProductBySlug,
   getProductById,
@@ -11,7 +9,7 @@ import {
 } from "@/app/actions/products";
 import ProductDetailClient from "@/components/product-details/ProductDetailClient";
 import RelatedProducts from "@/components/product-details/RelatedProducts";
-
+import { BackButton } from "@/components/ui/BackButton";
 import { constructMetadata } from "@/lib/utils/seo";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -68,25 +66,7 @@ export default async function ItemDetailsPage({ params }: PageProps) {
 
   return (
     <div className="container max-w-6xl mx-auto px-4 md:px-8 py-16">
-      <Link
-        href="/items"
-        className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 mb-8 transition-colors"
-      >
-        <svg
-          className="w-4 h-4 mr-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M10 19l-7-7m0 0l7-7m-7 7h18"
-          ></path>
-        </svg>
-        Back to Collection
-      </Link>
+      <BackButton label="Back to Collection" fallbackHref="/items" />
 
       <ProductDetailClient product={product} />
 

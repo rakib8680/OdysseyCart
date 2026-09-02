@@ -1,6 +1,14 @@
+"use client";
+
+import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function ItemDetailSkeleton() {
+  // Instant scroll-to-top guarantee the moment loading skeleton mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
+
   return (
     <div className="container max-w-6xl mx-auto px-4 md:px-8 py-16">
       {/* Back link */}
