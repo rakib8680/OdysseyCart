@@ -47,7 +47,7 @@ export default function ProductCard({
   return (
     <div
       onClick={handleCardClick}
-      className="group h-full   transition-all duration-300 rounded-xl overflow-hidden flex flex-col bg-white cursor-pointer"
+      className="group h-full transition-all duration-300 rounded-xl overflow-hidden flex flex-col bg-white cursor-pointer"
     >
       {/* 1. Product Image Wrapper (Aspect Square) */}
       <div className="w-full aspect-square bg-slate-50 overflow-hidden relative border-b border-slate-100/60">
