@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Product, Variant } from "@/lib/types/product";
 import ProductGallery from "@/components/product-details/ProductGallery";
 import ProductInfo from "@/components/product-details/ProductInfo";
@@ -28,7 +28,14 @@ interface ProductDetailClientProps {
 export default function ProductDetailClient({
   product,
 }: ProductDetailClientProps) {
-  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  // Zero-friction auto-preselection: resolve first in-stock variant on mount
+  const defaultVariant = useMemo(() => {
+    if (!product.variants || product.variants.length === 0) return null;
+    const inStock = product.variants.find((v) => v.stockQuantity > 0);
+    return inStock || product.variants[0];
+  }, [product.variants]);
+
+  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(defaultVariant);
   const [quantity, setQuantity] = useState(1);
   const [isStickyVisible, setIsStickyVisible] = useState(false);
   const buyBoxRef = useRef<HTMLDivElement>(null);
@@ -90,6 +97,7 @@ export default function ProductDetailClient({
             variants={product.variants}
             basePrice={product.price}
             images={product.images}
+            initialVariant={selectedVariant}
             onVariantChange={setSelectedVariant}
           />
         )}

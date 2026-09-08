@@ -44,10 +44,21 @@ export function ProductQuickViewModal({
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const { imgRef: mainImgRef, onError: onMainImageError } = useImageFallback();
 
-  // Reset local state when active product changes
+  // Preselect the first in-stock variant on product change
   useEffect(() => {
-    setSelectedImageIndex(0);
-    setSelectedVariant(null);
+    if (product?.variants && product.variants.length > 0) {
+      const defaultVar =
+        product.variants.find((v) => v.stockQuantity > 0) || product.variants[0];
+      setSelectedVariant(defaultVar);
+      if (typeof defaultVar?.imageIndex === "number") {
+        setSelectedImageIndex(defaultVar.imageIndex);
+      } else {
+        setSelectedImageIndex(0);
+      }
+    } else {
+      setSelectedImageIndex(0);
+      setSelectedVariant(null);
+    }
   }, [product]);
 
   // Sync image preview when selected variant changes
@@ -208,6 +219,7 @@ export function ProductQuickViewModal({
                     variants={product.variants!}
                     basePrice={product.price}
                     images={product.images}
+                    initialVariant={selectedVariant}
                     onVariantChange={handleVariantChange}
                     compact
                   />

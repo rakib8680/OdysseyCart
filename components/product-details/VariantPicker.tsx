@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { Variant, VariantOption } from "@/lib/types/product";
 import ColorSwatchOption from "./variant-picker/ColorSwatchOption";
 import SizeChipOption from "./variant-picker/SizeChipOption";
@@ -14,6 +14,7 @@ interface VariantPickerProps {
   variants: Variant[];
   basePrice: number;
   images?: string[];
+  initialVariant?: Variant | null;
   onVariantChange: (variant: Variant | null) => void;
   compact?: boolean;
 }
@@ -48,10 +49,13 @@ export default function VariantPicker({
   variants,
   basePrice,
   images = [],
+  initialVariant = null,
   onVariantChange,
   compact = false,
 }: VariantPickerProps) {
-  const [selections, setSelections] = useState<Record<string, string>>({});
+  const [selections, setSelections] = useState<Record<string, string>>(() => {
+    return initialVariant?.options ? { ...initialVariant.options } : {};
+  });
 
   // Pre-computed O(1) lookup map: "Color:Black|Size:M" → Variant
   const variantMap = useMemo(() => {
@@ -62,6 +66,13 @@ export default function VariantPicker({
     });
     return map;
   }, [variants]);
+
+  // Synchronize selections if initialVariant changes (e.g. via deep-link or quick-view product switch)
+  useEffect(() => {
+    if (initialVariant?.options) {
+      setSelections({ ...initialVariant.options });
+    }
+  }, [initialVariant]);
 
   // Resolve the currently selected variant from the map
   const selectedVariant = useMemo(() => {
@@ -86,17 +97,36 @@ export default function VariantPicker({
 
   const handleSelect = useCallback(
     (optionName: string, value: string) => {
-      const updated = { ...selections, [optionName]: value };
-      setSelections(updated);
+      let updated = { ...selections, [optionName]: value };
 
-      if (Object.keys(updated).length === options.length) {
-        const variant = variantMap.get(buildLookupKey(updated)) || null;
-        onVariantChange(variant);
-      } else {
-        onVariantChange(null);
+      // Verify if updated selection forms a valid in-stock variant
+      let lookupKey = buildLookupKey(updated);
+      let variant = variantMap.get(lookupKey) || null;
+
+      // Smart Reconciliation: If combination is missing or out of stock,
+      // auto-resolve to the first in-stock variant candidate with this selected option
+      if (!variant || variant.stockQuantity <= 0) {
+        const inStockCandidate = variants.find(
+          (v) => v.options[optionName] === value && v.stockQuantity > 0,
+        );
+        if (inStockCandidate) {
+          updated = { ...inStockCandidate.options };
+          variant = inStockCandidate;
+        } else {
+          const candidate = variants.find(
+            (v) => v.options[optionName] === value,
+          );
+          if (candidate) {
+            updated = { ...candidate.options };
+            variant = candidate;
+          }
+        }
       }
+
+      setSelections(updated);
+      onVariantChange(variant);
     },
-    [selections, options.length, variantMap, onVariantChange],
+    [selections, variantMap, variants, onVariantChange],
   );
 
   // Resolved price display
