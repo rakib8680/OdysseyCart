@@ -1,5 +1,6 @@
 "use client";
 
+import { useTransition } from "react";
 import { useQueryStates } from "nuqs";
 import { productFilterParsers } from "@/lib/search-params";
 import { useViewMode } from "@/hooks/useViewMode";
@@ -31,8 +32,11 @@ export function ItemsFilter({
   totalPages,
   currentPage,
 }: ItemsFilterProps) {
+  const [isPending, startTransition] = useTransition();
+
   const [filters, setFilters] = useQueryStates(productFilterParsers, {
     shallow: false, // Trigger server re-render on URL change
+    startTransition, // Wrap all URL updates in a React transition for immediate pending status
   });
 
   const { viewMode, setViewMode } = useViewMode("grid");
@@ -112,6 +116,7 @@ export function ItemsFilter({
             products={products}
             wishlistIds={wishlistIds}
             viewMode={viewMode}
+            isPending={isPending}
           />
 
           {/* Pagination (only when needed) */}
