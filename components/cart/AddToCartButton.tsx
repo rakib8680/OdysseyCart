@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useCart } from "@/contexts/CartContext";
+import { useProductInventory } from "@/hooks/cart/useProductInventory";
 import { ShoppingCart, Loader2, SlidersHorizontal } from "lucide-react";
 import { Product, Variant } from "@/lib/types/product";
 import { cn } from "@/lib/utils";
-import { FALLBACK_PRODUCT_IMAGE } from "@/lib/constants/images";
 
 // ==========================================
 // PROPS
@@ -15,6 +15,7 @@ interface AddToCartButtonProps {
   selectedVariant?: Variant | null;
   className?: string;
   compactText?: boolean; // When true, uses compact "Add" / "Select" labels on mobile screens
+  quantity?: number; // Optional quantity to add to cart (defaults to 1)
 }
 
 // ==========================================
@@ -25,50 +26,30 @@ export function AddToCartButton({
   selectedVariant,
   className,
   compactText = false,
+  quantity = 1,
 }: AddToCartButtonProps) {
-  const { addItem, openCart, items, busyItems } = useCart();
+  const { addItem, openCart } = useCart();
   const router = useRouter();
-
-  const hasVariants = product.variants && product.variants.length > 0;
-  const needsVariantSelection = hasVariants && !selectedVariant;
-
-  // Resolve price, stock, and image based on variant or base product
-  const hasDiscount = product.discount > 0;
-  const basePrice = selectedVariant?.price ?? product.price;
-  const resolvedPrice = hasDiscount
-    ? basePrice * (1 - product.discount / 100)
-    : basePrice;
-  const resolvedStock = selectedVariant?.stockQuantity ?? product.stockQuantity;
-  const resolvedImage =
-    selectedVariant?.imageIndex !== undefined
-      ? product.images?.[selectedVariant.imageIndex] ||
-        product.images?.[0] ||
-        FALLBACK_PRODUCT_IMAGE
-      : product.images?.[0] || FALLBACK_PRODUCT_IMAGE;
-
-  // Cart deduplication: match by (productId + variantSku)
-  const cartItem = items.find((item) =>
-    selectedVariant
-      ? item.productId === product._id &&
-        item.variantSku === selectedVariant.sku
-      : item.productId === product._id && !item.variantSku,
-  );
-  const currentQuantityInCart = cartItem?.quantity || 0;
-  const isMaxLimitReached = currentQuantityInCart >= resolvedStock;
-  const isBusy = busyItems.has(
-    selectedVariant ? `${product._id}:${selectedVariant.sku}` : product._id,
-  );
+  const inventory = useProductInventory(product, selectedVariant);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
 
     // Redirect to detail page if variant selection is required
-    if (needsVariantSelection) {
+    if (inventory.needsVariantSelection) {
       router.push(`/items/${product.slug}`, { scroll: true });
       return;
     }
 
-    if (isMaxLimitReached || isBusy) return;
+    if (inventory.isMaxInCart || inventory.isOutOfStock || inventory.isBusy) return;
+
+    // Safety clamp quantity to remaining available inventory
+    const safeQuantity = Math.min(
+      Math.max(1, quantity),
+      inventory.availableToAdd,
+    );
+
+    if (safeQuantity <= 0) return;
 
     addItem(
       {
@@ -76,30 +57,32 @@ export function AddToCartButton({
         variantSku: selectedVariant?.sku,
         selectedOptions: selectedVariant?.options,
         title: product.title,
-        price: resolvedPrice,
-        image: resolvedImage,
-        stockQuantity: resolvedStock,
+        price: inventory.unitPrice,
+        image: inventory.resolvedImage,
+        stockQuantity: inventory.totalStock,
       },
-      1,
+      safeQuantity,
     );
     openCart();
   };
 
+  const isDisabled =
+    inventory.isBusy ||
+    (!inventory.needsVariantSelection &&
+      (inventory.isOutOfStock || inventory.isMaxInCart));
+
   return (
     <button
       onClick={handleClick}
-      disabled={
-        isBusy ||
-        (!needsVariantSelection && (resolvedStock === 0 || isMaxLimitReached))
-      }
+      disabled={isDisabled}
       className={cn(
         "bg-slate-900 text-white hover:bg-emerald-600 transition-colors flex items-center justify-center font-bold disabled:opacity-50 disabled:cursor-not-allowed group/btn shadow-xs whitespace-nowrap",
         className,
       )}
     >
-      {isBusy ? (
+      {inventory.isBusy ? (
         <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin shrink-0" />
-      ) : needsVariantSelection ? (
+      ) : inventory.needsVariantSelection ? (
         <>
           <SlidersHorizontal className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 shrink-0" />
           <span className="truncate">
@@ -113,7 +96,7 @@ export function AddToCartButton({
             )}
           </span>
         </>
-      ) : resolvedStock === 0 ? (
+      ) : inventory.isOutOfStock ? (
         <span className="truncate">
           {compactText ? (
             <>
@@ -124,15 +107,15 @@ export function AddToCartButton({
             "Out of Stock"
           )}
         </span>
-      ) : isMaxLimitReached ? (
+      ) : inventory.isMaxInCart ? (
         <span className="truncate text-[10px] sm:text-xs">
           {compactText ? (
             <>
               <span className="sm:hidden">Max Limit</span>
-              <span className="hidden sm:inline">Max Limit in Cart</span>
+              <span className="hidden sm:inline">All in Cart</span>
             </>
           ) : (
-            "Max Limit"
+            `All in Cart (${inventory.inCart})`
           )}
         </span>
       ) : (
@@ -144,6 +127,8 @@ export function AddToCartButton({
                 <span className="sm:hidden">Add</span>
                 <span className="hidden sm:inline">Add to Cart</span>
               </>
+            ) : quantity > 1 ? (
+              `Add ${quantity} to Cart`
             ) : (
               "Add to Cart"
             )}
@@ -153,3 +138,4 @@ export function AddToCartButton({
     </button>
   );
 }
+

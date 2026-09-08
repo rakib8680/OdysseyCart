@@ -25,8 +25,9 @@ export function QuantitySelector({
   disabled = false,
   className,
 }: QuantitySelectorProps) {
-  const canDecrease = !disabled && quantity > min;
-  const canIncrease = !disabled && quantity < max;
+  const isEffectivelyDisabled = disabled || max <= 0;
+  const canDecrease = !isEffectivelyDisabled && quantity > min;
+  const canIncrease = !isEffectivelyDisabled && quantity < max;
 
   const handleDecrease = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -45,8 +46,8 @@ export function QuantitySelector({
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-xl border border-slate-200 bg-slate-50/70 p-1 select-none shadow-2xs h-12",
-        disabled && "opacity-50 pointer-events-none",
+        "inline-flex items-center rounded-xl border border-slate-200 bg-slate-50/70 p-1 select-none shadow-2xs h-12 transition-opacity",
+        isEffectivelyDisabled && "opacity-50 pointer-events-none",
         className,
       )}
       role="group"
