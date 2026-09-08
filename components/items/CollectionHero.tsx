@@ -73,7 +73,7 @@ export function CollectionHero({
       </div>
 
       {/* Title */}
-      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
+      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight capitalize">
         {title}
       </h1>
 

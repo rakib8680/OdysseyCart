@@ -1,5 +1,6 @@
 "use server";
 
+import { cache } from "react";
 import mongoose from "mongoose";
 import { connectDB, serialize } from "@/lib/db/mongoose";
 import Product from "@/lib/models/Product";
@@ -193,7 +194,11 @@ export async function getFilteredProducts(
     }
 
     if (category) {
-      filter.category = category;
+      const categories = await getCategories();
+      const canonical = categories.find(
+        (c) => c.toLowerCase() === category.toLowerCase(),
+      );
+      filter.category = canonical || category;
     }
 
     if (minPrice !== undefined || maxPrice !== undefined) {
@@ -230,8 +235,9 @@ export async function getFilteredProducts(
 
 // ==========================================
 // READ CATEGORIES (for filter dropdown)
+// Wrapped with React cache() to deduplicate identical calls within a request
 // ==========================================
-export async function getCategories(): Promise<string[]> {
+export const getCategories = cache(async (): Promise<string[]> => {
   try {
     await connectDB();
     const categories: string[] = await Product.distinct("category");
@@ -240,7 +246,7 @@ export async function getCategories(): Promise<string[]> {
     console.error("getCategories error:", error);
     return [];
   }
-}
+});
 
 // ==========================================
 // READ SINGLE (by slug or id)

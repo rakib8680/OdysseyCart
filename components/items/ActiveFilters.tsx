@@ -25,8 +25,10 @@ export function ActiveFilters({ filters, onClear, onReset }: ActiveFiltersProps)
   }
 
   if (filters.category) {
+    const formattedCat =
+      filters.category.charAt(0).toUpperCase() + filters.category.slice(1);
     chips.push({
-      label: `Category: ${filters.category}`,
+      label: `Category: ${formattedCat}`,
       onRemove: () => onClear({ category: "" }),
     });
   }

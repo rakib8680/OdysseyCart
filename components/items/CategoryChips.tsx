@@ -40,12 +40,13 @@ export function CategoryChips({
 
         {/* Category Pills */}
         {categories.map((cat) => {
-          const isSelected = selectedCategory === cat;
+          const isSelected =
+            selectedCategory.toLowerCase() === cat.toLowerCase();
           return (
             <button
               key={cat}
               type="button"
-              onClick={() => onSelectCategory(cat)}
+              onClick={() => onSelectCategory(cat.toLowerCase())}
               className={cn(
                 "px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer border whitespace-nowrap",
                 isSelected

@@ -101,12 +101,13 @@ export function FilterSections({
             {filters.category === "" && <Check className="w-3.5 h-3.5" />}
           </button>
           {categories.map((cat) => {
-            const isSelected = filters.category === cat;
+            const isSelected =
+              filters.category?.toLowerCase() === cat.toLowerCase();
             return (
               <button
                 key={cat}
                 type="button"
-                onClick={() => onFilterChange({ category: cat })}
+                onClick={() => onFilterChange({ category: cat.toLowerCase() })}
                 className={cn(
                   "w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors cursor-pointer text-xs font-medium",
                   isSelected
