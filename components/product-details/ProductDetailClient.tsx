@@ -10,6 +10,7 @@ import ProductSpecs from "@/components/product-details/ProductSpecs";
 import { QuantitySelector } from "@/components/product-details/QuantitySelector";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { HeartButton } from "@/components/wishlist/HeartButton";
+import { ProductTrustBadges } from "@/components/product-details/ProductTrustBadges";
 import { useWishlistIds } from "@/hooks/useWishlistIds";
 import { useProductInventory } from "@/hooks/cart/useProductInventory";
 
@@ -112,6 +113,13 @@ export default function ProductDetailClient({
               </span>
             </p>
           )}
+
+          {/* 4-Pillar Trust Guarantee Ribbon */}
+          <ProductTrustBadges
+            warranty={product.warranty}
+            shippingInfo={product.shippingInfo}
+            className="mt-6"
+          />
         </div>
       </div>
     </div>
