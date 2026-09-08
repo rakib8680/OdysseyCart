@@ -121,7 +121,14 @@ export function ItemsFilter({
 
           {/* Pagination (only when needed) */}
           {totalPages > 1 && (
-            <Pagination currentPage={currentPage} totalPages={totalPages} />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              isPending={isPending}
+              onPageChange={(page) =>
+                setFilters((prev) => ({ ...prev, page }))
+              }
+            />
           )}
         </div>
       </div>
