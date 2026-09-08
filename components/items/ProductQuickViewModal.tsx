@@ -207,6 +207,7 @@ export function ProductQuickViewModal({
                     options={product.options!}
                     variants={product.variants!}
                     basePrice={product.price}
+                    images={product.images}
                     onVariantChange={handleVariantChange}
                     compact
                   />

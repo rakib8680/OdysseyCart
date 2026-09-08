@@ -89,6 +89,7 @@ export default function ProductDetailClient({
             options={product.options}
             variants={product.variants}
             basePrice={product.price}
+            images={product.images}
             onVariantChange={setSelectedVariant}
           />
         )}
