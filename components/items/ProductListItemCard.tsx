@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Eye } from "lucide-react";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { HeartButton } from "@/components/wishlist/HeartButton";
 import { StarRating } from "@/components/reviews/StarRating";
 import { ProductStatusBadges } from "@/components/items/ProductStatusBadges";
+import { VariantColorSwatches } from "@/components/items/VariantColorSwatches";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/lib/types/product";
 import { getProductImageUrl } from "@/lib/utils/productImages";
@@ -27,7 +29,9 @@ export function ProductListItemCard({
   wishlistIds = [],
   onQuickView,
 }: ProductListItemCardProps) {
+  const [hoverImage, setHoverImage] = useState<string | null>(null);
   const imageUrl = getProductImageUrl(product.images);
+  const displayImage = hoverImage || imageUrl;
   const { imgRef, onError: onImageError } = useImageFallback();
 
   const hasDiscount = product.discount > 0;
@@ -68,7 +72,7 @@ export function ProductListItemCard({
 
         <img
           ref={imgRef}
-          src={imageUrl}
+          src={displayImage}
           alt={product.title}
           onError={onImageError}
           className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
@@ -118,6 +122,13 @@ export function ProductListItemCard({
                 {product.brand}
               </p>
             )}
+
+            {/* Dynamic Variant Color Swatches */}
+            <VariantColorSwatches
+              product={product}
+              onColorHover={setHoverImage}
+              className="pt-1"
+            />
           </div>
 
           {/* Rating & Description */}

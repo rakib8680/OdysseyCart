@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { HeartButton } from "@/components/wishlist/HeartButton";
 import { StarRating } from "@/components/reviews/StarRating";
 import { ProductStatusBadges } from "@/components/items/ProductStatusBadges";
+import { VariantColorSwatches } from "@/components/items/VariantColorSwatches";
 import { Eye } from "lucide-react";
 import { Product } from "@/lib/types/product";
 import { getProductImageUrl } from "@/lib/utils/productImages";
@@ -28,7 +30,9 @@ export default function ProductCard({
   onQuickView,
 }: ProductCardProps) {
   const router = useRouter();
+  const [hoverImage, setHoverImage] = useState<string | null>(null);
   const imageUrl = getProductImageUrl(product.images);
+  const displayImage = hoverImage || imageUrl;
   const { imgRef, onError: onImageError } = useImageFallback();
 
   const hasDiscount = product.discount > 0;
@@ -70,7 +74,7 @@ export default function ProductCard({
         {/* Product Image */}
         <img
           ref={imgRef}
-          src={imageUrl}
+          src={displayImage}
           alt={product.title}
           onError={onImageError}
           className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
@@ -105,7 +109,7 @@ export default function ProductCard({
 
       {/* 2. Product Details Section */}
       <div className="p-2.5 sm:p-3.5 flex flex-col justify-between flex-1 space-y-1.5 bg-white">
-        {/* Brand & Title */}
+        {/* Brand, Title & Swatches */}
         <div>
           {product.brand && (
             <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium mb-0.5 truncate">
@@ -120,6 +124,13 @@ export default function ProductCard({
               {product.title}
             </h3>
           </Link>
+
+          {/* Dynamic Variant Color Swatches */}
+          <VariantColorSwatches
+            product={product}
+            onColorHover={setHoverImage}
+            className="pt-1.5"
+          />
         </div>
 
         {/* Pricing & Responsive Ratings */}

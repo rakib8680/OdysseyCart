@@ -1,25 +1,30 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Product } from "@/lib/types/product";
+import { useRouter } from "next/navigation";
+import { Product, Variant } from "@/lib/types/product";
 import { extractVariantColorSwatches, ColorSwatchItem } from "@/lib/utils/variantHelpers";
 import { cn } from "@/lib/utils";
 
 interface VariantColorSwatchesProps {
   product: Product;
   onColorHover?: (imageUrl: string | null) => void;
+  onColorClick?: (variant: Variant) => void;
   className?: string;
 }
 
 /**
  * Reusable Variant Color Swatches Component.
- * Displays interactive color dots on product cards with live image preview callbacks on hover.
+ * Displays interactive color swatches on product cards with live image preview callbacks on hover,
+ * WCAG-computed optical contrast borders, and optional 1-click deep-link navigation.
  */
 export function VariantColorSwatches({
   product,
   onColorHover,
+  onColorClick,
   className,
 }: VariantColorSwatchesProps) {
+  const router = useRouter();
   const [activeColor, setActiveColor] = useState<string | null>(null);
 
   // Memoize swatch calculation to prevent array re-allocation on renders
@@ -44,6 +49,15 @@ export function VariantColorSwatches({
     }
   };
 
+  const handleClick = (e: React.MouseEvent, swatch: ColorSwatchItem) => {
+    e.stopPropagation();
+    if (onColorClick) {
+      onColorClick(swatch.variant);
+    } else if (swatch.variant?.sku) {
+      router.push(`/items/${product.slug}?variant=${encodeURIComponent(swatch.variant.sku)}`);
+    }
+  };
+
   return (
     <div
       className={cn("flex items-center gap-1.5 flex-wrap", className)}
@@ -51,18 +65,27 @@ export function VariantColorSwatches({
     >
       {swatches.slice(0, 5).map((swatch) => {
         const isActive = activeColor === swatch.name;
+        const bg = swatch.swatch?.background || swatch.hex;
+        const needsBorder = swatch.swatch?.needsBorder ?? false;
+
         return (
           <button
             key={swatch.name}
             type="button"
-            title={`${swatch.name}`}
-            aria-label={`Color ${swatch.name}`}
+            title={swatch.name}
+            aria-label={`Select color ${swatch.name}`}
+            onClick={(e) => handleClick(e, swatch)}
             onMouseEnter={() => handleMouseEnter(swatch)}
             className={cn(
-              "w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border border-slate-300 transition-all duration-200 focus:outline-none cursor-pointer",
-              isActive ? "ring-2 ring-slate-900 scale-110" : "hover:scale-110"
+              "w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full transition-all duration-200 focus:outline-none cursor-pointer shrink-0",
+              needsBorder
+                ? "ring-1 ring-slate-300/90 inset border border-black/10"
+                : "border border-black/10",
+              isActive
+                ? "ring-2 ring-emerald-600 scale-115 shadow-xs"
+                : "hover:scale-110"
             )}
-            style={{ backgroundColor: swatch.hex }}
+            style={{ background: bg }}
           />
         );
       })}
