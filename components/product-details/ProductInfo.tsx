@@ -106,9 +106,9 @@ export default function ProductInfo({ product, selectedVariant }: ProductInfoPro
         </p>
       </div>
 
-      {/* Description */}
-      <div className="prose prose-slate text-slate-600 mb-8 leading-relaxed">
-        <p>{product.fullDescription}</p>
+      {/* Short Summary Hook */}
+      <div className="text-sm sm:text-base text-slate-600 mb-6 leading-relaxed">
+        <p>{product.shortDescription || product.fullDescription}</p>
       </div>
 
       {/* Tags */}

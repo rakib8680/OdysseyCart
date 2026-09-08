@@ -65,7 +65,7 @@ export default async function ItemDetailsPage({ params }: PageProps) {
   );
 
   return (
-    <div className="container max-w-6xl mx-auto px-4 md:px-8 py-16">
+    <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-32">
       <ProductBreadcrumbs
         category={product.category}
         title={product.title}
