@@ -9,5 +9,5 @@ coverage/
 .next/
 out/
 .vercel
-PROGRESS.md
 TODO.md
+.agents/
