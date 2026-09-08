@@ -76,6 +76,7 @@ export function ItemsFilter({
         filters={filters}
         activeFilterCount={activeFilterCount}
         viewMode={viewMode}
+        isPending={isPending}
         onViewModeChange={setViewMode}
         onSearchChange={(value) => handleFilterChange({ search: value })}
         onFilterChange={handleFilterChange}

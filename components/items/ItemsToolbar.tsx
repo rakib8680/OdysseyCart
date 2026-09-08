@@ -14,6 +14,7 @@ interface ItemsToolbarProps {
   filters: ProductFilters;
   activeFilterCount: number;
   viewMode: ViewMode;
+  isPending?: boolean;
   onViewModeChange: (mode: ViewMode) => void;
   onSearchChange: (value: string) => void;
   onFilterChange: (updates: Record<string, string>) => void;
@@ -32,6 +33,7 @@ export function ItemsToolbar({
   filters,
   activeFilterCount,
   viewMode,
+  isPending = false,
   onViewModeChange,
   onSearchChange,
   onFilterChange,
@@ -40,7 +42,11 @@ export function ItemsToolbar({
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-4">
       {/* Search Input */}
-      <SearchBar search={search} onSearchChange={onSearchChange} />
+      <SearchBar
+        search={search}
+        onSearchChange={onSearchChange}
+        isSearching={isPending}
+      />
 
       {/* Right Controls: Mobile Drawer + Desktop Sort + View Toggle */}
       <div className="flex items-center gap-2 justify-between sm:justify-end">
