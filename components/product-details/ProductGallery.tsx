@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
-import { Star, ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Product } from "@/lib/types/product";
 import { getProductImages } from "@/lib/utils/productImages";
-import { useImageFallback, handleImageError } from "@/hooks/useImageFallback";
-
-
+import { useImageFallback } from "@/hooks/useImageFallback";
+import { GalleryViewport } from "./GalleryViewport";
+import { GalleryThumbnails } from "./GalleryThumbnails";
+import { GalleryLightbox } from "./GalleryLightbox";
 
 // ==========================================
 // PROPS
@@ -17,7 +17,7 @@ interface ProductGalleryProps {
 }
 
 // ==========================================
-// PRODUCT GALLERY COMPONENT
+// PRODUCT GALLERY COMPONENT (Orchestrator)
 // ==========================================
 export default function ProductGallery({
   product,
@@ -36,202 +36,37 @@ export default function ProductGallery({
     }
   }, [activeImageIndex, images.length]);
 
-  const hasDiscount = product.discount > 0;
-
   return (
     <div className="lg:sticky lg:top-24">
-      {/* Main Image Viewport */}
-      <div
-        className="w-full aspect-square bg-slate-50 rounded-3xl border border-slate-200 overflow-hidden flex items-center justify-center p-8 relative group/gallery cursor-zoom-in"
-        onClick={() => setIsLightboxOpen(true)}
-      >
-        {/* Discount Badge */}
-        {hasDiscount && (
-          <div className="absolute top-4 left-4 bg-red-500 text-white text-sm font-bold px-3 py-1.5 rounded-full z-10">
-            -{product.discount}% OFF
-          </div>
-        )}
-        {/* Featured Badge */}
-        {product.isFeatured && (
-          <div className="absolute top-4 right-4 bg-amber-500 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 z-10">
-            <Star className="w-3 h-3 fill-white" />
-            Featured
-          </div>
-        )}
-        {/* Zoom Hint */}
-        <div className="absolute bottom-4 right-4 bg-black/50 text-white text-xs font-medium px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 opacity-0 group-hover/gallery:opacity-100 transition-opacity z-10">
-          <ZoomIn className="w-3.5 h-3.5" />
-          Click to zoom
-        </div>
-        <img
-          ref={mainImgRef}
-          src={images[selectedIndex]}
-          alt={product.title}
-          onError={onMainImageError}
-          className="w-full h-full object-contain rounded-xl mix-blend-multiply max-h-125 transition-opacity duration-300"
-        />
-      </div>
+      {/* 1. Main Viewport with GPU Hover-Zoom Lens & Image Counter */}
+      <GalleryViewport
+        src={images[selectedIndex]}
+        alt={product.title}
+        discount={product.discount}
+        isFeatured={product.isFeatured}
+        currentIndex={selectedIndex}
+        totalImages={images.length}
+        onOpenLightbox={() => setIsLightboxOpen(true)}
+        onError={onMainImageError}
+        imgRef={mainImgRef}
+      />
 
-      {/* Thumbnail Strip */}
-      {images.length > 1 && (
-        <div className="flex items-center gap-3 mt-4 overflow-x-auto pb-1">
-          {images.map((img: string, i: number) => (
-            <button
-              key={i}
-              onClick={() => setSelectedIndex(i)}
-              className={`w-20 h-20 shrink-0 aspect-square bg-slate-50 rounded-xl border overflow-hidden p-2 transition-all cursor-pointer ${
-                selectedIndex === i
-                  ? "border-emerald-500 ring-2 ring-emerald-500/20"
-                  : "border-slate-200 hover:border-slate-300"
-              }`}
-            >
-              <img
-                src={img}
-                alt={`${product.title} - ${i + 1}`}
-                onError={handleImageError}
-                className="w-full h-full object-contain mix-blend-multiply"
-              />
-            </button>
-          ))}
-        </div>
-      )}
+      {/* 2. Thumbnails with Active Emerald Halo Ring */}
+      <GalleryThumbnails
+        images={images}
+        selectedIndex={selectedIndex}
+        onSelect={setSelectedIndex}
+        alt={product.title}
+      />
 
-      {/* Lightbox Modal — conditionally mounted to prevent DOM bloat */}
+      {/* 3. Lightbox Modal — conditionally mounted to prevent DOM bloat */}
       {isLightboxOpen && (
-        <LightboxModal
+        <GalleryLightbox
           images={images}
           initialIndex={selectedIndex}
           alt={product.title}
           onClose={() => setIsLightboxOpen(false)}
         />
-      )}
-    </div>
-  );
-}
-
-// ==========================================
-// LIGHTBOX MODAL (Conditionally Mounted)
-// ==========================================
-interface LightboxModalProps {
-  images: string[];
-  initialIndex: number;
-  alt: string;
-  onClose: () => void;
-}
-
-function LightboxModal({
-  images,
-  initialIndex,
-  alt,
-  onClose,
-}: LightboxModalProps) {
-  const [currentIndex, setCurrentIndex] = useState(initialIndex);
-
-  const goNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
-  }, [images.length]);
-
-  const goPrev = useCallback(() => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-  }, [images.length]);
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") goNext();
-      if (e.key === "ArrowLeft") goPrev();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "";
-    };
-  }, [onClose, goNext, goPrev]);
-
-  return (
-    <div
-      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center animate-in fade-in-0 duration-200"
-      onClick={onClose}
-    >
-      {/* Close Button */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors z-50 p-2 rounded-full hover:bg-white/10"
-        aria-label="Close lightbox"
-      >
-        <X className="w-6 h-6" />
-      </button>
-
-      {/* Image Counter */}
-      {images.length > 1 && (
-        <div className="absolute top-4 left-4 text-white/70 text-sm font-medium z-50">
-          {currentIndex + 1} / {images.length}
-        </div>
-      )}
-
-      {/* Navigation Arrows */}
-      {images.length > 1 && (
-        <>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              goPrev();
-            }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-3 rounded-full hover:bg-white/10 transition-colors z-50"
-            aria-label="Previous image"
-          >
-            <ChevronLeft className="w-8 h-8" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              goNext();
-            }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-3 rounded-full hover:bg-white/10 transition-colors z-50"
-            aria-label="Next image"
-          >
-            <ChevronRight className="w-8 h-8" />
-          </button>
-        </>
-      )}
-
-      {/* Full-Res Image */}
-      <img
-        src={images[currentIndex]}
-        alt={`${alt} - ${currentIndex + 1}`}
-        className="max-w-[90vw] max-h-[85vh] object-contain select-none"
-        onClick={(e) => e.stopPropagation()}
-        onError={handleImageError}
-      />
-
-      {/* Thumbnail Strip */}
-      {images.length > 1 && (
-        <div
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-50"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {images.map((img, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentIndex(i)}
-              className={`w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${
-                currentIndex === i
-                  ? "border-emerald-500 ring-2 ring-emerald-500/30"
-                  : "border-white/20 hover:border-white/50 opacity-60 hover:opacity-100"
-              }`}
-            >
-              <img
-                src={img}
-                alt={`Thumbnail ${i + 1}`}
-                onError={handleImageError}
-                className="w-full h-full object-cover"
-              />
-            </button>
-          ))}
-        </div>
       )}
     </div>
   );

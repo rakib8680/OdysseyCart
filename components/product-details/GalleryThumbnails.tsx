@@ -27,7 +27,7 @@ export function GalleryThumbnails({
     <div
       role="tablist"
       aria-label="Product image thumbnails"
-      className="flex items-center gap-3 mt-4 overflow-x-auto pb-1 scrollbar-none"
+      className="flex items-center gap-3 mt-3 overflow-x-auto p-1.5 scrollbar-none"
     >
       {images.map((img: string, i: number) => {
         const isSelected = selectedIndex === i;
@@ -40,10 +40,10 @@ export function GalleryThumbnails({
             aria-label={`View image ${i + 1} of ${images.length}`}
             onClick={() => onSelect(i)}
             className={cn(
-              "w-20 h-20 shrink-0 aspect-square bg-slate-50 rounded-2xl border overflow-hidden p-2 transition-all cursor-pointer select-none",
+              "w-20 h-20 shrink-0 aspect-square bg-slate-50 rounded-2xl overflow-hidden p-2 transition-all cursor-pointer select-none border-2",
               isSelected
-                ? "border-emerald-500 ring-2 ring-emerald-500/30 scale-[1.03] shadow-xs"
-                : "border-slate-200/80 hover:border-slate-300 opacity-70 hover:opacity-100 hover:scale-[1.01]",
+                ? "border-emerald-500 ring-2 ring-emerald-500/25 shadow-xs"
+                : "border-slate-200/80 hover:border-slate-300 opacity-70 hover:opacity-100",
             )}
           >
             <img
