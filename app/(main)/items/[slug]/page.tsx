@@ -9,7 +9,7 @@ import {
 } from "@/app/actions/products";
 import ProductDetailClient from "@/components/product-details/ProductDetailClient";
 import RelatedProducts from "@/components/product-details/RelatedProducts";
-import { BackButton } from "@/components/ui/BackButton";
+import { ProductBreadcrumbs } from "@/components/product-details/ProductBreadcrumbs";
 import { constructMetadata } from "@/lib/utils/seo";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -66,7 +66,10 @@ export default async function ItemDetailsPage({ params }: PageProps) {
 
   return (
     <div className="container max-w-6xl mx-auto px-4 md:px-8 py-16">
-      <BackButton label="Back to Collection" fallbackHref="/items" />
+      <ProductBreadcrumbs
+        category={product.category}
+        title={product.title}
+      />
 
       <ProductDetailClient product={product} />
 
