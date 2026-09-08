@@ -5,12 +5,11 @@ import { Product, Variant } from "@/lib/types/product";
 import ProductGallery from "@/components/product-details/ProductGallery";
 import ProductInfo from "@/components/product-details/ProductInfo";
 import VariantPicker from "@/components/product-details/VariantPicker";
-import KeyInformation from "@/components/product-details/KeyInformation";
-import ProductSpecs from "@/components/product-details/ProductSpecs";
 import { QuantitySelector } from "@/components/product-details/QuantitySelector";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { HeartButton } from "@/components/wishlist/HeartButton";
 import { ProductTrustBadges } from "@/components/product-details/ProductTrustBadges";
+import { ProductAccordions } from "@/components/product-details/ProductAccordions";
 import { useWishlistIds } from "@/hooks/useWishlistIds";
 import { useProductInventory } from "@/hooks/cart/useProductInventory";
 
@@ -71,9 +70,6 @@ export default function ProductDetailClient({
           />
         )}
 
-        <KeyInformation product={product} />
-        <ProductSpecs specs={product.specs || {}} />
-
         {/* Purchase Action Dock: Quantity Stepper + Add to Cart + Wishlist */}
         <div className="mt-8">
           <div className="flex items-center gap-3">
@@ -118,9 +114,11 @@ export default function ProductDetailClient({
           <ProductTrustBadges
             warranty={product.warranty}
             shippingInfo={product.shippingInfo}
-            className="mt-6"
           />
         </div>
+
+        {/* Progressive Disclosure Accordions: Specs, Story, Shipping */}
+        <ProductAccordions product={product} className="mt-8" />
       </div>
     </div>
   );

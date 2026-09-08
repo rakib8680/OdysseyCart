@@ -10,63 +10,67 @@ interface ProductTrustBadgesProps {
 }
 
 /**
- * ProductTrustBadges Component.
- * 4-Pillar trust and guarantee ribbon formatted in an airy 2x2 grid
- * to guarantee zero text truncation, ample breathing room, and elevated brand trust.
+ * ProductTrustBadges Component (Apple Store Official PDP Style).
+ * Clean, borderless vertical list with hairline dividers, circular monochrome icon badges,
+ * and high-contrast editorial typography. Zero bulky boxes or card containers.
  */
 export function ProductTrustBadges({
   warranty,
   shippingInfo,
   className,
 }: ProductTrustBadgesProps) {
-  const badges = [
+  const items = [
     {
       icon: Truck,
-      title: shippingInfo ? "Fast Delivery" : "Free Delivery",
-      description: shippingInfo || "Free shipping on orders over $50",
+      title: "Free & Fast Delivery",
+      description:
+        shippingInfo || "Free standard shipping on all orders over $50.",
     },
     {
       icon: RotateCcw,
-      title: "30-Day Returns",
-      description: "Quick & easy exchanges",
+      title: "30-Day Hassle-Free Returns",
+      description:
+        "Return online or in-store within 30 days of delivery for a full refund.",
     },
     {
       icon: ShieldCheck,
-      title: warranty || "2-Year Warranty",
-      description: "Full manufacturer coverage",
+      title: warranty || "2-Year Quality Warranty",
+      description:
+        "Comprehensive hardware coverage backed by dedicated priority support.",
     },
     {
       icon: Lock,
-      title: "Secure Checkout",
-      description: "256-bit SSL encrypted",
+      title: "Secure & Encrypted Checkout",
+      description:
+        "Bank-grade 256-bit SSL encryption. We never store your payment credentials.",
     },
   ];
 
   return (
     <div
       role="region"
-      aria-label="Trust and guarantee benefits"
+      aria-label="Delivery and purchase guarantees"
       className={cn(
-        "grid grid-cols-1 sm:grid-cols-2 gap-3 pt-6 mt-6 border-t border-slate-200/70",
+        "pt-6 mt-6 border-t border-slate-200/80 divide-y divide-slate-100",
         className,
       )}
     >
-      {badges.map((badge, idx) => {
-        const Icon = badge.icon;
+      {items.map((item, idx) => {
+        const Icon = item.icon;
         return (
           <div
             key={idx}
-            className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/80 border border-slate-200/60 hover:bg-white hover:border-emerald-200/70 hover:shadow-xs transition-all duration-200 group"
+            className="flex items-start gap-3.5 py-3.5 first:pt-0 last:pb-0 group"
           >
-            <div className="w-10 h-10 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center text-emerald-600 shadow-2xs shrink-0 group-hover:scale-105 group-hover:border-emerald-300 transition-all">
-              <Icon className="w-5 h-5 text-emerald-600" />
+            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 shrink-0 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
+              <Icon className="w-4 h-4" />
             </div>
-            <div className="min-w-0">
-              <h4 className="text-xs font-bold text-slate-900 leading-snug">
-                {badge.title}
+            <div className="min-w-0 flex-1 pt-0.5">
+              <h4 className="text-sm font-semibold text-slate-900 leading-snug">
+                {item.title}
               </h4>
-              <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
-                {badge.description}
+              <p className="text-xs text-slate-500 leading-relaxed mt-0.5">
+                {item.description}
               </p>
             </div>
           </div>
