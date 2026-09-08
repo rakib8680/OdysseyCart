@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Product, Variant } from "@/lib/types/product";
 import ProductGallery from "@/components/product-details/ProductGallery";
 import ProductInfo from "@/components/product-details/ProductInfo";
@@ -10,6 +10,7 @@ import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { HeartButton } from "@/components/wishlist/HeartButton";
 import { ProductTrustBadges } from "@/components/product-details/ProductTrustBadges";
 import { ProductAccordions } from "@/components/product-details/ProductAccordions";
+import { StickyBuyBar } from "@/components/product-details/StickyBuyBar";
 import { useWishlistIds } from "@/hooks/useWishlistIds";
 import { useProductInventory } from "@/hooks/cart/useProductInventory";
 
@@ -29,12 +30,34 @@ export default function ProductDetailClient({
 }: ProductDetailClientProps) {
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [isStickyVisible, setIsStickyVisible] = useState(false);
+  const buyBoxRef = useRef<HTMLDivElement>(null);
   const wishlistIds = useWishlistIds();
   const inventory = useProductInventory(product, selectedVariant);
 
   // Instant scroll-to-top guarantee on mount
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
+
+  // Performance-optimized IntersectionObserver for StickyBuyBar
+  useEffect(() => {
+    const target = buyBoxRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Show sticky dock strictly when the main buy box has scrolled past the top of the viewport
+        const isScrolledPast = entry.boundingClientRect.bottom < 0;
+        setIsStickyVisible(!entry.isIntersecting && isScrolledPast);
+      },
+      {
+        threshold: 0,
+      },
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
   }, []);
 
   const hasVariants = Boolean(product.variants && product.variants.length > 0);
@@ -71,7 +94,7 @@ export default function ProductDetailClient({
         )}
 
         {/* Purchase Action Dock: Quantity Stepper + Add to Cart + Wishlist */}
-        <div className="mt-8">
+        <div ref={buyBoxRef} className="mt-8">
           <div className="flex items-center gap-3">
             <QuantitySelector
               quantity={inventory.availableToAdd > 0 ? quantity : 0}
@@ -120,6 +143,14 @@ export default function ProductDetailClient({
         {/* Progressive Disclosure Accordions: Specs, Story, Shipping */}
         <ProductAccordions product={product} className="mt-8" />
       </div>
+
+      {/* Floating Sticky Buy Dock on Scroll */}
+      <StickyBuyBar
+        product={product}
+        selectedVariant={selectedVariant}
+        visible={isStickyVisible}
+        quantity={quantity}
+      />
     </div>
   );
 }
