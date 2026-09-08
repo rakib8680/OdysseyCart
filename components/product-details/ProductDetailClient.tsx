@@ -47,6 +47,47 @@ export default function ProductDetailClient({
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, []);
 
+  // Deep-link resolution: Read ?variant=SKU from URL on mount
+  useEffect(() => {
+    if (typeof window === "undefined" || !product.variants || product.variants.length === 0) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const skuFromUrl = params.get("variant");
+
+    if (skuFromUrl) {
+      const matched = product.variants.find(
+        (v) => v.sku.toLowerCase() === skuFromUrl.toLowerCase(),
+      );
+      if (matched) {
+        setSelectedVariant(matched);
+        return;
+      }
+    }
+
+    // If no variant in URL but product has variants, set initial URL param to defaultVariant
+    if (defaultVariant?.sku && !params.has("variant")) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("variant", defaultVariant.sku);
+      window.history.replaceState(window.history.state, "", url.pathname + url.search);
+    }
+  }, [product.variants, defaultVariant]);
+
+  // Shallow URL synchronization: update ?variant=SKU on variant switch without page reload
+  useEffect(() => {
+    if (typeof window === "undefined" || !product.variants || product.variants.length === 0) return;
+
+    const url = new URL(window.location.href);
+    if (selectedVariant?.sku) {
+      if (url.searchParams.get("variant") !== selectedVariant.sku) {
+        url.searchParams.set("variant", selectedVariant.sku);
+        window.history.replaceState(window.history.state, "", url.pathname + url.search);
+      }
+    } else if (url.searchParams.has("variant")) {
+      url.searchParams.delete("variant");
+      window.history.replaceState(window.history.state, "", url.pathname + url.search);
+    }
+  }, [selectedVariant, product.variants]);
+
   // Performance-optimized IntersectionObserver for StickyBuyBar
   useEffect(() => {
     const target = buyBoxRef.current;
