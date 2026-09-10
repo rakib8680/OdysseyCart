@@ -29,7 +29,7 @@ export function ToolbarPagination({
     <div
       aria-label="Toolbar pagination navigation"
       className={cn(
-        "hidden lg:flex items-center gap-1.5 h-10 px-2.5 bg-white border border-slate-200 rounded-lg shadow-sm text-xs font-medium text-slate-600 transition-opacity duration-200",
+        "hidden lg:flex items-center gap-1.5 h-10 px-2.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 transition-opacity duration-200",
         isPending && "opacity-50 pointer-events-none",
         className
       )}
