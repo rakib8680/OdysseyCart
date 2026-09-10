@@ -68,6 +68,12 @@ export function ItemsFilter({
 
   const handlePageChange = (page: number) => {
     setFilters((prev) => ({ ...prev, page }));
+    if (typeof window !== "undefined") {
+      const anchor = document.getElementById("catalog-top-anchor");
+      if (anchor) {
+        anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
   };
 
   return (
@@ -112,6 +118,9 @@ export function ItemsFilter({
 
         {/* Main Product Content Area */}
         <div className="flex-1 min-w-0 w-full space-y-6">
+          {/* Scroll Anchor for smooth pagination restoration */}
+          <div id="catalog-top-anchor" className="scroll-mt-24" />
+
           {/* Category Quick-Nav Chips Row */}
           <CategoryChips
             categories={categories}
