@@ -6,7 +6,7 @@ export interface ProductFormData {
   price: number;
   category: string;
   stockQuantity: number;
-  images: string;
+  images?: string;
   brand: string;
   tags: string;
   specs: string;

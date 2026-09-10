@@ -11,6 +11,7 @@ import BasicInfoSection from "@/components/form/BasicInfoSection";
 import PricingSection from "@/components/form/PricingSection";
 import SpecsSection from "@/components/form/SpecsSection";
 import VariantSection from "@/components/form/VariantSection";
+import { ProductImageUploader } from "@/components/form/ProductImageUploader";
 import {
   ProductFormData,
   VariantOptionForm,
@@ -30,7 +31,8 @@ export default function AddProductForm({ initialData }: ProductFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Variant state managed outside standard react-hook-form inputs
+  // Media and variant state managed outside standard react-hook-form inputs
+  const [images, setImages] = useState<string[]>(initialData?.images || []);
   const [options, setOptions] = useState<VariantOptionForm[]>(
     initialData?.options || []
   );
@@ -85,6 +87,11 @@ export default function AddProductForm({ initialData }: ProductFormProps) {
       return;
     }
 
+    if (images.length === 0) {
+      toast.error("Please add at least one product image.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -95,12 +102,7 @@ export default function AddProductForm({ initialData }: ProductFormProps) {
         price: Number(data.price),
         category: data.category,
         stockQuantity: Number(data.stockQuantity),
-        images: data.images
-          ? data.images
-              .split(",")
-              .map((url: string) => url.trim())
-              .filter(Boolean)
-          : [],
+        images: images,
         createdBy: user.uid,
         brand: data.brand || "",
         tags: data.tags
@@ -133,6 +135,9 @@ export default function AddProductForm({ initialData }: ProductFormProps) {
           `Product ${isEditing ? "updated" : "created"} successfully!`,
         );
         reset();
+        setImages([]);
+        setOptions([]);
+        setVariants([]);
         router.refresh();
         router.push("/admin/products");
       } else {
@@ -171,17 +176,12 @@ export default function AddProductForm({ initialData }: ProductFormProps) {
               </span>
               Media
             </h2>
-            <div>
-              <label className={labelStyles}>
-                Image URLs (comma separated)
-              </label>
-              <input
-                type="text"
-                className={inputStyles}
-                placeholder="https://example.com/img1.jpg, https://..."
-                {...register("images")}
-              />
-            </div>
+            <ProductImageUploader
+              images={images}
+              onChange={setImages}
+              maxImages={6}
+              disabled={isSubmitting}
+            />
           </div>
         </div>
 
