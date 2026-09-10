@@ -21,6 +21,17 @@ export const ourFileRouter = {
       // persist it to Firebase + MongoDB via AuthContext.updateAvatar()
       return { url: file.ufsUrl };
     }),
+
+  /** Product image uploader — multi-image for catalog creation/editing, max 8MB, up to 6 files */
+  productImageUploader: f({
+    image: { maxFileSize: "8MB", maxFileCount: 6 },
+  })
+    .middleware(async ({ req }) => {
+      return {};
+    })
+    .onUploadComplete(async ({ file }) => {
+      return { url: file.ufsUrl };
+    }),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;
