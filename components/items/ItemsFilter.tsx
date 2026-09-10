@@ -66,9 +66,13 @@ export function ItemsFilter({
     setFilters((prev) => ({ ...prev, ...updates, page: 1 }));
   };
 
+  const handlePageChange = (page: number) => {
+    setFilters((prev) => ({ ...prev, page }));
+  };
+
   return (
     <div className="space-y-6">
-      {/* 1. Top Toolbar (Search Bar + Mobile Drawer Trigger + Quick Sort + View Mode Toggle) */}
+      {/* 1. Top Toolbar (Search Bar + Mobile Drawer Trigger + Quick Sort + View Mode Toggle + Micro-Pager) */}
       <ItemsToolbar
         search={filters.search}
         sort={filters.sort}
@@ -77,10 +81,13 @@ export function ItemsFilter({
         activeFilterCount={activeFilterCount}
         viewMode={viewMode}
         isPending={isPending}
+        currentPage={currentPage}
+        totalPages={totalPages}
         onViewModeChange={setViewMode}
         onSearchChange={(value) => handleFilterChange({ search: value })}
         onFilterChange={handleFilterChange}
         onReset={resetFilters}
+        onPageChange={handlePageChange}
       />
 
       {/* 2. Active Filter Chips */}
@@ -126,9 +133,7 @@ export function ItemsFilter({
               currentPage={currentPage}
               totalPages={totalPages}
               isPending={isPending}
-              onPageChange={(page) =>
-                setFilters((prev) => ({ ...prev, page }))
-              }
+              onPageChange={handlePageChange}
             />
           )}
         </div>

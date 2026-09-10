@@ -3,6 +3,7 @@
 import { SearchBar } from "./SearchBar";
 import { MobileFilterDrawer } from "./MobileFilterDrawer";
 import { ItemsViewToggle } from "./ItemsViewToggle";
+import { ToolbarPagination } from "./ToolbarPagination";
 import { FormSelect } from "@/components/form/FormSelect";
 import { SORT_CONFIG } from "@/lib/config/products";
 import { ProductFilters, ViewMode } from "@/lib/types/product";
@@ -15,16 +16,19 @@ interface ItemsToolbarProps {
   activeFilterCount: number;
   viewMode: ViewMode;
   isPending?: boolean;
+  currentPage?: number;
+  totalPages?: number;
   onViewModeChange: (mode: ViewMode) => void;
   onSearchChange: (value: string) => void;
   onFilterChange: (updates: Record<string, string>) => void;
   onReset: () => void;
+  onPageChange?: (page: number) => void;
 }
 
 /**
  * Top Items Toolbar Component.
  * Orchestrates debounced search bar, mobile filter drawer button, quick-sort dropdown,
- * and view mode layout switcher (Grid vs. List).
+ * view mode layout switcher (Grid vs. List), and compact desktop micro-pagination.
  */
 export function ItemsToolbar({
   search,
@@ -34,10 +38,13 @@ export function ItemsToolbar({
   activeFilterCount,
   viewMode,
   isPending = false,
+  currentPage,
+  totalPages,
   onViewModeChange,
   onSearchChange,
   onFilterChange,
   onReset,
+  onPageChange,
 }: ItemsToolbarProps) {
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-4">
@@ -48,7 +55,7 @@ export function ItemsToolbar({
         isSearching={isPending}
       />
 
-      {/* Right Controls: Mobile Drawer + Desktop Sort + View Toggle */}
+      {/* Right Controls: Mobile Drawer + Desktop Sort + View Toggle + Top Micro-Pager */}
       <div className="flex items-center gap-2 justify-between sm:justify-end">
         {/* Mobile Filter Drawer Button */}
         <MobileFilterDrawer
@@ -83,6 +90,19 @@ export function ItemsToolbar({
           viewMode={viewMode}
           onViewModeChange={onViewModeChange}
         />
+
+        {/* Desktop Micro-Pagination */}
+        {totalPages !== undefined &&
+          totalPages > 1 &&
+          currentPage !== undefined &&
+          onPageChange && (
+            <ToolbarPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              isPending={isPending}
+            />
+          )}
       </div>
     </div>
   );
