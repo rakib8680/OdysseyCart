@@ -16,6 +16,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteConfirmModal } from "./DeleteConfirmModal";
+import { getProductImageUrl } from "@/lib/utils/productImages";
+import { handleImageError } from "@/hooks/useImageFallback";
+
 interface ManageTableProps {
   products: any[];
   onRefresh?: () => void;
@@ -109,19 +112,12 @@ export default function ManageTable({ products, onRefresh }: ManageTableProps) {
             {products.map((product: any) => (
               <TableRow key={product._id}>
                 <TableCell className="pl-8">
-                  {product.images && product.images.length > 0 ? (
-                    <img
-                      src={product.images[0]}
-                      alt={product.title}
-                      className="w-14 h-14 object-cover rounded-xl"
-                    />
-                  ) : (
-                    <img
-                      src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
-                      alt={product.title}
-                      className="w-16 h-16 rounded-md"
-                    />
-                  )}
+                  <img
+                    src={getProductImageUrl(product.images)}
+                    alt={product.title}
+                    onError={handleImageError}
+                    className="w-14 h-14 object-cover rounded-xl bg-slate-100"
+                  />
                 </TableCell>
                 <TableCell className="font-medium text-slate-900 py-4 pl-8">
                   {product.title}
