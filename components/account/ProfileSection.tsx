@@ -27,6 +27,10 @@ export function ProfileSection() {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const { startUpload } = useUploadThing("avatarUploader", {
+    headers: async () => {
+      const token = await user?.getIdToken();
+      return token ? { Authorization: `Bearer ${token}` } : {};
+    },
     onUploadProgress: (p) => {
       setUploadProgress(p);
     },
@@ -90,7 +94,7 @@ export function ProfileSection() {
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
-          className="relative group flex-shrink-0 cursor-pointer disabled:cursor-wait rounded-full overflow-hidden"
+          className="relative group shrink-0 cursor-pointer disabled:cursor-wait rounded-full overflow-hidden"
         >
           <UserAvatar
             photoURL={dbUser?.avatar || user?.photoURL}

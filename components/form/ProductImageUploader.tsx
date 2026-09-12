@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useUploadThing } from "@/hooks/useUploadThing";
+import { useAuth } from "@/contexts/AuthContext";
 import { handleImageError } from "@/hooks/useImageFallback";
 import { toast } from "sonner";
 import {
@@ -36,6 +37,7 @@ export function ProductImageUploader({
   maxImages = 6,
   disabled = false,
 }: ProductImageUploaderProps) {
+  const { user } = useAuth();
   const [urlInput, setUrlInput] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -45,6 +47,10 @@ export function ProductImageUploader({
 
   // Uploadthing Client Hook
   const { startUpload, isUploading } = useUploadThing("productImageUploader", {
+    headers: async () => {
+      const token = await user?.getIdToken();
+      return token ? { Authorization: `Bearer ${token}` } : {};
+    },
     onClientUploadComplete: (res) => {
       if (res && res.length > 0) {
         const uploadedUrls = res.map(
