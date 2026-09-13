@@ -119,6 +119,8 @@ const ProductSchema = new Schema<TProduct>(
     },
     options: { type: [VariantOptionSchema], default: [] },
     variants: { type: [VariantSchema], default: [] },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
   },
   {
     timestamps: true,
@@ -138,6 +140,10 @@ ProductSchema.index(
   { weights: { title: 10, shortDescription: 5 }, name: "product_text_search" },
 );
 ProductSchema.index({ category: 1, price: 1 });
+ProductSchema.index({ createdAt: -1, _id: -1 });
+ProductSchema.index({ price: 1, _id: 1 });
+ProductSchema.index({ category: 1, createdAt: -1, _id: -1 });
+ProductSchema.index({ category: 1, price: 1, _id: 1 });
 
 // 5. Create and export the model safely for Next.js
 const Product: Model<TProduct> =
