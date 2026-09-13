@@ -24,11 +24,15 @@ export const REVIEW_SORT_OPTIONS: ReviewSortConfig[] = [
 // ==========================================
 // MONGODB SORT MAPPINGS
 // ==========================================
+/**
+ * MongoDB sorting mappings for each ReviewSortOption.
+ * Includes deterministic unique tie-breakers (_id) to guarantee cursor stability.
+ */
 export const REVIEW_DB_SORT_MAP: Record<
   ReviewSortOption,
   Record<string, 1 | -1>
 > = {
-  newest: { createdAt: -1 },
-  highest: { rating: -1, createdAt: -1 },
-  lowest: { rating: 1, createdAt: -1 },
+  newest: { createdAt: -1, _id: -1 },
+  highest: { rating: -1, createdAt: -1, _id: -1 },
+  lowest: { rating: 1, createdAt: -1, _id: -1 },
 };

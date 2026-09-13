@@ -37,14 +37,15 @@ export const PRICE_PRESETS: PricePreset[] = [
 
 /**
  * MongoDB sorting mappings for each SortOption.
+ * Includes deterministic unique tie-breakers (_id) to guarantee cursor stability.
  */
 export const DB_SORT_MAP: Record<SortOption, Record<string, 1 | -1>> = {
-  newest: { createdAt: -1 },
-  oldest: { createdAt: 1 },
-  "price-low": { price: 1 },
-  "price-high": { price: -1 },
-  "name-az": { title: 1 },
-  "name-za": { title: -1 },
+  newest: { createdAt: -1, _id: -1 },
+  oldest: { createdAt: 1, _id: 1 },
+  "price-low": { price: 1, _id: 1 },
+  "price-high": { price: -1, _id: -1 },
+  "name-az": { title: 1, _id: 1 },
+  "name-za": { title: -1, _id: -1 },
 };
 
 /**
