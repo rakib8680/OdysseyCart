@@ -26,12 +26,17 @@ export function Pagination({
     parseAsInteger.withDefault(1).withOptions({ shallow: false }),
   );
 
+  if (totalPages <= 1) return null;
+
+  const safeCurrent = Math.max(1, Math.min(currentPage, totalPages));
+
   const handlePageSelect = (page: number) => {
     if (isPending) return;
+    const targetPage = Math.max(1, Math.min(page, totalPages));
     if (onPageChange) {
-      onPageChange(page);
+      onPageChange(targetPage);
     } else {
-      setPage(page);
+      setPage(targetPage);
     }
   };
 
@@ -40,7 +45,7 @@ export function Pagination({
     const pages: number[] = [];
     const maxVisible = 5;
 
-    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let start = Math.max(1, safeCurrent - Math.floor(maxVisible / 2));
     const end = Math.min(totalPages, start + maxVisible - 1);
 
     // Adjust start if we're near the end
@@ -65,8 +70,8 @@ export function Pagination({
     >
       {/* Previous */}
       <button
-        onClick={() => handlePageSelect(currentPage - 1)}
-        disabled={isPending || currentPage <= 1}
+        onClick={() => handlePageSelect(safeCurrent - 1)}
+        disabled={isPending || safeCurrent <= 1}
         className="flex items-center gap-1 h-10 px-3 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
       >
         <ChevronLeft className="w-4 h-4" />
@@ -97,7 +102,7 @@ export function Pagination({
           onClick={() => handlePageSelect(num)}
           disabled={isPending}
           className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer ${
-            num === currentPage
+            num === safeCurrent
               ? "bg-slate-900 text-white shadow-sm"
               : "border border-slate-200 text-slate-600 hover:bg-slate-50"
           }`}
@@ -125,8 +130,8 @@ export function Pagination({
 
       {/* Next */}
       <button
-        onClick={() => handlePageSelect(currentPage + 1)}
-        disabled={isPending || currentPage >= totalPages}
+        onClick={() => handlePageSelect(safeCurrent + 1)}
+        disabled={isPending || safeCurrent >= totalPages}
         className="flex items-center gap-1 h-10 px-3 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
       >
         <span className="hidden sm:inline">Next</span>
