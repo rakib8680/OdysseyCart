@@ -9,6 +9,7 @@ import { type OrderStatus } from "@/lib/models/Order";
 import { OrderCard } from "@/components/orders/OrderCard";
 import { OrderDetailSheet } from "@/components/orders/OrderDetailSheet";
 import { Pagination } from "@/components/items/Pagination";
+import { ToolbarPagination } from "@/components/ui/ToolbarPagination";
 import { OrderListSkeleton } from "@/components/skeletons";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { LastUpdated } from "@/components/ui/LastUpdated";
@@ -173,40 +174,53 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      {/* Search + Status Filter Tabs */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-          <Input
-            type="text"
-            placeholder="Search by name or email..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value || null)}
-            className="w-full pl-10 h-10"
-          />
+      {/* Search + Status Filter Tabs + Top Pagination */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+            <Input
+              type="text"
+              placeholder="Search by name or email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value || null)}
+              className="w-full pl-10 h-10"
+            />
+          </div>
+
+          <div className="flex gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+            {FILTER_TABS.map((tab) => {
+              const isActive = (statusFilter || null) === tab.status;
+              return (
+                <Button
+                  key={tab.label}
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setStatusFilter(tab.status || null)}
+                  className={cn(
+                    "rounded-lg text-xs font-semibold whitespace-nowrap",
+                    isActive
+                      ? "bg-slate-900 text-white hover:bg-slate-800 hover:text-white"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200",
+                  )}
+                >
+                  {tab.label}
+                </Button>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="flex gap-1.5 overflow-x-auto pb-1">
-          {FILTER_TABS.map((tab) => {
-            const isActive = (statusFilter || null) === tab.status;
-            return (
-              <Button
-                key={tab.label}
-                variant="ghost"
-                size="sm"
-                onClick={() => setStatusFilter(tab.status || null)}
-                className={cn(
-                  "rounded-lg text-xs font-semibold whitespace-nowrap",
-                  isActive
-                    ? "bg-slate-900 text-white hover:bg-slate-800 hover:text-white"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200",
-                )}
-              >
-                {tab.label}
-              </Button>
-            );
-          })}
-        </div>
+        {totalPages > 1 && (
+          <div className="flex justify-end shrink-0">
+            <ToolbarPagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              isPending={loading}
+            />
+          </div>
+        )}
       </div>
 
       {/* Results */}
