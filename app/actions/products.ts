@@ -140,7 +140,9 @@ export async function getProducts() {
   try {
     await connectDB();
 
-    const products = await Product.find({}).sort({ createdAt: -1 }).lean();
+    const products = await Product.find({})
+      .sort({ createdAt: -1, _id: -1 })
+      .lean();
 
     return serialize(products);
   } catch (error: any) {
@@ -208,24 +210,38 @@ export async function getFilteredProducts(
     }
 
     // 3. Determine sort order
-    const skip = (page - 1) * limit;
     const sortOrder = DB_SORT_MAP[sort] || DB_SORT_MAP.newest;
 
-    // 4. Execute query + count in parallel for performance
-    const [products, totalCount] = await Promise.all([
-      Product.find(filter, LISTING_PROJECTION)
-        .sort(sortOrder)
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Product.countDocuments(filter),
-    ]);
+    // 4. Count matching documents first for bounds checking & early exit
+    const totalCount = await Product.countDocuments(filter);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    // If no matching products exist, short-circuit immediately (avoids empty find query)
+    if (totalCount === 0) {
+      return {
+        products: [],
+        totalCount: 0,
+        totalPages: 0,
+        currentPage: 1,
+      };
+    }
+
+    // 5. Clamp page strictly within bounds [1, totalPages]
+    const safePage = Math.max(1, Math.min(page, totalPages));
+    const skip = (safePage - 1) * limit;
+
+    // 6. Execute deterministic paginated query
+    const products = await Product.find(filter, LISTING_PROJECTION)
+      .sort(sortOrder)
+      .skip(skip)
+      .limit(limit)
+      .lean();
 
     return {
       products: serialize(products),
       totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
+      totalPages,
+      currentPage: safePage,
     };
   } catch (error: any) {
     console.error("getFilteredProducts error:", error);
@@ -321,7 +337,7 @@ export async function getFeaturedProducts(limit = 3) {
       { isFeatured: true },
       LISTING_PROJECTION,
     )
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1, _id: -1 })
       .limit(limit)
       .lean();
 
@@ -347,7 +363,7 @@ export async function getRelatedProducts(
       { category, _id: { $ne: excludeId } },
       LISTING_PROJECTION,
     )
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1, _id: -1 })
       .limit(limit)
       .lean();
 

@@ -139,7 +139,6 @@ ProductSchema.index(
   { title: "text", shortDescription: "text" },
   { weights: { title: 10, shortDescription: 5 }, name: "product_text_search" },
 );
-ProductSchema.index({ category: 1, price: 1 });
 ProductSchema.index({ createdAt: -1, _id: -1 });
 ProductSchema.index({ price: 1, _id: 1 });
 ProductSchema.index({ category: 1, createdAt: -1, _id: -1 });

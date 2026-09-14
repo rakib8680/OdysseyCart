@@ -25,8 +25,16 @@ export async function connectDB() {
       bufferCommands: false,
     };
 
+    let uri = MONGODB_URI as string;
+    if (uri.includes("directConnection=true")) {
+      uri = uri.replace(
+        "directConnection=true",
+        "replicaSet=atlas-z6h7jh-shard-0&retryWrites=true&w=majority",
+      );
+    }
+
     cached.promise = mongoose
-      .connect(MONGODB_URI as string, opts)
+      .connect(uri, opts)
       .then((mongoose) => {
         console.log("MongoDB connected successfully");
         return mongoose;

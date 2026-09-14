@@ -29,7 +29,7 @@ export async function getUserOrders(userId: string): Promise<{
       userId,
       status: { $ne: "pending" },
     })
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1, _id: -1 })
       .lean();
 
     return {
@@ -122,8 +122,6 @@ export async function getFilteredOrders(
     await connectDB();
     await requireAdmin(adminUid);
 
-    const skip = (page - 1) * ADMIN_ORDERS_PER_PAGE;
-
     // Build filter — always exclude pending (abandoned checkouts)
     const filter: Record<string, any> = { status: { $ne: "pending" } };
 
@@ -161,22 +159,35 @@ export async function getFilteredOrders(
       ];
     }
 
-    // Execute query + count in parallel
-    const [orders, totalCount] = await Promise.all([
-      Order.find(filter)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(ADMIN_ORDERS_PER_PAGE)
-        .lean(),
-      Order.countDocuments(filter),
-    ]);
+    // Count matching orders for bounds checking & early exit
+    const totalCount = await Order.countDocuments(filter);
+    const totalPages = Math.ceil(totalCount / ADMIN_ORDERS_PER_PAGE);
+
+    if (totalCount === 0) {
+      return {
+        success: true,
+        orders: [],
+        totalCount: 0,
+        totalPages: 0,
+        currentPage: 1,
+      };
+    }
+
+    const safePage = Math.max(1, Math.min(page, totalPages));
+    const skip = (safePage - 1) * ADMIN_ORDERS_PER_PAGE;
+
+    const orders = await Order.find(filter)
+      .sort({ createdAt: -1, _id: -1 })
+      .skip(skip)
+      .limit(ADMIN_ORDERS_PER_PAGE)
+      .lean();
 
     return {
       success: true,
       orders: orders.map(serializeOrder),
       totalCount,
-      totalPages: Math.ceil(totalCount / ADMIN_ORDERS_PER_PAGE),
-      currentPage: page,
+      totalPages,
+      currentPage: safePage,
     };
   } catch (error: any) {
     console.error("getFilteredOrders error:", error);
