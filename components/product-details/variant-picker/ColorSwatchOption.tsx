@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Variant, VariantOption } from "@/lib/types/product";
 import { resolveColorSwatch } from "@/lib/utils/colors";
 
@@ -22,6 +23,8 @@ export default function ColorSwatchOption({
   isValueAvailable,
   compact = false,
 }: ColorSwatchOptionProps) {
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
+
   return (
     <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
       {option.values.map((value) => {
@@ -41,8 +44,11 @@ export default function ColorSwatchOption({
             ? images[variantForColor.imageIndex]
             : null;
 
+        const hasImageError = Boolean(failedImages[value]);
+        const showThumbnail = Boolean(thumbnailSrc && !hasImageError);
+
         // TIER A: Nike-Style Variant Micro-Thumbnail
-        if (thumbnailSrc) {
+        if (showThumbnail) {
           return (
             <button
               key={value}
@@ -68,8 +74,11 @@ export default function ColorSwatchOption({
               `}
             >
               <img
-                src={thumbnailSrc}
+                src={thumbnailSrc!}
                 alt={value}
+                onError={() =>
+                  setFailedImages((prev) => ({ ...prev, [value]: true }))
+                }
                 className="w-full h-full object-cover"
               />
               {!isAvailable && (
