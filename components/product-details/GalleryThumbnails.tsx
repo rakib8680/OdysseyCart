@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { handleImageError } from "@/hooks/useImageFallback";
+import { handleImageError, handleImageRef } from "@/hooks/useImageFallback";
 
 interface GalleryThumbnailsProps {
   images: string[];
@@ -47,6 +47,7 @@ export function GalleryThumbnails({
             )}
           >
             <img
+              ref={handleImageRef}
               src={img}
               alt={`${alt} thumbnail ${i + 1}`}
               onError={handleImageError}

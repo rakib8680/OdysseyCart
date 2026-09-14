@@ -57,3 +57,13 @@ export function handleImageError(e: React.SyntheticEvent<HTMLImageElement>) {
     target.src = FALLBACK_PRODUCT_IMAGE;
   }
 }
+
+/**
+ * Standalone callback ref for <img> tags in loops (e.g. gallery thumbnails)
+ * to catch pre-hydration 404 errors on hard page reloads.
+ */
+export function handleImageRef(el: HTMLImageElement | null) {
+  if (isImageBroken(el) && el && el.src !== FALLBACK_PRODUCT_IMAGE) {
+    el.src = FALLBACK_PRODUCT_IMAGE;
+  }
+}
