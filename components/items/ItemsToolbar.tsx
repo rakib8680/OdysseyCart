@@ -101,6 +101,7 @@ export function ItemsToolbar({
               totalPages={totalPages}
               onPageChange={onPageChange}
               isPending={isPending}
+              className="hidden lg:flex"
             />
           )}
       </div>
