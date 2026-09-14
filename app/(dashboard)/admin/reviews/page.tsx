@@ -7,6 +7,7 @@ import { getAllReviewsAdmin, deleteReview } from "@/app/actions/reviews";
 import { AdminReview } from "@/lib/types/review";
 import { AdminReviewList } from "@/components/reviews/AdminReviewList";
 import { Pagination } from "@/components/items/Pagination";
+import { ToolbarPagination } from "@/components/ui/ToolbarPagination";
 import { DeleteConfirmModal } from "@/components/DeleteConfirmModal";
 import { AdminReviewTableSkeleton } from "@/components/skeletons";
 import { Input } from "@/components/ui/input";
@@ -113,19 +114,30 @@ export default function AdminReviewsPage() {
         </div>
       </div>
 
-      {/* Search Input */}
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-        <Input
-          type="text"
-          placeholder="Search by product, user, or review title..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value || null)}
-          className="w-full pl-10 h-10"
-        />
+      {/* Search & Top Pagination */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+          <Input
+            type="text"
+            placeholder="Search by product, user, or review title..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value || null)}
+            className="w-full pl-10 h-10"
+          />
+        </div>
+
+        {totalPages > 1 && (
+          <ToolbarPagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            isPending={loading}
+          />
+        )}
       </div>
 
-      <div className="pt-4 relative min-h-[400px]">
+      <div className="pt-4 relative min-h-100">
         {loading ? (
           <AdminReviewTableSkeleton />
         ) : (

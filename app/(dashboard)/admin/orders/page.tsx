@@ -224,7 +224,7 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Results */}
-      <div className="pt-2 relative min-h-[400px]">
+      <div className="pt-2 relative min-h-100">
         {loading ? (
           <OrderListSkeleton />
         ) : orders.length === 0 ? (
