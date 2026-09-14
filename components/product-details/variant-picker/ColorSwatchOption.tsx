@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Variant, VariantOption } from "@/lib/types/product";
 import { resolveColorSwatch } from "@/lib/utils/colors";
+import { isImageBroken } from "@/hooks/useImageFallback";
 
 interface ColorSwatchOptionProps {
   option: VariantOption;
@@ -74,6 +75,11 @@ export default function ColorSwatchOption({
               `}
             >
               <img
+                ref={(el) => {
+                  if (isImageBroken(el) && !failedImages[value]) {
+                    setFailedImages((prev) => ({ ...prev, [value]: true }));
+                  }
+                }}
                 src={thumbnailSrc!}
                 alt={value}
                 onError={() =>

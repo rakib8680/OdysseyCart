@@ -14,18 +14,21 @@ import { FALLBACK_PRODUCT_IMAGE } from "@/lib/constants/images";
  * Uses URL comparison as the infinite-loop guard so it works correctly when
  * React reuses the same `<img>` element with a different `src` (e.g. gallery switching).
  */
+/**
+ * Centralized check to detect if an <img> element has already failed (e.g. 404)
+ * before React hydrated (pre-hydration failure on hard reload).
+ */
+export function isImageBroken(img: HTMLImageElement | null): boolean {
+  return Boolean(img && img.complete && img.naturalWidth === 0);
+}
+
 export function useImageFallback() {
   const imgRef = useRef<HTMLImageElement>(null);
 
   // Post-hydration check: detect images that already failed before React attached onError
   useEffect(() => {
     const img = imgRef.current;
-    if (
-      img &&
-      img.complete &&
-      img.naturalWidth === 0 &&
-      img.src !== FALLBACK_PRODUCT_IMAGE
-    ) {
+    if (isImageBroken(img) && img && img.src !== FALLBACK_PRODUCT_IMAGE) {
       img.src = FALLBACK_PRODUCT_IMAGE;
     }
   }, []);
