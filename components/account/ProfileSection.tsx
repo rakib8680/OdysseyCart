@@ -85,7 +85,7 @@ export function ProfileSection() {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6">
+    <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6">
       <h2 className="text-sm font-semibold text-slate-900 mb-5">Profile</h2>
 
       <div className="flex flex-col sm:flex-row items-start gap-6">

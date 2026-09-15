@@ -39,7 +39,7 @@ export function SecuritySection() {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6">
+    <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6">
       <h2 className="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
         <Lock className="w-4 h-4 text-slate-500" />
         Security

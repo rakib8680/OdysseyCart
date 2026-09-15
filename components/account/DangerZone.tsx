@@ -66,12 +66,12 @@ export function DangerZone() {
   };
 
   return (
-    <div className="rounded-2xl border border-red-200 bg-red-50/30 p-6">
+    <div className="rounded-2xl border border-red-200 bg-red-50/30 p-4 sm:p-6">
       <h2 className="text-sm font-semibold text-red-700 mb-2 flex items-center gap-2">
         <AlertTriangle className="w-4 h-4" />
         Danger Zone
       </h2>
-      <p className="text-sm text-slate-600 mb-4">
+      <p className="text-xs sm:text-sm text-slate-600 mb-4">
         Permanently delete your account and anonymize all personal data. Your
         order history will be preserved for legal compliance, but your name and
         email will be removed.
