@@ -3,7 +3,7 @@
 import { SearchBar } from "./SearchBar";
 import { MobileFilterDrawer } from "./MobileFilterDrawer";
 import { ItemsViewToggle } from "./ItemsViewToggle";
-import { ToolbarPagination } from "./ToolbarPagination";
+import { ToolbarPagination } from "@/components/ui/ToolbarPagination";
 import { FormSelect } from "@/components/form/FormSelect";
 import { SORT_CONFIG } from "@/lib/config/products";
 import { ProductFilters, ViewMode } from "@/lib/types/product";

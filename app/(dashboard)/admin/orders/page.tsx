@@ -8,7 +8,7 @@ import type { SerializedOrder } from "@/lib/types/order";
 import { type OrderStatus } from "@/lib/models/Order";
 import { OrderCard } from "@/components/orders/OrderCard";
 import { OrderDetailSheet } from "@/components/orders/OrderDetailSheet";
-import { Pagination } from "@/components/items/Pagination";
+import { Pagination } from "@/components/ui/Pagination";
 import { ToolbarPagination } from "@/components/ui/ToolbarPagination";
 import { OrderListSkeleton } from "@/components/skeletons";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -58,7 +58,7 @@ export default function AdminOrdersPage() {
   // URL-synced state via nuqs
   const [page, setPage] = useQueryState(
     "page",
-    parseAsInteger.withDefault(1).withOptions({ shallow: false }),
+    parseAsInteger.withDefault(1).withOptions({ shallow: true }),
   );
   const [search, setSearch] = useQueryState(
     "q",
@@ -251,8 +251,13 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Pagination */}
-      {!loading && totalPages > 1 && (
-        <Pagination currentPage={page} totalPages={totalPages} />
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          isPending={loading}
+        />
       )}
 
       {/* Detail Sheet — shared component with fulfillment actions */}

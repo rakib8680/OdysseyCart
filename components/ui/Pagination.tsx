@@ -32,7 +32,7 @@ export function Pagination({
 }: PaginationProps) {
   const [, setPage] = useQueryState(
     "page",
-    parseAsInteger.withDefault(1).withOptions({ shallow: false })
+    parseAsInteger.withDefault(1).withOptions({ shallow: true })
   );
 
   const [jumpOpen, setJumpOpen] = useState<"left" | "right" | null>(null);

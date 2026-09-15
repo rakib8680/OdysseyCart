@@ -10,7 +10,7 @@ import { DesktopSidebar } from "./DesktopSidebar";
 import { ActiveFilters } from "./ActiveFilters";
 import { CategoryChips } from "./CategoryChips";
 import { ProductGrid } from "./ProductGrid";
-import { Pagination } from "./Pagination";
+import { Pagination } from "@/components/ui/Pagination";
 import { Product } from "@/lib/types/product";
 
 interface ItemsFilterProps {

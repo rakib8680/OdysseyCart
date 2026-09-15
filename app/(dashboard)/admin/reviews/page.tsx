@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getAllReviewsAdmin, deleteReview } from "@/app/actions/reviews";
 import { AdminReview } from "@/lib/types/review";
 import { AdminReviewList } from "@/components/reviews/AdminReviewList";
-import { Pagination } from "@/components/items/Pagination";
+import { Pagination } from "@/components/ui/Pagination";
 import { ToolbarPagination } from "@/components/ui/ToolbarPagination";
 import { DeleteConfirmModal } from "@/components/DeleteConfirmModal";
 import { AdminReviewTableSkeleton } from "@/components/skeletons";
@@ -30,7 +30,7 @@ export default function AdminReviewsPage() {
   // URL-synced state via nuqs
   const [page, setPage] = useQueryState(
     "page",
-    parseAsInteger.withDefault(1).withOptions({ shallow: false }),
+    parseAsInteger.withDefault(1).withOptions({ shallow: true }),
   );
   const [search, setSearch] = useQueryState(
     "q",
@@ -149,9 +149,14 @@ export default function AdminReviewsPage() {
         )}
       </div>
 
-      {/* Pagination — reusing Phase 15 component */}
-      {!loading && totalPages > 1 && (
-        <Pagination currentPage={page} totalPages={totalPages} />
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          isPending={loading}
+        />
       )}
 
       {/* Delete Confirmation Modal — reusing existing component */}

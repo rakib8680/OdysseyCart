@@ -7,7 +7,7 @@ import ManageTable from "@/components/ManageTable";
 import { getFilteredProducts } from "@/app/actions/products";
 import { Plus, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Pagination } from "@/components/items/Pagination";
+import { Pagination } from "@/components/ui/Pagination";
 import { ToolbarPagination } from "@/components/ui/ToolbarPagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import { toast } from "sonner";
@@ -24,7 +24,7 @@ export default function AdminProductsPage() {
   // URL-synced state via nuqs
   const [page, setPage] = useQueryState(
     "page",
-    parseAsInteger.withDefault(1).withOptions({ shallow: false }),
+    parseAsInteger.withDefault(1).withOptions({ shallow: true }),
   );
   const [search, setSearch] = useQueryState(
     "q",
@@ -119,8 +119,13 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Pagination */}
-      {!loading && totalPages > 1 && (
-        <Pagination currentPage={page} totalPages={totalPages} />
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          isPending={loading}
+        />
       )}
     </div>
   );
