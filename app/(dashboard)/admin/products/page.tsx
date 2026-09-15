@@ -109,7 +109,7 @@ export default function AdminProductsPage() {
             placeholder="Search products by title or description..."
             value={search}
             onChange={(e) => setSearch(e.target.value || null)}
-            className="w-full pl-9 h-9 sm:h-10 text-xs sm:text-sm rounded-lg"
+            className="w-full pl-9 h-9 sm:h-10 text-xs sm:text-sm placeholder:text-xs sm:placeholder:text-sm rounded-lg"
           />
         </div>
 

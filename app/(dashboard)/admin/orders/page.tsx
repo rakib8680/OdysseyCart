@@ -186,7 +186,7 @@ export default function AdminOrdersPage() {
               placeholder="Search by name or email..."
               value={search}
               onChange={(e) => setSearch(e.target.value || null)}
-              className="w-full pl-9 h-9 sm:h-10 text-xs sm:text-sm rounded-lg"
+              className="w-full pl-9 h-9 sm:h-10 text-xs sm:text-sm placeholder:text-xs sm:placeholder:text-sm rounded-lg"
             />
           </div>
 

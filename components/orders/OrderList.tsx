@@ -118,21 +118,21 @@ export function OrderList({
   return (
     <>
       {/* ─── Search + Filters Bar ─── */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-5">
+      <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 mb-4">
         {/* Search */}
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
           <Input
             type="text"
             placeholder="Search by ID, name, email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 h-10"
+            className="w-full pl-9 h-9 sm:h-10 text-xs sm:text-sm placeholder:text-xs sm:placeholder:text-sm rounded-lg"
           />
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex gap-1.5 overflow-x-auto pb-1">
+        <div className="flex gap-1 sm:gap-1.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
           {FILTER_TABS.map((tab) => {
             const isActive = activeFilter === tab.status;
             return (
@@ -142,10 +142,10 @@ export function OrderList({
                 size="sm"
                 onClick={() => setActiveFilter(tab.status)}
                 className={cn(
-                  "rounded-lg text-xs font-semibold whitespace-nowrap",
+                  "rounded-lg text-[11px] sm:text-xs h-7 sm:h-8 px-2.5 sm:px-3 font-semibold whitespace-nowrap transition-colors",
                   isActive
-                    ? "bg-slate-900 text-white hover:bg-slate-800 hover:text-white"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    ? "bg-slate-900 text-white hover:bg-slate-800 hover:text-white dark:bg-emerald-600 dark:hover:bg-emerald-500"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
                 )}
               >
                 {tab.label}

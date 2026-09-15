@@ -51,7 +51,7 @@ export function SearchBar({
         type="text"
         placeholder="Search products by name or description..."
         className={cn(
-          "w-full pl-10 h-10 text-xs sm:text-sm bg-white transition-all",
+          "w-full pl-10 h-9 sm:h-10 text-xs sm:text-sm placeholder:text-xs sm:placeholder:text-sm bg-white transition-all rounded-lg",
           isQueryActive && "pr-10"
         )}
         value={localSearch}
