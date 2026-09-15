@@ -96,34 +96,35 @@ export default function AdminReviewsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Review Moderation
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 sm:mt-1">
             Monitor and moderate customer reviews across all products.
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-[11px] sm:text-xs font-medium text-slate-600 dark:text-slate-300">
             Total Reviews:{" "}
-            <span className="text-slate-900 dark:text-white">{totalCount}</span>
-          </div>
+            <strong className="text-slate-900 dark:text-white font-semibold">{totalCount}</strong>
+          </span>
           <LastUpdated timestamp={lastUpdated} onRefresh={fetchReviews} loading={loading} />
         </div>
       </div>
 
-      {/* Search & Top Pagination */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+      {/* Search & Top Pagination (Side-by-side on all viewports) */}
+      <div className="flex items-center justify-between gap-2 sm:gap-3">
+        <div className="relative flex-1 min-w-0 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
           <Input
             type="text"
             placeholder="Search by product, user, or review title..."
             value={search}
             onChange={(e) => setSearch(e.target.value || null)}
-            className="w-full pl-10 h-10"
+            className="w-full pl-9 h-9 sm:h-10 text-xs sm:text-sm rounded-lg"
           />
         </div>
 

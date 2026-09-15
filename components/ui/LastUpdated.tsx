@@ -25,16 +25,16 @@ export function LastUpdated({ timestamp, onRefresh, loading }: LastUpdatedProps)
   const relativeTime = useRelativeTime(timestamp);
 
   return (
-    <div className="flex items-center gap-1.5 text-xs text-slate-400">
+    <div className="flex items-center gap-1 text-[11px] sm:text-xs text-slate-400 shrink-0 select-none">
       <span>Updated {relativeTime}</span>
       <button
         onClick={onRefresh}
         disabled={loading}
-        className="p-1 rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        className="p-0.5 sm:p-1 rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         aria-label="Refresh data"
       >
         <RefreshCw
-          className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`}
+          className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${loading ? "animate-spin" : ""}`}
         />
       </button>
     </div>

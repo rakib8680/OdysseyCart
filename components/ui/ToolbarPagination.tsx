@@ -32,27 +32,27 @@ export function ToolbarPagination({
       role="navigation"
       aria-label="Micro pagination navigation"
       className={cn(
-        "flex items-center gap-1.5 h-10 px-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 transition-opacity duration-200 shadow-xs",
+        "flex items-center gap-1 sm:gap-1.5 h-9 sm:h-10 px-2 sm:px-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-[11px] sm:text-xs font-medium text-slate-600 dark:text-slate-300 transition-opacity duration-200 shadow-xs shrink-0",
         isPending && "opacity-50 pointer-events-none",
         className
       )}
     >
       <span className="tabular-nums select-none">
         <strong className="text-slate-900 dark:text-white font-semibold">{safeCurrent}</strong>
-        <span className="text-slate-300 dark:text-slate-600 mx-1">/</span>
+        <span className="text-slate-300 dark:text-slate-600 mx-0.5 sm:mx-1">/</span>
         <span className="text-slate-500 dark:text-slate-400">{totalPages}</span>
       </span>
 
-      <div className="flex items-center gap-0.5 ml-1 border-l border-slate-200 dark:border-slate-800 pl-1.5">
+      <div className="flex items-center gap-0.5 ml-1 border-l border-slate-200 dark:border-slate-800 pl-1 sm:pl-1.5">
         <button
           type="button"
           onClick={() => onPageChange(Math.max(1, safeCurrent - 1))}
           disabled={isPending || safeCurrent <= 1}
           aria-label="Previous page"
           title="Previous page"
-          className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+          className="p-0.5 sm:p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
         >
-          <ChevronLeft className="w-3.5 h-3.5" />
+          <ChevronLeft className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
         </button>
         <button
           type="button"
@@ -60,9 +60,9 @@ export function ToolbarPagination({
           disabled={isPending || safeCurrent >= totalPages}
           aria-label="Next page"
           title="Next page"
-          className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+          className="p-0.5 sm:p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
         >
-          <ChevronRight className="w-3.5 h-3.5" />
+          <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
         </button>
       </div>
     </div>

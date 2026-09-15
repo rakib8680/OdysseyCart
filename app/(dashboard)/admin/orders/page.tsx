@@ -156,71 +156,72 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Order Management
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 sm:mt-1">
             View all customer orders, search, filter, and track fulfillment.
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-[11px] sm:text-xs font-medium text-slate-600 dark:text-slate-300">
             Total Orders:{" "}
-            <span className="text-slate-900 dark:text-white">{totalCount}</span>
-          </div>
+            <strong className="text-slate-900 dark:text-white font-semibold">{totalCount}</strong>
+          </span>
           <LastUpdated timestamp={lastUpdated} onRefresh={fetchOrders} loading={loading} />
         </div>
       </div>
 
-      {/* Search + Status Filter Tabs + Top Pagination */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+      {/* Search & Top Pagination (Row 1 on mobile, integrated) + Filter Tabs */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
+        {/* Search & Top Pagination side-by-side */}
+        <div className="flex items-center gap-2 sm:gap-3 flex-1">
+          <div className="relative flex-1 min-w-0 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
             <Input
               type="text"
               placeholder="Search by name or email..."
               value={search}
               onChange={(e) => setSearch(e.target.value || null)}
-              className="w-full pl-10 h-10"
+              className="w-full pl-9 h-9 sm:h-10 text-xs sm:text-sm rounded-lg"
             />
           </div>
 
-          <div className="flex gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-            {FILTER_TABS.map((tab) => {
-              const isActive = (statusFilter || null) === tab.status;
-              return (
-                <Button
-                  key={tab.label}
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setStatusFilter(tab.status || null)}
-                  className={cn(
-                    "rounded-lg text-xs font-semibold whitespace-nowrap",
-                    isActive
-                      ? "bg-slate-900 text-white hover:bg-slate-800 hover:text-white"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200",
-                  )}
-                >
-                  {tab.label}
-                </Button>
-              );
-            })}
-          </div>
-        </div>
-
-        {totalPages > 1 && (
-          <div className="flex justify-end shrink-0">
+          {totalPages > 1 && (
             <ToolbarPagination
               currentPage={page}
               totalPages={totalPages}
               onPageChange={setPage}
               isPending={loading}
             />
-          </div>
-        )}
+          )}
+        </div>
+
+        {/* Filter Tabs */}
+        <div className="flex gap-1 sm:gap-1.5 overflow-x-auto pb-1 sm:pb-0 shrink-0">
+          {FILTER_TABS.map((tab) => {
+            const isActive = (statusFilter || null) === tab.status;
+            return (
+              <Button
+                key={tab.label}
+                variant="ghost"
+                size="sm"
+                onClick={() => setStatusFilter(tab.status || null)}
+                className={cn(
+                  "rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap h-7 sm:h-8 px-2.5 sm:px-3 cursor-pointer",
+                  isActive
+                    ? "bg-slate-900 text-white hover:bg-slate-800 hover:text-white"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200",
+                )}
+              >
+                {tab.label}
+              </Button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Results */}
