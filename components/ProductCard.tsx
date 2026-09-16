@@ -12,6 +12,7 @@ import { Eye } from "lucide-react";
 import { Product } from "@/lib/types/product";
 import { getProductImageUrl } from "@/lib/utils/productImages";
 import { useImageFallback } from "@/hooks/useImageFallback";
+import { formatPrice, calculateDiscountedPrice } from "@/lib/utils/pricing";
 
 interface ProductCardProps {
   product: Product;
@@ -36,9 +37,10 @@ export default function ProductCard({
   const { imgRef, onError: onImageError } = useImageFallback();
 
   const hasDiscount = product.discount > 0;
-  const discountedPrice = hasDiscount
-    ? product.price * (1 - product.discount / 100)
-    : product.price;
+  const discountedPrice = calculateDiscountedPrice(
+    product.price,
+    product.discount,
+  );
 
   // Navigate to product details unless clicking a button or link
   const handleCardClick = (e: React.MouseEvent) => {
@@ -137,12 +139,12 @@ export default function ProductCard({
         <div className="space-y-1 pt-0.5">
           <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
             <span className="font-extrabold text-xs sm:text-base text-slate-900">
-              ${discountedPrice.toFixed(2)}
+              {formatPrice(discountedPrice)}
             </span>
             {hasDiscount && (
               <>
                 <span className="text-[10px] sm:text-[11px] text-slate-400 line-through">
-                  ${product.price.toFixed(2)}
+                  {formatPrice(product.price)}
                 </span>
                 <span className="bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1 sm:px-1.5 py-0.2 rounded-full">
                   -{product.discount}%

@@ -13,6 +13,12 @@ import { Product } from "@/lib/types/product";
 import { getProductImageUrl } from "@/lib/utils/productImages";
 import { useImageFallback } from "@/hooks/useImageFallback";
 
+import {
+  formatPrice,
+  calculateDiscountedPrice,
+  calculateDiscountSavings,
+} from "@/lib/utils/pricing";
+
 interface ProductListItemCardProps {
   product: Product;
   wishlistIds?: string[];
@@ -35,9 +41,14 @@ export function ProductListItemCard({
   const { imgRef, onError: onImageError } = useImageFallback();
 
   const hasDiscount = product.discount > 0;
-  const discountedPrice = hasDiscount
-    ? product.price * (1 - product.discount / 100)
-    : product.price;
+  const discountedPrice = calculateDiscountedPrice(
+    product.price,
+    product.discount,
+  );
+  const discountSavings = calculateDiscountSavings(
+    product.price,
+    product.discount,
+  );
 
   const isLowStock = product.stockQuantity > 0 && product.stockQuantity <= 5;
   const isOutOfStock = product.stockQuantity <= 0;
@@ -152,17 +163,17 @@ export function ProductListItemCard({
           <div>
             <div className="flex items-baseline gap-1 sm:gap-1.5">
               <span className="font-extrabold text-sm sm:text-xl text-slate-900">
-                ${discountedPrice.toFixed(2)}
+                {formatPrice(discountedPrice)}
               </span>
               {hasDiscount && (
                 <span className="text-[10px] sm:text-xs text-slate-400 line-through">
-                  ${product.price.toFixed(2)}
+                  {formatPrice(product.price)}
                 </span>
               )}
             </div>
             {hasDiscount && (
               <p className="text-[10px] sm:text-[11px] font-semibold text-emerald-600 hidden sm:block">
-                Save ${(product.price - discountedPrice).toFixed(2)}
+                Save {formatPrice(discountSavings)}
               </p>
             )}
           </div>

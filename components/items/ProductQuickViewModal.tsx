@@ -19,6 +19,11 @@ import VariantPicker from "@/components/product-details/VariantPicker";
 import { ExternalLink, X } from "lucide-react";
 import { getProductImages } from "@/lib/utils/productImages";
 import { useImageFallback, handleImageError } from "@/hooks/useImageFallback";
+import {
+  formatPrice,
+  calculateDiscountedPrice,
+  calculateDiscountSavings,
+} from "@/lib/utils/pricing";
 
 interface ProductQuickViewModalProps {
   product: Product | null;
@@ -85,9 +90,8 @@ export function ProductQuickViewModal({
 
   const hasDiscount = product.discount > 0;
   const basePrice = selectedVariant?.price ?? product.price;
-  const discountedPrice = hasDiscount
-    ? basePrice * (1 - product.discount / 100)
-    : basePrice;
+  const discountedPrice = calculateDiscountedPrice(basePrice, product.discount);
+  const discountSavings = calculateDiscountSavings(basePrice, product.discount);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -177,16 +181,16 @@ export function ProductQuickViewModal({
                 {/* Pricing Section: Directly below the Title */}
                 <div className="pt-1 pb-0.5 flex items-baseline gap-2 flex-wrap">
                   <span className="text-lg sm:text-xl md:text-2xl font-extrabold text-slate-900">
-                    ${discountedPrice.toFixed(2)}
+                    {formatPrice(discountedPrice)}
                   </span>
                   {hasDiscount && (
                     <>
                       <span className="text-xs sm:text-sm text-slate-400 line-through">
-                        ${basePrice.toFixed(2)}
+                        {formatPrice(basePrice)}
                       </span>
                       <span className="text-[10px] sm:text-xs font-semibold text-emerald-600">
-                        Save ${(basePrice - discountedPrice).toFixed(2)} (
-                        {product.discount}% OFF)
+                        Save {formatPrice(discountSavings)} ({product.discount}%
+                        OFF)
                       </span>
                     </>
                   )}

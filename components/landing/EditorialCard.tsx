@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { type Product } from "@/lib/types/product";
 import { getProductImageUrl } from "@/lib/utils/productImages";
 import { handleImageError } from "@/hooks/useImageFallback";
+import { formatPrice } from "@/lib/utils/pricing";
 
 interface EditorialCardProps {
   product: Product;
@@ -54,7 +55,7 @@ export function EditorialCard({ product, isLarge }: EditorialCardProps) {
               isLarge ? "text-xl" : "text-lg"
             }`}
           >
-            ${product.price.toFixed(2)}
+            {formatPrice(product.price)}
           </span>
         </div>
 
