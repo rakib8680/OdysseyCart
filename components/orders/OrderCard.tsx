@@ -41,13 +41,13 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
   return (
     <div className="bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-xs transition-all p-3.5 sm:px-4 sm:py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
       {/* Row 1/Col 1: ID, Date & Status (Status on right on mobile) */}
-      <div className="flex items-center justify-between sm:justify-start gap-4 sm:w-[200px] sm:flex-shrink-0">
+      <div className="flex items-center justify-between sm:justify-start gap-4 sm:w-50 sm:shrink-0">
         <div className="space-y-0.5">
           <p className="text-sm font-semibold text-slate-900">{shortId}</p>
           <div className="flex items-center gap-1 text-[11px] text-slate-500">
             <span>{orderDate}</span>
             <span className="hidden sm:inline">•</span>
-            <span className="truncate max-w-[100px] hidden sm:inline">
+            <span className="truncate max-w-25 hidden sm:inline">
               {order.shippingInfo.fullName}
             </span>
           </div>
@@ -60,9 +60,13 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
       {/* Row 2/Col 2: Product Thumbnails & Item Count/Recipient */}
       <div className="flex items-center gap-2 flex-1 min-w-0">
         <div className="flex items-center -space-x-1 overflow-hidden">
-          {order.items.slice(0, MAX_THUMBNAILS).map((item) => (
+          {order.items.slice(0, MAX_THUMBNAILS).map((item, idx) => (
             <ItemThumbnail
-              key={item.productId}
+              key={
+                item.variantSku
+                  ? `${item.productId}:${item.variantSku}`
+                  : `${item.productId}-${idx}`
+              }
               image={item.image}
               title={item.title}
             />
@@ -78,19 +82,19 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
         <span className="text-[11px] text-slate-500 ml-1 hidden md:inline">
           {totalItems} {totalItems === 1 ? "item" : "items"}
         </span>
-        <span className="text-[11px] text-slate-500 truncate max-w-[120px] sm:hidden">
+        <span className="text-[11px] text-slate-500 truncate max-w-30 sm:hidden">
           for {order.shippingInfo.fullName}
         </span>
       </div>
 
       {/* Col 3: Desktop Status Badge (hidden on mobile) */}
-      <div className="hidden sm:flex items-center sm:justify-center min-w-[110px]">
+      <div className="hidden sm:flex items-center sm:justify-center min-w-27.5">
         <OrderStatusBadge status={order.status} showIcon={false} />
       </div>
 
       {/* Row 3/Col 4 & 5: Price & Details button (aligned horizontally on mobile) */}
       <div className="flex items-center justify-between sm:justify-end gap-4 border-t border-slate-100 pt-3 sm:border-t-0 sm:pt-0">
-        <div className="sm:text-right sm:min-w-[90px]">
+        <div className="sm:text-right sm:min-w-22.5">
           <div className="flex items-baseline gap-1 sm:block">
             <span className="text-xs text-slate-400 sm:hidden">Total:</span>
             <span className="text-sm font-bold text-slate-900">
@@ -122,7 +126,7 @@ function ItemThumbnail({ image, title }: { image: string; title: string }) {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="w-8 h-8 rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center border border-slate-200/60 shadow-xs relative z-0 flex-shrink-0">
+    <div className="w-8 h-8 rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center border border-slate-200/60 shadow-xs relative z-0 shrink-0">
       {image && !imgError ? (
         <img
           src={image}

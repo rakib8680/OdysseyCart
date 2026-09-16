@@ -60,13 +60,33 @@ export function serializeOrder(doc: any): SerializedOrder {
     _id: doc._id.toString(),
     userId: doc.userId,
     stripePaymentId: doc.stripePaymentId || undefined,
-    items: (doc.items || []).map((item: any) => ({
-      productId: item.productId.toString(),
-      title: item.title,
-      price: item.price,
-      image: item.image || "",
-      quantity: item.quantity,
-    })),
+    items: (doc.items || []).map((item: any) => {
+      let selectedOptions: Record<string, string> | undefined = undefined;
+      if (item.selectedOptions) {
+        const rawOptions =
+          item.selectedOptions instanceof Map
+            ? Object.fromEntries(item.selectedOptions)
+            : typeof item.selectedOptions.toJSON === "function"
+              ? item.selectedOptions.toJSON()
+              : typeof item.selectedOptions === "object"
+                ? { ...item.selectedOptions }
+                : undefined;
+
+        if (rawOptions && Object.keys(rawOptions).length > 0) {
+          selectedOptions = rawOptions;
+        }
+      }
+
+      return {
+        productId: item.productId.toString(),
+        variantSku: item.variantSku || undefined,
+        selectedOptions,
+        title: item.title,
+        price: item.price,
+        image: item.image || "",
+        quantity: item.quantity,
+      };
+    }),
     shippingInfo: {
       email: doc.shippingInfo.email,
       fullName: doc.shippingInfo.fullName,

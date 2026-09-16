@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { DEFAULT_OG_IMAGE } from "@/lib/constants/images";
 
 export interface SEOOptions {
   title?: string;
@@ -11,7 +12,7 @@ export interface SEOOptions {
 const DEFAULT_TITLE = "OdysseyCart — Premium E-Commerce Storefront";
 const DEFAULT_DESCRIPTION =
   "Discover top-rated products, accessories, tech, and furniture with fast shipping and secure checkout on OdysseyCart.";
-const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=1200&h=630&q=80";
+const DEFAULT_IMAGE = DEFAULT_OG_IMAGE;
 
 /**
  * Centralized SEO & Metadata construction utility.

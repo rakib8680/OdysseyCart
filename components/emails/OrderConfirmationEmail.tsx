@@ -2,6 +2,7 @@ import { Section, Text, Row, Column, Img, Button } from "react-email";
 import * as React from "react";
 import { BaseEmailLayout, styles, colors } from "./BaseEmailLayout";
 import { getBaseUrl } from "@/lib/utils";
+import { FALLBACK_PRODUCT_IMAGE } from "@/lib/constants/images";
 import type { SerializedOrder } from "@/lib/types/order";
 
 // ==========================================
@@ -70,7 +71,7 @@ export function OrderConfirmationEmail({
           <Row>
             <Column style={{ width: "64px" }}>
               <Img
-                src={item.image || `${BASE_URL}/placeholder.png`}
+                src={item.image?.trim() || FALLBACK_PRODUCT_IMAGE}
                 alt={item.title}
                 width={56}
                 height={56}
@@ -79,6 +80,14 @@ export function OrderConfirmationEmail({
             </Column>
             <Column style={{ paddingLeft: "12px" }}>
               <Text style={itemStyles.itemTitle}>{item.title}</Text>
+              {item.selectedOptions &&
+                Object.keys(item.selectedOptions).length > 0 && (
+                  <Text style={itemStyles.itemVariant}>
+                    {Object.entries(item.selectedOptions)
+                      .map(([key, val]) => `${key}: ${val}`)
+                      .join(" • ")}
+                  </Text>
+                )}
               <Text style={itemStyles.itemMeta}>
                 Qty: {item.quantity} × ${item.price.toFixed(2)}
               </Text>
@@ -215,6 +224,11 @@ const itemStyles = {
     fontSize: "14px",
     fontWeight: 600,
     color: colors.slate900,
+    margin: "0 0 4px",
+  } as React.CSSProperties,
+  itemVariant: {
+    fontSize: "12px",
+    color: colors.slate600,
     margin: "0 0 4px",
   } as React.CSSProperties,
   itemMeta: {

@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { type Product } from "@/lib/types/product";
+import { getProductImageUrl } from "@/lib/utils/productImages";
+import { handleImageError } from "@/hooks/useImageFallback";
 
 interface EditorialCardProps {
   product: Product;
@@ -16,12 +20,13 @@ export function EditorialCard({ product, isLarge }: EditorialCardProps) {
       {/* Image Container - Borderless and clean */}
       <div
         className={`relative w-full ${
-          isLarge ? "aspect-[4/3] md:aspect-[16/9]" : "aspect-[4/3]"
+          isLarge ? "aspect-4/3 md:aspect-video" : "aspect-4/3"
         } bg-slate-100 rounded-2xl overflow-hidden mb-6`}
       >
         <img
-          src={product.images?.[0] || "/placeholder.png"}
+          src={getProductImageUrl(product.images)}
           alt={product.title}
+          onError={handleImageError}
           className="absolute inset-0 w-full h-full object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105"
         />
         {/* Subtle inner shadow for depth */}
