@@ -10,34 +10,12 @@ import { ReviewValidationSchema } from "@/lib/validations/review";
 import { revalidatePath } from "next/cache";
 import { escapeRegex } from "@/lib/utils";
 import { REVIEW_DB_SORT_MAP } from "@/lib/config/reviews";
+import { serializeReview } from "@/lib/db/serialize";
 import type {
   Review as ReviewType,
   PaginatedReviews,
   AdminReview,
 } from "@/lib/types/review";
-
-// ==========================================
-// SERIALIZATION HELPER
-// ==========================================
-
-/**
- * Converts a Mongoose lean Review document into a plain JS object
- * safe for passing from Server Actions to Client Components.
- */
-function serializeReview(doc: any): ReviewType {
-  return {
-    _id: doc._id.toString(),
-    productId: doc.productId.toString(),
-    userId: doc.userId,
-    userName: doc.userName,
-    rating: doc.rating,
-    title: doc.title,
-    body: doc.body,
-    isVerifiedPurchase: doc.isVerifiedPurchase || false,
-    createdAt: new Date(doc.createdAt).toISOString(),
-    updatedAt: new Date(doc.updatedAt).toISOString(),
-  };
-}
 
 // ==========================================
 // RECALCULATE PRODUCT RATING (shared helper)

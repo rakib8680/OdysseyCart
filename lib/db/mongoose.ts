@@ -51,10 +51,16 @@ export async function connectDB() {
   return cached.conn;
 }
 
-/** Serialize a Mongoose document for Next.js client consumption.
- *  Converts ObjectId → string, Date → string, etc. */
-export function serialize(doc: unknown) {
-  return JSON.parse(JSON.stringify(doc));
+import { serializeDoc } from "./serialize";
+export { serializeDoc };
+
+/**
+ * Serialize a Mongoose document for Next.js client consumption.
+ * Converts ObjectId → string, Date → string, etc.
+ * Delegates to serializeDoc for centralized serialization.
+ */
+export function serialize<T = any>(doc: unknown): T {
+  return serializeDoc<T>(doc);
 }
 
 /** Convert a string ID to a Mongoose ObjectId */

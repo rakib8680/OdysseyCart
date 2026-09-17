@@ -1,7 +1,7 @@
 import { Section, Text, Row, Column, Img, Button } from "react-email";
 import * as React from "react";
 import { BaseEmailLayout, styles, colors } from "./BaseEmailLayout";
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl, formatOrderId } from "@/lib/utils";
 import { FALLBACK_PRODUCT_IMAGE } from "@/lib/constants/images";
 import type { SerializedOrder } from "@/lib/types/order";
 import { formatPrice } from "@/lib/utils/pricing";
@@ -15,11 +15,6 @@ import { formatDate } from "@/lib/utils/date";
 
 interface OrderConfirmationEmailProps {
   order: SerializedOrder;
-}
-
-/** Formats an order ID as the short display hash (e.g. #OD-1CE88C) */
-function formatOrderId(id: string): string {
-  return `#OD-${id.slice(-6).toUpperCase()}`;
 }
 
 const BASE_URL = getBaseUrl();

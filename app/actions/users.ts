@@ -1,6 +1,7 @@
 "use server";
 
 import { connectDB } from "@/lib/db/mongoose";
+import { serializeUser } from "@/lib/db/serialize";
 import User from "@/lib/models/User";
 import { sendWelcomeEmail } from "@/lib/email/service";
 
@@ -45,7 +46,7 @@ export async function syncUser(
     }
 
     // Return standard JSON object (required for Server Actions)
-    return { success: true, user: JSON.parse(JSON.stringify(user)) };
+    return { success: true, user: serializeUser(user) };
   } catch (error: any) {
     console.error("Error syncing user:", error);
     return { success: false, error: error.message };

@@ -1,6 +1,6 @@
 "use client";
 
-import { type TShippingForm } from "@/lib/validations/checkout";
+import type { SerializedShippingAddress } from "@/lib/types/user";
 import { type ReactNode } from "react";
 
 // ==========================================
@@ -8,11 +8,7 @@ import { type ReactNode } from "react";
 // ==========================================
 
 /** A saved shipping address with metadata. Used across checkout and account. */
-export interface SavedAddress extends TShippingForm {
-  _id: string;
-  label: string;
-  isDefault: boolean;
-}
+export type SavedAddress = SerializedShippingAddress;
 
 // ==========================================
 // COMPONENT

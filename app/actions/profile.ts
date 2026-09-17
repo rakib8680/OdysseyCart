@@ -1,6 +1,7 @@
 "use server";
 
 import { connectDB } from "@/lib/db/mongoose";
+import { serializeUser } from "@/lib/db/serialize";
 import User from "@/lib/models/User";
 import Review from "@/lib/models/Review";
 import Wishlist from "@/lib/models/Wishlist";
@@ -26,7 +27,7 @@ export async function updateUserName(firebaseUid: string, name: string) {
       return { success: false, error: "User not found." };
     }
 
-    return { success: true, user: JSON.parse(JSON.stringify(user)) };
+    return { success: true, user: serializeUser(user) };
   } catch (error: any) {
     console.error("Error updating user name:", error);
     return { success: false, error: error.message };
@@ -55,7 +56,7 @@ export async function updateUserAvatar(
       return { success: false, error: "User not found." };
     }
 
-    return { success: true, user: JSON.parse(JSON.stringify(user)) };
+    return { success: true, user: serializeUser(user) };
   } catch (error: any) {
     console.error("Error updating avatar:", error);
     return { success: false, error: error.message };

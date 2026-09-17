@@ -1,8 +1,10 @@
 "use server";
 
 import { connectDB } from "@/lib/db/mongoose";
+import { serializeDoc } from "@/lib/db/serialize";
 import User, { IShippingAddress } from "@/lib/models/User";
 import { TAddressForm } from "@/lib/validations/checkout";
+import type { SerializedShippingAddress } from "@/lib/types/user";
 
 export async function getSavedAddresses(firebaseUid: string) {
   try {
@@ -12,10 +14,12 @@ export async function getSavedAddresses(firebaseUid: string) {
       return { success: false, message: "User not found" };
     }
 
-    // Stringify and parse to ensure ObjectIds become standard strings for Next.js Client Components
+    // Serialize addresses with type safety for Next.js Client Components
     return {
       success: true,
-      addresses: JSON.parse(JSON.stringify(user.shippingAddresses || [])),
+      addresses: serializeDoc<SerializedShippingAddress[]>(
+        user.shippingAddresses || [],
+      ),
     };
   } catch (error) {
     console.error("Error fetching addresses:", error);
@@ -66,7 +70,9 @@ export async function saveAddress(
     return {
       success: true,
       message: "Address saved successfully",
-      addresses: JSON.parse(JSON.stringify(user.shippingAddresses)),
+      addresses: serializeDoc<SerializedShippingAddress[]>(
+        user.shippingAddresses,
+      ),
     };
   } catch (error) {
     console.error("Error saving address:", error);
@@ -105,7 +111,9 @@ export async function deleteAddress(firebaseUid: string, addressId: string) {
     return {
       success: true,
       message: "Address deleted successfully",
-      addresses: JSON.parse(JSON.stringify(user.shippingAddresses)),
+      addresses: serializeDoc<SerializedShippingAddress[]>(
+        user.shippingAddresses,
+      ),
     };
   } catch (error) {
     console.error("Error deleting address:", error);
@@ -143,7 +151,9 @@ export async function setDefaultAddress(
     return {
       success: true,
       message: "Default address updated",
-      addresses: JSON.parse(JSON.stringify(user.shippingAddresses)),
+      addresses: serializeDoc<SerializedShippingAddress[]>(
+        user.shippingAddresses,
+      ),
     };
   } catch (error) {
     console.error("Error setting default address:", error);
@@ -190,7 +200,9 @@ export async function updateAddress(
     return {
       success: true,
       message: "Address updated successfully",
-      addresses: JSON.parse(JSON.stringify(user.shippingAddresses)),
+      addresses: serializeDoc<SerializedShippingAddress[]>(
+        user.shippingAddresses,
+      ),
     };
   } catch (error) {
     console.error("Error updating address:", error);

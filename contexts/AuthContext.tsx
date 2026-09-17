@@ -21,11 +21,12 @@ import {
 import { auth } from "@/lib/firebase/config";
 import { syncUser } from "@/app/actions/users";
 import { updateUserName, updateUserAvatar } from "@/app/actions/profile";
+import type { DbUser } from "@/lib/types/user";
 
 // ---------- types ----------
 interface AuthContextType {
   user: User | null;
-  dbUser: any | null;
+  dbUser: DbUser | null;
   loading: boolean;
   register: (email: string, password: string, name: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
@@ -42,7 +43,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // ---------- provider ----------
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [dbUser, setDbUser] = useState<any | null>(null);
+  const [dbUser, setDbUser] = useState<DbUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   const isRegistering = useRef(false);

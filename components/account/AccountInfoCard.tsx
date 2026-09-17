@@ -3,10 +3,11 @@
 import { User } from "firebase/auth";
 import { Mail, Calendar, Shield } from "lucide-react";
 import { formatDate } from "@/lib/utils/date";
+import type { DbUser } from "@/lib/types/user";
 
 interface AccountInfoCardProps {
   user: User | null;
-  dbUser: any | null;
+  dbUser: DbUser | null;
 }
 
 /** Displays user info — email, member since, role badge */
