@@ -24,6 +24,7 @@ import {
   calculateDiscountedPrice,
   calculateDiscountSavings,
 } from "@/lib/utils/pricing";
+import { resolveVariantFromImageIndex } from "@/lib/utils/variantHelpers";
 
 interface ProductQuickViewModalProps {
   product: Product | null;
@@ -74,6 +75,21 @@ export function ProductQuickViewModal({
       product?.images?.[variant.imageIndex]
     ) {
       setSelectedImageIndex(variant.imageIndex);
+    }
+  };
+
+  // Bi-directional thumbnail selection: sync image and reconcile matching variant
+  const handleThumbnailSelect = (idx: number) => {
+    setSelectedImageIndex(idx);
+    if (product?.variants && product.variants.length > 0) {
+      const matched = resolveVariantFromImageIndex(
+        product.variants,
+        idx,
+        selectedVariant?.options,
+      );
+      if (matched) {
+        setSelectedVariant(matched);
+      }
     }
   };
 
@@ -136,7 +152,7 @@ export function ProductQuickViewModal({
                   <button
                     key={idx}
                     type="button"
-                    onClick={() => setSelectedImageIndex(idx)}
+                    onClick={() => handleThumbnailSelect(idx)}
                     className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white border-2 overflow-hidden shrink-0 transition-all cursor-pointer shadow-2xs ${
                       selectedImageIndex === idx
                         ? "border-slate-900 ring-2 ring-slate-900/10"

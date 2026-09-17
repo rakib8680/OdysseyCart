@@ -13,6 +13,7 @@ import { ProductAccordions } from "@/components/product-details/ProductAccordion
 import { StickyBuyBar } from "@/components/product-details/StickyBuyBar";
 import { useWishlistIds } from "@/hooks/useWishlistIds";
 import { useProductInventory } from "@/hooks/cart/useProductInventory";
+import { resolveVariantFromImageIndex } from "@/lib/utils/variantHelpers";
 
 // ==========================================
 // PROPS
@@ -124,9 +125,28 @@ export default function ProductDetailClient({
     }
   }, [inventory.availableToAdd, quantity]);
 
+  // Bi-directional gallery sync: resolve matching variant when thumbnail is clicked
+  const handleGalleryImageSelect = (index: number) => {
+    if (!product.variants || product.variants.length === 0) return;
+
+    const matchedVariant = resolveVariantFromImageIndex(
+      product.variants,
+      index,
+      selectedVariant?.options,
+    );
+
+    if (matchedVariant) {
+      setSelectedVariant(matchedVariant);
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-      <ProductGallery product={product} activeImageIndex={activeImageIndex} />
+      <ProductGallery
+        product={product}
+        activeImageIndex={activeImageIndex}
+        onImageSelect={handleGalleryImageSelect}
+      />
 
       <div className="flex flex-col justify-start">
         <ProductInfo product={product} selectedVariant={selectedVariant} />

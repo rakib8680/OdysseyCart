@@ -14,6 +14,7 @@ import { GalleryLightbox } from "./GalleryLightbox";
 interface ProductGalleryProps {
   product: Product;
   activeImageIndex?: number; // Driven externally by VariantPicker
+  onImageSelect?: (index: number) => void;
 }
 
 // ==========================================
@@ -22,6 +23,7 @@ interface ProductGalleryProps {
 export default function ProductGallery({
   product,
   activeImageIndex,
+  onImageSelect,
 }: ProductGalleryProps) {
   const images = getProductImages(product.images);
 
@@ -35,6 +37,11 @@ export default function ProductGallery({
       setSelectedIndex(activeImageIndex);
     }
   }, [activeImageIndex, images.length]);
+
+  const handleSelectImage = (index: number) => {
+    setSelectedIndex(index);
+    onImageSelect?.(index);
+  };
 
   return (
     <div className="lg:sticky lg:top-24">
@@ -55,7 +62,7 @@ export default function ProductGallery({
       <GalleryThumbnails
         images={images}
         selectedIndex={selectedIndex}
-        onSelect={setSelectedIndex}
+        onSelect={handleSelectImage}
         alt={product.title}
       />
 
