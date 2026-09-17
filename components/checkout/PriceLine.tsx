@@ -1,3 +1,5 @@
+import { formatPrice } from "@/lib/utils/pricing";
+
 /** Reusable price breakdown line */
 export function PriceLine({
   label,
@@ -25,8 +27,8 @@ export function PriceLine({
       ) : (
         <span className="font-medium text-slate-900">
           {value < 0
-            ? `-$${Math.abs(value).toFixed(2)}`
-            : `$${value.toFixed(2)}`}
+            ? `-${formatPrice(Math.abs(value))}`
+            : formatPrice(value)}
         </span>
       )}
     </div>

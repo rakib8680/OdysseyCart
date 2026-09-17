@@ -1,7 +1,7 @@
 "use client";
 
 import { Truck, PartyPopper } from "lucide-react";
-import { SHIPPING_THRESHOLD } from "@/lib/utils/pricing";
+import { SHIPPING_THRESHOLD, formatPrice } from "@/lib/utils/pricing";
 
 // Re-export for backward compatibility (CartDrawer imports this)
 export const FREE_SHIPPING_THRESHOLD = SHIPPING_THRESHOLD;
@@ -37,7 +37,7 @@ export function ShippingProgress({ subtotal }: ShippingProgressProps) {
             <Truck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0" />
             <p className="text-xs sm:text-sm text-slate-600">
               <span className="font-bold text-slate-900">
-                ${amountLeft.toFixed(2)}
+                {formatPrice(amountLeft)}
               </span>{" "}
               away from free shipping
             </p>
@@ -51,7 +51,7 @@ export function ShippingProgress({ subtotal }: ShippingProgressProps) {
           className={`h-full rounded-full transition-all duration-500 ease-out ${
             isUnlocked
               ? "bg-emerald-500"
-              : "bg-gradient-to-r from-slate-400 to-emerald-500"
+              : "bg-linear-to-r from-slate-400 to-emerald-500"
           }`}
           style={{ width: `${percentage}%` }}
         />
@@ -61,7 +61,7 @@ export function ShippingProgress({ subtotal }: ShippingProgressProps) {
       <div className="flex justify-between mt-1 sm:mt-1.5">
         <span className="text-[9px] sm:text-[10px] text-slate-400">$0</span>
         <span className="text-[9px] sm:text-[10px] text-slate-400">
-          ${FREE_SHIPPING_THRESHOLD}
+          {formatPrice(FREE_SHIPPING_THRESHOLD, { showCents: false })}
         </span>
       </div>
     </div>

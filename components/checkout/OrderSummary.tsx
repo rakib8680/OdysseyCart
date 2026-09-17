@@ -1,6 +1,6 @@
 "use client";
 
-import { OrderTotals } from "@/lib/utils/pricing";
+import { OrderTotals, formatPrice } from "@/lib/utils/pricing";
 import { CartItem } from "@/lib/types/cart";
 import { ShippingProgress } from "@/components/cart/ShippingProgress";
 import { TrustBadges } from "@/components/ui/TrustBadges";
@@ -138,7 +138,7 @@ export function OrderSummary({
         <div className="pt-3 border-t border-slate-200 flex justify-between items-center">
           <span className="text-base font-bold text-slate-900">Total</span>
           <span className="text-xl font-bold text-slate-900">
-            ${totals.total.toFixed(2)}
+            {formatPrice(totals.total)}
           </span>
         </div>
       </div>

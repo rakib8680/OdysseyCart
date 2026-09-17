@@ -2,6 +2,7 @@
 
 import { connectDB } from "@/lib/db/mongoose";
 import Coupon from "@/lib/models/Coupon";
+import { formatPrice } from "@/lib/utils/pricing";
 
 export interface CouponValidationResult {
   success: boolean;
@@ -73,7 +74,7 @@ export async function validateCoupon(
       return {
         success: false,
         discountAmount: 0,
-        message: `A minimum purchase of $${coupon.minimumPurchaseAmount.toFixed(2)} is required for this coupon.`,
+        message: `A minimum purchase of ${formatPrice(coupon.minimumPurchaseAmount)} is required for this coupon.`,
       };
     }
 

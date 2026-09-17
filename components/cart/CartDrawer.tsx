@@ -15,6 +15,7 @@ import { AnimatePresence } from "framer-motion";
 import { CartItem } from "./CartItem";
 import { ShippingProgress, FREE_SHIPPING_THRESHOLD } from "./ShippingProgress";
 import { cartItemKey } from "@/lib/utils/cart";
+import { formatPrice } from "@/lib/utils/pricing";
 import { useEffect } from "react";
 
 export function CartDrawer() {
@@ -111,7 +112,7 @@ export function CartDrawer() {
           <SheetFooter className="px-3 py-3 sm:p-6 border-t border-slate-200 shrink-0 bg-slate-50 flex flex-col gap-2 sm:gap-4">
             <div className="flex justify-between items-center text-sm sm:text-lg font-bold text-slate-900 w-full">
               <span>Subtotal</span>
-              <span>${totalPrice.toFixed(2)}</span>
+              <span>{formatPrice(totalPrice)}</span>
             </div>
             {totalPrice >= FREE_SHIPPING_THRESHOLD && (
               <div className="flex justify-between items-center text-sm font-medium text-emerald-600 w-full -mt-1 sm:-mt-2">

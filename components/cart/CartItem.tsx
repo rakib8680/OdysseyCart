@@ -5,6 +5,7 @@ import { Minus, Plus, Trash2, Loader2, ImageOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { CartItem as CartItemType } from "@/lib/types/cart";
 import { VariantBadges } from "@/components/ui/VariantBadges";
+import { formatPrice } from "@/lib/utils/pricing";
 
 interface CartItemProps {
   item: CartItemType;
@@ -66,7 +67,7 @@ export function CartItem({
           {/* Variant Option Badges */}
           <VariantBadges options={item.selectedOptions} className="mt-1" />
           <p className="font-bold text-emerald-600 mt-0.5 sm:mt-1 text-xs sm:text-base">
-            ${item.price.toFixed(2)}
+            {formatPrice(item.price)}
           </p>
         </div>
 
@@ -126,7 +127,7 @@ export function CartItem({
         </div>
 
         <span className="text-xs sm:text-sm font-semibold text-slate-700">
-          ${(item.price * item.quantity).toFixed(2)}
+          {formatPrice(item.price * item.quantity)}
         </span>
       </div>
     </motion.div>

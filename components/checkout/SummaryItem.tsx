@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ImageOff } from "lucide-react";
 import { CartItem } from "@/lib/types/cart";
 import { VariantBadges } from "@/components/ui/VariantBadges";
+import { formatPrice } from "@/lib/utils/pricing";
 
 /** Single item row in the summary list — with quantity badge overlay */
 export function SummaryItem({ item }: { item: CartItem }) {
@@ -44,7 +45,7 @@ export function SummaryItem({ item }: { item: CartItem }) {
 
       {/* Line Price */}
       <p className="text-sm font-semibold text-slate-900 shrink-0">
-        ${(item.price * item.quantity).toFixed(2)}
+        {formatPrice(item.price * item.quantity)}
       </p>
     </div>
   );
