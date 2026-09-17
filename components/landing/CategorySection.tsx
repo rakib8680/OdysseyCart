@@ -1,32 +1,19 @@
 import Link from "next/link";
-import { ArrowUpRight, Monitor, Armchair, Watch } from "lucide-react";
+import {
+  ArrowUpRight,
+  Monitor,
+  Armchair,
+  Watch,
+  Package,
+  type LucideIcon,
+} from "lucide-react";
+import { PRODUCT_CATEGORIES } from "@/lib/config/products";
 
-const CATEGORIES = [
-  {
-    name: "Tech Essentials",
-    description: "Premium gadgets and gear to elevate your productivity.",
-    href: "/items?category=Tech",
-    Icon: Monitor,
-    bgColor: "bg-blue-50/50",
-    iconColor: "text-blue-500",
-  },
-  {
-    name: "Modern Furniture",
-    description: "Minimalist pieces designed for comfort and aesthetics.",
-    href: "/items?category=Furniture",
-    Icon: Armchair,
-    bgColor: "bg-orange-50/50",
-    iconColor: "text-orange-500",
-  },
-  {
-    name: "Daily Accessories",
-    description: "Sleek add-ons to complete your everyday carry.",
-    href: "/items?category=Accessories",
-    Icon: Watch,
-    bgColor: "bg-emerald-50/50",
-    iconColor: "text-emerald-500",
-  },
-];
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  tech: Monitor,
+  furniture: Armchair,
+  accessories: Watch,
+};
 
 export function CategorySection() {
   return (
@@ -52,38 +39,41 @@ export function CategorySection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {CATEGORIES.map((category) => (
-            <Link
-              key={category.name}
-              href={category.href}
-              className="group flex flex-col bg-white rounded-3xl p-6 border border-slate-200/60 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-            >
-              {/* Premium Icon Container */}
-              <div
-                className={`w-full aspect-[4/3] rounded-2xl overflow-hidden mb-8 relative flex items-center justify-center transition-colors duration-500 ${category.bgColor} group-hover:bg-slate-50`}
+          {PRODUCT_CATEGORIES.map((category) => {
+            const Icon = CATEGORY_ICONS[category.id] || Package;
+            return (
+              <Link
+                key={category.id}
+                href={category.href}
+                className="group flex flex-col bg-white rounded-3xl p-6 border border-slate-200/60 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
-                <category.Icon
-                  strokeWidth={1}
-                  className={`w-32 h-32 md:w-40 md:h-40 ${category.iconColor} opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out`}
-                />
-              </div>
-
-              {/* Text Content */}
-              <div className="flex flex-col flex-1 px-2">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-2xl font-bold text-slate-900">
-                    {category.name}
-                  </h3>
-                  <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
-                    <ArrowUpRight className="w-5 h-5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                  </div>
+                {/* Premium Icon Container */}
+                <div
+                  className={`w-full aspect-4/3 rounded-2xl overflow-hidden mb-8 relative flex items-center justify-center transition-colors duration-500 ${category.bgColor} group-hover:bg-slate-50`}
+                >
+                  <Icon
+                    strokeWidth={1}
+                    className={`w-32 h-32 md:w-40 md:h-40 ${category.iconColor} opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out`}
+                  />
                 </div>
-                <p className="text-slate-500 leading-relaxed">
-                  {category.description}
-                </p>
-              </div>
-            </Link>
-          ))}
+
+                {/* Text Content */}
+                <div className="flex flex-col flex-1 px-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-2xl font-bold text-slate-900">
+                      {category.label}
+                    </h3>
+                    <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
+                      <ArrowUpRight className="w-5 h-5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    </div>
+                  </div>
+                  <p className="text-slate-500 leading-relaxed">
+                    {category.description}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
 
         {/* Mobile View All Link */}

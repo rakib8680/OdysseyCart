@@ -7,6 +7,7 @@ import {
   Github,
   Globe,
 } from "lucide-react";
+import { PRODUCT_CATEGORIES } from "@/lib/config/products";
 
 export function Footer() {
   return (
@@ -68,25 +69,19 @@ export function Footer() {
             >
               All Products
             </Link>
+            {PRODUCT_CATEGORIES.map((cat) => (
+              <Link
+                key={cat.id}
+                href={cat.href}
+                className="hover:text-emerald-400 transition-colors"
+              >
+                {cat.label}
+              </Link>
+            ))}
             <Link
-              href="/items?category=Tech"
+              href="/items?sort=newest"
               className="hover:text-emerald-400 transition-colors"
             >
-              Tech Essentials
-            </Link>
-            <Link
-              href="/items?category=Furniture"
-              className="hover:text-emerald-400 transition-colors"
-            >
-              Modern Furniture
-            </Link>
-            <Link
-              href="/items?category=Accessories"
-              className="hover:text-emerald-400 transition-colors"
-            >
-              Daily Accessories
-            </Link>
-            <Link href="#" className="hover:text-emerald-400 transition-colors">
               New Arrivals
             </Link>
           </div>
@@ -97,7 +92,10 @@ export function Footer() {
             <Link href="#" className="hover:text-emerald-400 transition-colors">
               Help Center
             </Link>
-            <Link href="#" className="hover:text-emerald-400 transition-colors">
+            <Link
+              href="/account/orders"
+              className="hover:text-emerald-400 transition-colors"
+            >
               Track Order
             </Link>
             <Link href="#" className="hover:text-emerald-400 transition-colors">
@@ -106,7 +104,10 @@ export function Footer() {
             <Link href="#" className="hover:text-emerald-400 transition-colors">
               Shipping Info
             </Link>
-            <Link href="#" className="hover:text-emerald-400 transition-colors">
+            <Link
+              href="/contact"
+              className="hover:text-emerald-400 transition-colors"
+            >
               Contact Us
             </Link>
           </div>
@@ -114,7 +115,10 @@ export function Footer() {
           {/* Links Column 3: Company */}
           <div className="flex flex-col space-y-4 text-sm">
             <h4 className="text-white font-semibold mb-2">Company</h4>
-            <Link href="#" className="hover:text-emerald-400 transition-colors">
+            <Link
+              href="/about"
+              className="hover:text-emerald-400 transition-colors"
+            >
               About Us
             </Link>
             <Link href="#" className="hover:text-emerald-400 transition-colors">

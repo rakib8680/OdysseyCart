@@ -1,5 +1,6 @@
 import { UseFormRegister, FieldErrors } from "react-hook-form";
 import { ProductFormData } from "./types";
+import { PRODUCT_CATEGORIES } from "@/lib/config/products";
 
 interface BasicInfoSectionProps {
   register: UseFormRegister<ProductFormData>;
@@ -42,7 +43,7 @@ export default function BasicInfoSection({
           <label className={labelStyles}>Brand</label>
           <input
             type="text"
-            className={`${inputStyles} bg-white h-[52px]`}
+            className={`${inputStyles} bg-white h-13`}
             placeholder="e.g., Apple, Sony, Nike"
             {...register("brand")}
           />
@@ -52,13 +53,15 @@ export default function BasicInfoSection({
         <div>
           <label className={labelStyles}>Category</label>
           <select
-            className={`${inputStyles} bg-white h-[52px]`}
+            className={`${inputStyles} bg-white h-13`}
             {...register("category", { required: "Category is required" })}
           >
             <option value="">Select Category</option>
-            <option value="Tech">Tech</option>
-            <option value="Furniture">Furniture</option>
-            <option value="Accessories">Accessories</option>
+            {PRODUCT_CATEGORIES.map((cat) => (
+              <option key={cat.id} value={cat.name}>
+                {cat.name}
+              </option>
+            ))}
           </select>
           {errors.category && (
             <p className="text-red-500 text-xs mt-1">

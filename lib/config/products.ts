@@ -53,3 +53,51 @@ export const DB_SORT_MAP: Record<SortOption, Record<string, 1 | -1>> = {
  */
 export const CATALOG_VIEW_MODE_STORAGE_KEY = "odyssey_catalog_view_mode";
 
+// ==========================================
+// PRODUCT CATEGORIES
+// ==========================================
+
+export interface ProductCategory {
+  id: string;
+  name: string;
+  label: string;
+  description: string;
+  href: string;
+  bgColor: string;
+  iconColor: string;
+}
+
+/**
+ * Single Source of Truth (SSOT) for Product Categories across OdysseyCart.
+ * Consumed by admin creation forms, landing page curated collections, and footer navigation.
+ */
+export const PRODUCT_CATEGORIES: ProductCategory[] = [
+  {
+    id: "tech",
+    name: "Tech",
+    label: "Tech Essentials",
+    description: "Premium gadgets and gear to elevate your productivity.",
+    href: "/items?category=Tech",
+    bgColor: "bg-blue-50/50",
+    iconColor: "text-blue-500",
+  },
+  {
+    id: "furniture",
+    name: "Furniture",
+    label: "Modern Furniture",
+    description: "Minimalist pieces designed for comfort and aesthetics.",
+    href: "/items?category=Furniture",
+    bgColor: "bg-orange-50/50",
+    iconColor: "text-orange-500",
+  },
+  {
+    id: "accessories",
+    name: "Accessories",
+    label: "Daily Accessories",
+    description: "Sleek add-ons to complete your everyday carry.",
+    href: "/items?category=Accessories",
+    bgColor: "bg-emerald-50/50",
+    iconColor: "text-emerald-500",
+  },
+];
+
