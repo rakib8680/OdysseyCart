@@ -5,6 +5,7 @@ import type { SerializedOrder } from "@/lib/types/order";
 import { OrderStatusBadge } from "@/components/orders/OrderStatusBadge";
 import { ImageOff, ChevronRight } from "lucide-react";
 import { formatOrderId } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils/pricing";
 
 // ==========================================
 // CONSTANTS
@@ -98,7 +99,7 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
           <div className="flex items-baseline gap-1 sm:block">
             <span className="text-xs text-slate-400 sm:hidden">Total:</span>
             <span className="text-sm font-bold text-slate-900">
-              ${order.total.toFixed(2)}
+              {formatPrice(order.total)}
             </span>
           </div>
         </div>

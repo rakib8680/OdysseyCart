@@ -4,6 +4,7 @@ import { BaseEmailLayout, styles, colors } from "./BaseEmailLayout";
 import { getBaseUrl } from "@/lib/utils";
 import { FALLBACK_PRODUCT_IMAGE } from "@/lib/constants/images";
 import type { SerializedOrder } from "@/lib/types/order";
+import { formatPrice } from "@/lib/utils/pricing";
 
 // ==========================================
 // ORDER CONFIRMATION EMAIL
@@ -56,7 +57,7 @@ export function OrderConfirmationEmail({
           <Column>
             <Text style={metaStyles.metaLabel}>Total</Text>
             <Text style={metaStyles.metaValue}>
-              ${order.total.toFixed(2)}
+              {formatPrice(order.total)}
             </Text>
           </Column>
         </Row>
@@ -89,12 +90,12 @@ export function OrderConfirmationEmail({
                   </Text>
                 )}
               <Text style={itemStyles.itemMeta}>
-                Qty: {item.quantity} × ${item.price.toFixed(2)}
+                Qty: {item.quantity} × {formatPrice(item.price)}
               </Text>
             </Column>
             <Column style={{ textAlign: "right" as const }}>
               <Text style={itemStyles.itemPrice}>
-                ${(item.price * item.quantity).toFixed(2)}
+                {formatPrice(item.price * item.quantity)}
               </Text>
             </Column>
           </Row>
@@ -109,7 +110,7 @@ export function OrderConfirmationEmail({
           </Column>
           <Column style={{ textAlign: "right" as const }}>
             <Text style={totalStyles.value}>
-              ${order.subtotal.toFixed(2)}
+              {formatPrice(order.subtotal)}
             </Text>
           </Column>
         </Row>
@@ -122,7 +123,7 @@ export function OrderConfirmationEmail({
             </Column>
             <Column style={{ textAlign: "right" as const }}>
               <Text style={{ ...totalStyles.value, color: colors.emerald600 }}>
-                -${order.discount.toFixed(2)}
+                -{formatPrice(order.discount)}
               </Text>
             </Column>
           </Row>
@@ -135,7 +136,7 @@ export function OrderConfirmationEmail({
             <Text style={totalStyles.value}>
               {order.shippingCost === 0
                 ? "Free"
-                : `$${order.shippingCost.toFixed(2)}`}
+                : formatPrice(order.shippingCost)}
             </Text>
           </Column>
         </Row>
@@ -144,7 +145,7 @@ export function OrderConfirmationEmail({
             <Text style={totalStyles.label}>Tax</Text>
           </Column>
           <Column style={{ textAlign: "right" as const }}>
-            <Text style={totalStyles.value}>${order.tax.toFixed(2)}</Text>
+            <Text style={totalStyles.value}>{formatPrice(order.tax)}</Text>
           </Column>
         </Row>
         <Row>
@@ -153,7 +154,7 @@ export function OrderConfirmationEmail({
           </Column>
           <Column style={{ textAlign: "right" as const }}>
             <Text style={totalStyles.totalValue}>
-              ${order.total.toFixed(2)}
+              {formatPrice(order.total)}
             </Text>
           </Column>
         </Row>

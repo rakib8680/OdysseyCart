@@ -23,6 +23,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { formatOrderId } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils/pricing";
 
 // ==========================================
 // FULFILLMENT TIMELINE CONFIG
@@ -86,7 +87,7 @@ export function OrderDetailSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full sm:!max-w-xl overflow-y-auto md:p-5 "
+        className="w-full sm:max-w-xl overflow-y-auto md:p-5 "
       >
         {/* Header */}
         <SheetHeader className="border-b border-slate-100 pb-4">
@@ -174,7 +175,7 @@ export function OrderDetailSheet({
             </h3>
             <div className="bg-slate-50 rounded-xl p-4 space-y-2.5">
               <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                <MapPin className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
                 <div className="text-sm text-slate-700">
                   <p className="font-medium">{order.shippingInfo.fullName}</p>
                   <p>{order.shippingInfo.address}</p>
@@ -186,13 +187,13 @@ export function OrderDetailSheet({
                 </div>
               </div>
               <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                <Phone className="w-4 h-4 text-slate-400 shrink-0" />
                 <span className="text-sm text-slate-700">
                   {order.shippingInfo.phone}
                 </span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                <Mail className="w-4 h-4 text-slate-400 shrink-0" />
                 <span className="text-sm text-slate-700">
                   {order.shippingInfo.email}
                 </span>
@@ -232,7 +233,7 @@ export function OrderDetailSheet({
                   Total
                 </span>
                 <span className="text-lg font-bold text-slate-900">
-                  ${order.total.toFixed(2)}
+                  {formatPrice(order.total)}
                 </span>
               </div>
 
@@ -255,7 +256,7 @@ export function OrderDetailSheet({
                 Transaction
               </h3>
               <div className="bg-slate-50 rounded-xl p-4 flex items-center gap-2.5">
-                <CreditCard className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                <CreditCard className="w-4 h-4 text-slate-400 shrink-0" />
                 <span className="text-xs text-slate-500 font-mono truncate">
                   {order.stripePaymentId}
                 </span>
@@ -279,7 +280,9 @@ export function OrderDetailSheet({
                   {order.status === "paid" && (
                     <button
                       disabled={isUpdatingStatus}
-                      onClick={() => onUpdateStatus(order._id, "shipped", order.updatedAt)}
+                      onClick={() =>
+                        onUpdateStatus(order._id, "shipped", order.updatedAt)
+                      }
                       className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg py-2 text-xs font-semibold disabled:opacity-50 transition-colors"
                     >
                       {isUpdatingStatus && (
@@ -291,7 +294,9 @@ export function OrderDetailSheet({
                   {order.status === "shipped" && (
                     <button
                       disabled={isUpdatingStatus}
-                      onClick={() => onUpdateStatus(order._id, "delivered", order.updatedAt)}
+                      onClick={() =>
+                        onUpdateStatus(order._id, "delivered", order.updatedAt)
+                      }
                       className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2 text-xs font-semibold disabled:opacity-50 transition-colors"
                     >
                       {isUpdatingStatus && (

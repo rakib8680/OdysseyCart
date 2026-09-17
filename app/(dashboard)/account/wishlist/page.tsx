@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Heart, ShoppingCart, Trash2, ImageOff } from "lucide-react";
 import Link from "next/link";
+import { formatPrice, calculateDiscountedPrice } from "@/lib/utils/pricing";
 
 export default function AccountWishlistPage() {
   const { user } = useAuth();
@@ -59,10 +60,7 @@ export default function AccountWishlistPage() {
         {
           productId: item._id,
           title: item.title,
-          price:
-            item.discount > 0
-              ? item.price * (1 - item.discount / 100)
-              : item.price,
+          price: calculateDiscountedPrice(item.price, item.discount),
           image: item.images?.[0] || "",
         },
         1,
@@ -147,9 +145,7 @@ function WishlistRow({
   const imageUrl = item.images?.[0];
   const isOutOfStock = item.stockQuantity <= 0;
   const hasDiscount = item.discount > 0;
-  const discountedPrice = hasDiscount
-    ? item.price * (1 - item.discount / 100)
-    : item.price;
+  const discountedPrice = calculateDiscountedPrice(item.price, item.discount);
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-xs transition-all p-3.5 sm:px-4 sm:py-3 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
@@ -180,11 +176,11 @@ function WishlistRow({
           </Link>
           <div className="flex items-center gap-2 mt-0.5">
             <span className="text-sm font-bold text-slate-900">
-              ${discountedPrice.toFixed(2)}
+              {formatPrice(discountedPrice)}
             </span>
             {hasDiscount && (
               <span className="text-xs text-slate-400 line-through">
-                ${item.price.toFixed(2)}
+                {formatPrice(item.price)}
               </span>
             )}
             {hasDiscount && (

@@ -18,6 +18,7 @@ import {
 import { DeleteConfirmModal } from "./DeleteConfirmModal";
 import { getProductImageUrl } from "@/lib/utils/productImages";
 import { handleImageError } from "@/hooks/useImageFallback";
+import { formatPrice } from "@/lib/utils/pricing";
 
 interface ManageTableProps {
   products: any[];
@@ -126,7 +127,7 @@ export default function ManageTable({ products, onRefresh }: ManageTableProps) {
                   {product.category}
                 </TableCell>
                 <TableCell className="text-slate-600 font-medium py-4">
-                  ${product.price.toFixed(2)}
+                  {formatPrice(product.price)}
                 </TableCell>
                 <TableCell className="py-4">
                   <span
