@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/Spinner";
 import { toast } from "sonner";
 import { Lock, ExternalLink } from "lucide-react";
+import { STORAGE_KEYS } from "@/lib/constants/storage";
 
 // ==========================================
 // SECURITY SECTION — provider-aware password management
@@ -17,7 +18,7 @@ export function SecuritySection() {
   const { user } = useAuth();
   const [isSending, setIsSending] = useState(false);
   const { countdown, startCountdown } = useCountdown(
-    "password_reset_timer",
+    STORAGE_KEYS.PASSWORD_RESET_TIMER,
     30,
   );
 

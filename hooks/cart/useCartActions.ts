@@ -9,8 +9,9 @@ import {
 } from "@/app/actions/cart";
 import { cartItemKey, findCartIndex } from "@/lib/utils/cart";
 import { toast } from "sonner";
+import { STORAGE_KEYS } from "@/lib/constants/storage";
 
-const STORAGE_KEY = "odyssey_cart";
+const STORAGE_KEY = STORAGE_KEYS.CART;
 
 /**
  * Provides all cart mutation functions with optimistic updates.

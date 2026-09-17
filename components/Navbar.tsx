@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
-import { toast } from "sonner";
+import { useLogout } from "@/hooks/auth/useLogout";
 import { ShoppingCart, User, Shield, LogOut } from "lucide-react";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 
@@ -18,8 +18,8 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const { user, dbUser, loading, logout } = useAuth();
+  const { user, dbUser, loading } = useAuth();
+  const logout = useLogout();
   const { itemCount, openCart } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -50,10 +50,8 @@ export function Navbar() {
 
   // logout function
   const handleLogout = async () => {
-    await logout();
     setDropdownOpen(false);
-    toast.success("Logged out successfully!");
-    router.push("/");
+    await logout();
   };
 
   return (
@@ -97,7 +95,7 @@ export function Navbar() {
             >
               <ShoppingCart className="w-6 h-6" />
               {itemCount > 0 && (
-                <span className="absolute top-0 right-0 inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[11px] font-bold text-white bg-red-500 border-2 border-white rounded-full -translate-y-1 translate-x-1">
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center min-w-5 h-5 px-1.5 text-[11px] font-bold text-white bg-red-500 border-2 border-white rounded-full -translate-y-1 translate-x-1">
                   {itemCount > 99 ? "99+" : itemCount}
                 </span>
               )}
@@ -119,7 +117,7 @@ export function Navbar() {
                     size="sm"
                     className="border-slate-200"
                   />
-                  <span className="hidden sm:block text-sm font-medium text-slate-700 max-w-[120px] truncate">
+                  <span className="hidden sm:block text-sm font-medium text-slate-700 max-w-30 truncate">
                     {user.displayName || user.email}
                   </span>
                   <svg

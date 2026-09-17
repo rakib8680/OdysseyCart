@@ -2,8 +2,9 @@ import { useEffect, useState, useCallback } from "react";
 import { User } from "firebase/auth";
 import { CartItem } from "@/lib/types/cart";
 import { getCart, mergeCart } from "@/app/actions/cart";
+import { STORAGE_KEYS } from "@/lib/constants/storage";
 
-const STORAGE_KEY = "odyssey_cart";
+const STORAGE_KEY = STORAGE_KEYS.CART;
 
 /**
  * Handles loading and persisting cart data.
