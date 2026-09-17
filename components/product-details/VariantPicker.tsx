@@ -5,6 +5,7 @@ import { Variant, VariantOption } from "@/lib/types/product";
 import ColorSwatchOption from "./variant-picker/ColorSwatchOption";
 import SizeChipOption from "./variant-picker/SizeChipOption";
 import PillOption from "./variant-picker/PillOption";
+import { formatPrice } from "@/lib/utils/pricing";
 
 // ==========================================
 // TYPES
@@ -205,7 +206,7 @@ export default function VariantPicker({
           <p className="text-xs sm:text-sm text-slate-500 flex items-center gap-1.5 pt-1 font-medium">
             <span>Price updated for selected variant:</span>
             <span className="font-bold text-slate-900">
-              ${displayPrice.toFixed(2)}
+              {formatPrice(displayPrice)}
             </span>
           </p>
         )}

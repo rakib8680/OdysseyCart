@@ -6,6 +6,7 @@ import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { HeartButton } from "@/components/wishlist/HeartButton";
 import { useWishlistIds } from "@/hooks/useWishlistIds";
 import { useProductInventory } from "@/hooks/cart/useProductInventory";
+import { formatPrice } from "@/lib/utils/pricing";
 import { cn } from "@/lib/utils";
 
 interface StickyBuyBarProps {
@@ -81,11 +82,11 @@ export function StickyBuyBar({
               <div className="text-right">
                 <div className="flex items-baseline gap-2">
                   <span className="text-base sm:text-lg font-extrabold text-slate-900">
-                    ${inventory.unitPrice.toFixed(2)}
+                    {formatPrice(inventory.unitPrice)}
                   </span>
                   {inventory.hasDiscount && (
                     <span className="text-xs text-slate-400 line-through font-medium">
-                      ${inventory.basePrice.toFixed(2)}
+                      {formatPrice(inventory.basePrice)}
                     </span>
                   )}
                 </div>
@@ -118,7 +119,7 @@ export function StickyBuyBar({
               {/* Mobile Price Display */}
               <div className="md:hidden text-right mr-1">
                 <span className="text-sm font-bold text-slate-900 block leading-tight">
-                  ${inventory.unitPrice.toFixed(2)}
+                  {formatPrice(inventory.unitPrice)}
                 </span>
               </div>
 

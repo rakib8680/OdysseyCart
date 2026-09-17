@@ -3,6 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Tag } from "lucide-react";
 import { Product, Variant } from "@/lib/types/product";
 import { StarRating } from "@/components/reviews/StarRating";
+import {
+  formatPrice,
+  calculateDiscountedPrice,
+  calculateDiscountSavings,
+} from "@/lib/utils/pricing";
 
 interface ProductInfoProps {
   product: Product;
@@ -12,9 +17,8 @@ interface ProductInfoProps {
 export default function ProductInfo({ product, selectedVariant }: ProductInfoProps) {
   const hasDiscount = product.discount > 0;
   const basePrice = selectedVariant?.price ?? product.price;
-  const discountedPrice = hasDiscount
-    ? basePrice * (1 - product.discount / 100)
-    : basePrice;
+  const discountedPrice = calculateDiscountedPrice(basePrice, product.discount);
+  const savings = calculateDiscountSavings(basePrice, product.discount);
   const resolvedStock = selectedVariant?.stockQuantity ?? product.stockQuantity;
 
   return (
@@ -81,16 +85,16 @@ export default function ProductInfo({ product, selectedVariant }: ProductInfoPro
       <div className="mb-6">
         <div className="flex items-baseline gap-3">
           <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            ${discountedPrice.toFixed(2)}
+            {formatPrice(discountedPrice)}
           </span>
           {hasDiscount && (
             <span className="text-xl text-slate-400 line-through font-medium">
-              ${basePrice.toFixed(2)}
+              {formatPrice(basePrice)}
             </span>
           )}
           {hasDiscount && (
             <span className="text-xs font-bold text-red-600 bg-red-50 border border-red-100 px-2.5 py-1 rounded-full">
-              Save ${(basePrice - discountedPrice).toFixed(2)}
+              Save {formatPrice(savings)}
             </span>
           )}
         </div>
@@ -99,7 +103,7 @@ export default function ProductInfo({ product, selectedVariant }: ProductInfoPro
           <span>
             Or 4 interest-free payments of{" "}
             <strong className="text-slate-700 font-semibold">
-              ${(discountedPrice / 4).toFixed(2)}
+              {formatPrice(discountedPrice / 4)}
             </strong>{" "}
             with Stripe
           </span>

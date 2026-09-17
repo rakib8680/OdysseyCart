@@ -5,6 +5,7 @@ import { cartItemKey } from "@/lib/utils/cart";
 import { FALLBACK_PRODUCT_IMAGE } from "@/lib/constants/images";
 
 import { ProductInventoryState } from "@/lib/types/cart";
+import { calculateDiscountedPrice } from "@/lib/utils/pricing";
 
 // Re-export for convenience and backward compatibility
 export type { ProductInventoryState };
@@ -27,9 +28,7 @@ export function useProductInventory(
     // 1. Resolve Pricing
     const hasDiscount = product.discount > 0;
     const basePrice = selectedVariant?.price ?? product.price;
-    const unitPrice = hasDiscount
-      ? basePrice * (1 - product.discount / 100)
-      : basePrice;
+    const unitPrice = calculateDiscountedPrice(basePrice, product.discount);
 
     // 2. Resolve Stock & Identification
     const totalStock = selectedVariant?.stockQuantity ?? product.stockQuantity;
