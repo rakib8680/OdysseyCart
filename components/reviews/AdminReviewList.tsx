@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StarRating } from "./StarRating";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { formatDate } from "@/lib/utils/date";
 import {
   Table,
   TableBody,
@@ -50,15 +51,14 @@ export function AdminReviewList({
         </TableHeader>
         <TableBody>
           {reviews.map((review) => (
-            <TableRow key={review._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+            <TableRow
+              key={review._id}
+              className="hover:bg-slate-50 dark:hover:bg-slate-800/50"
+            >
               <TableCell className="px-6 py-4 text-slate-500 dark:text-slate-400">
-                {new Date(review.createdAt).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                {formatDate(review.createdAt, "short")}
               </TableCell>
-              <TableCell className="px-6 py-4 max-w-[200px]">
+              <TableCell className="px-6 py-4 max-w-50">
                 <Link
                   href={`/items/${review.productSlug}`}
                   className="flex items-center gap-1.5 text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 font-medium truncate"
@@ -71,7 +71,7 @@ export function AdminReviewList({
               <TableCell className="px-6 py-4">
                 <StarRating rating={review.rating} size="sm" />
               </TableCell>
-              <TableCell className="px-6 py-4 max-w-[300px]">
+              <TableCell className="px-6 py-4 max-w-75">
                 <div className="font-semibold text-slate-900 dark:text-white mb-1 truncate">
                   {review.title}
                 </div>

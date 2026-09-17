@@ -6,6 +6,7 @@ import { OrderStatusBadge } from "@/components/orders/OrderStatusBadge";
 import { ImageOff, ChevronRight } from "lucide-react";
 import { formatOrderId } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils/pricing";
+import { formatDate } from "@/lib/utils/date";
 
 // ==========================================
 // CONSTANTS
@@ -30,11 +31,7 @@ interface OrderCardProps {
  */
 export function OrderCard({ order, onViewDetails }: OrderCardProps) {
   const shortId = formatOrderId(order._id);
-  const orderDate = new Date(order.createdAt).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  const orderDate = formatDate(order.createdAt, "short");
 
   const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
   const extraItems = order.items.length - MAX_THUMBNAILS;

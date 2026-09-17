@@ -2,6 +2,7 @@
 
 import { User } from "firebase/auth";
 import { Mail, Calendar, Shield } from "lucide-react";
+import { formatDate } from "@/lib/utils/date";
 
 interface AccountInfoCardProps {
   user: User | null;
@@ -10,12 +11,7 @@ interface AccountInfoCardProps {
 
 /** Displays user info — email, member since, role badge */
 export function AccountInfoCard({ user, dbUser }: AccountInfoCardProps) {
-  const memberSince = dbUser?.createdAt
-    ? new Date(dbUser.createdAt).toLocaleDateString("en-US", {
-        month: "long",
-        year: "numeric",
-      })
-    : "—";
+  const memberSince = formatDate(dbUser?.createdAt, "month-year");
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 p-5">
@@ -26,7 +22,7 @@ export function AccountInfoCard({ user, dbUser }: AccountInfoCardProps) {
       <div className="grid sm:grid-cols-3 gap-4">
         {/* Email */}
         <div className="flex items-start gap-3">
-          <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+          <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
             <Mail className="w-4 h-4 text-slate-500" />
           </div>
           <div className="min-w-0">
@@ -39,7 +35,7 @@ export function AccountInfoCard({ user, dbUser }: AccountInfoCardProps) {
 
         {/* Member Since */}
         <div className="flex items-start gap-3">
-          <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+          <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
             <Calendar className="w-4 h-4 text-slate-500" />
           </div>
           <div>
@@ -50,7 +46,7 @@ export function AccountInfoCard({ user, dbUser }: AccountInfoCardProps) {
 
         {/* Role */}
         <div className="flex items-start gap-3">
-          <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+          <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
             <Shield className="w-4 h-4 text-slate-500" />
           </div>
           <div>

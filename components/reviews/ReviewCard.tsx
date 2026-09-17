@@ -2,6 +2,7 @@ import { Review } from "@/lib/types/review";
 import { StarRating } from "./StarRating";
 import { CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatDate } from "@/lib/utils/date";
 
 interface ReviewCardProps {
   review: Review;
@@ -17,11 +18,7 @@ export function ReviewCard({ review, className }: ReviewCardProps) {
     .substring(0, 2)
     .toUpperCase();
 
-  const formattedDate = new Date(review.createdAt).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const formattedDate = formatDate(review.createdAt, "long");
 
   return (
     <div

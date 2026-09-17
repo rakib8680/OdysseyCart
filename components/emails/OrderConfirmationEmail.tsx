@@ -5,6 +5,7 @@ import { getBaseUrl } from "@/lib/utils";
 import { FALLBACK_PRODUCT_IMAGE } from "@/lib/constants/images";
 import type { SerializedOrder } from "@/lib/types/order";
 import { formatPrice } from "@/lib/utils/pricing";
+import { formatDate } from "@/lib/utils/date";
 
 // ==========================================
 // ORDER CONFIRMATION EMAIL
@@ -26,11 +27,7 @@ const BASE_URL = getBaseUrl();
 export function OrderConfirmationEmail({
   order,
 }: OrderConfirmationEmailProps) {
-  const orderDate = new Date(order.createdAt).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const orderDate = formatDate(order.createdAt, "long");
 
   return (
     <BaseEmailLayout previewText={`Order ${formatOrderId(order._id)} confirmed — thank you for your purchase!`}>

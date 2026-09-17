@@ -9,6 +9,14 @@ export function formatOrderId(id: string) {
   return `#OD-${id.slice(-6).toUpperCase()}`;
 }
 
+export {
+  formatDate,
+  isValidDate,
+  formatRelativeTime,
+  type DateVariant,
+  type FormatDateOptions,
+} from "@/lib/utils/date";
+
 /**
  * Resolves the application base URL for emails, SEO metadata, and callbacks.
  * Precedence: NEXT_PUBLIC_APP_URL -> VERCEL_PROJECT_PRODUCTION_URL -> VERCEL_URL -> localhost:3000

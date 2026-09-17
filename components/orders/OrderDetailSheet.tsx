@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { formatOrderId } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils/pricing";
+import { formatDate } from "@/lib/utils/date";
 
 // ==========================================
 // FULFILLMENT TIMELINE CONFIG
@@ -75,11 +76,7 @@ export function OrderDetailSheet({
   if (!order) return null;
 
   const shortId = formatOrderId(order._id);
-  const orderDate = new Date(order.createdAt).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const orderDate = formatDate(order.createdAt, "long");
   const activeIndex = getTimelineIndex(order.status);
   const isFailed = order.status === "failed";
 
