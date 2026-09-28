@@ -8,6 +8,8 @@ import { NewArrivalsSkeleton } from "@/components/landing/NewArrivalsSkeleton";
 import { CategoryShowcase } from "@/components/landing/CategoryShowcase";
 import { CategoryShowcaseSkeleton } from "@/components/landing/CategoryShowcaseSkeleton";
 import { BrandStory } from "@/components/landing/BrandStory";
+import { Testimonials } from "@/components/landing/Testimonials";
+import { TestimonialsSkeleton } from "@/components/landing/TestimonialsSkeleton";
 import { ValueProps } from "@/components/landing/ValueProps";
 import { NewsletterCTA } from "@/components/landing/NewsletterCTA";
 
@@ -26,11 +28,15 @@ export default function Home() {
         <CategoryShowcase />
       </Suspense>
       <BrandStory />
+      <Suspense fallback={<TestimonialsSkeleton />}>
+        <Testimonials />
+      </Suspense>
       <ValueProps />
       <NewsletterCTA />
     </div>
   );
 }
+
 
 
 
