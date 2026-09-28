@@ -5,7 +5,8 @@ import { ArrowRight } from "lucide-react";
 import { type Product } from "@/lib/types/product";
 import { getProductImageUrl } from "@/lib/utils/productImages";
 import { handleImageError } from "@/hooks/useImageFallback";
-import { formatPrice } from "@/lib/utils/pricing";
+import { formatPrice, calculateDiscountedPrice } from "@/lib/utils/pricing";
+import { Star } from "lucide-react";
 
 interface EditorialCardProps {
   product: Product;
@@ -13,6 +14,11 @@ interface EditorialCardProps {
 }
 
 export function EditorialCard({ product, isLarge }: EditorialCardProps) {
+  const hasDiscount = Boolean(product.discount && product.discount > 0);
+  const discountedPrice = hasDiscount
+    ? calculateDiscountedPrice(product.price, product.discount)
+    : product.price;
+
   return (
     <Link
       href={`/items/${product.slug}`}
@@ -33,30 +39,64 @@ export function EditorialCard({ product, isLarge }: EditorialCardProps) {
         {/* Subtle inner shadow for depth */}
         <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-2xl" />
 
-        <div className="absolute top-4 left-4">
+        <div className="absolute top-4 left-4 flex items-center gap-2">
           <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-xs font-bold uppercase tracking-wider text-slate-900 rounded-full shadow-sm">
             {product.category}
           </span>
+          {hasDiscount && (
+            <span className="px-2.5 py-1 bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-wider rounded-full shadow-xs">
+              -{product.discount}% OFF
+            </span>
+          )}
         </div>
       </div>
 
       {/* Typography - Minimalist, no borders */}
       <div className="flex flex-col flex-1 px-1">
-        <div className="flex justify-between items-start mb-2">
-          <h3
-            className={`font-bold text-slate-900 ${
-              isLarge ? "text-2xl md:text-3xl" : "text-xl"
-            }`}
-          >
-            {product.title}
-          </h3>
-          <span
-            className={`font-medium text-slate-500 ${
-              isLarge ? "text-xl" : "text-lg"
-            }`}
-          >
-            {formatPrice(product.price)}
-          </span>
+        <div className="flex justify-between items-start mb-2 gap-4">
+          <div>
+            <h3
+              className={`font-bold text-slate-900 group-hover:text-emerald-700 transition-colors ${
+                isLarge ? "text-2xl md:text-3xl" : "text-xl"
+              }`}
+            >
+              {product.title}
+            </h3>
+            {product.numReviews > 0 && (
+              <div className="flex items-center gap-1.5 mt-1 text-xs text-slate-500 font-medium">
+                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                <span className="font-semibold text-slate-800">
+                  {product.averageRating.toFixed(1)}
+                </span>
+                <span>({product.numReviews})</span>
+              </div>
+            )}
+          </div>
+
+          <div className="text-right shrink-0">
+            {hasDiscount ? (
+              <div className="flex flex-col items-end">
+                <span
+                  className={`font-bold text-slate-900 ${
+                    isLarge ? "text-xl md:text-2xl" : "text-lg"
+                  }`}
+                >
+                  {formatPrice(discountedPrice)}
+                </span>
+                <span className="text-xs text-slate-400 line-through">
+                  {formatPrice(product.price)}
+                </span>
+              </div>
+            ) : (
+              <span
+                className={`font-medium text-slate-500 ${
+                  isLarge ? "text-xl" : "text-lg"
+                }`}
+              >
+                {formatPrice(product.price)}
+              </span>
+            )}
+          </div>
         </div>
 
         {isLarge && (

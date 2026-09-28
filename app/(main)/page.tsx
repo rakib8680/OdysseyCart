@@ -5,8 +5,9 @@ import { TrustStrip } from "@/components/landing/TrustStrip";
 import { FeaturedProducts } from "@/components/landing/FeaturedProducts";
 import { NewArrivals } from "@/components/landing/NewArrivals";
 import { NewArrivalsSkeleton } from "@/components/landing/NewArrivalsSkeleton";
-import { Craftsmanship } from "@/components/landing/Craftsmanship";
-import { CategorySection } from "@/components/landing/CategorySection";
+import { CategoryShowcase } from "@/components/landing/CategoryShowcase";
+import { CategoryShowcaseSkeleton } from "@/components/landing/CategoryShowcaseSkeleton";
+import { BrandStory } from "@/components/landing/BrandStory";
 import { ValueProps } from "@/components/landing/ValueProps";
 import { NewsletterCTA } from "@/components/landing/NewsletterCTA";
 
@@ -21,13 +22,16 @@ export default function Home() {
       <Suspense fallback={<NewArrivalsSkeleton />}>
         <NewArrivals />
       </Suspense>
-      <Craftsmanship />
-      <CategorySection />
+      <Suspense fallback={<CategoryShowcaseSkeleton />}>
+        <CategoryShowcase />
+      </Suspense>
+      <BrandStory />
       <ValueProps />
       <NewsletterCTA />
     </div>
   );
 }
+
 
 
 
