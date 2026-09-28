@@ -18,6 +18,8 @@ interface ProductCardProps {
   product: Product;
   wishlistIds?: string[];
   onQuickView?: (product: Product) => void;
+  showMobileAction?: boolean;
+  aspectRatio?: "square" | "4/3";
 }
 
 /**
@@ -29,6 +31,8 @@ export default function ProductCard({
   product,
   wishlistIds = [],
   onQuickView,
+  showMobileAction = true,
+  aspectRatio = "square",
 }: ProductCardProps) {
   const router = useRouter();
   const [hoverImage, setHoverImage] = useState<string | null>(null);
@@ -53,10 +57,10 @@ export default function ProductCard({
   return (
     <div
       onClick={handleCardClick}
-      className="group h-full transition-all duration-300 rounded-xl overflow-hidden flex flex-col bg-white cursor-pointer"
+      className="group h-full transition-all duration-300 rounded-[inherit] overflow-hidden flex flex-col bg-white cursor-pointer"
     >
-      {/* 1. Product Image Wrapper (Aspect Square) */}
-      <div className="w-full aspect-square bg-slate-50 overflow-hidden relative border-b border-slate-100/60">
+      {/* 1. Product Image Wrapper (Aspect 4:3 Mobile, Square Desktop) */}
+      <div className="w-full aspect-4/3 sm:aspect-square bg-slate-50 overflow-hidden relative border-b border-slate-100/60">
         {/* Dynamic Status Badges (Scaled down on mobile) */}
         <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 z-10 scale-75 sm:scale-90 origin-top-left">
           <ProductStatusBadges product={product} />
@@ -110,11 +114,11 @@ export default function ProductCard({
       </div>
 
       {/* 2. Product Details Section */}
-      <div className="p-2.5 sm:p-3.5 flex flex-col justify-between flex-1 space-y-1.5 bg-white">
+      <div className="p-2.5 sm:p-4 flex flex-col justify-between flex-1 space-y-1 sm:space-y-2 bg-white">
         {/* Brand, Title & Swatches */}
         <div>
           {product.brand && (
-            <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium mb-0.5 truncate">
+            <p className="text-[10px] sm:text-xs text-slate-400 font-medium mb-0.5 truncate uppercase tracking-wider">
               {product.brand}
             </p>
           )}
@@ -122,7 +126,7 @@ export default function ProductCard({
             href={`/items/${product.slug}`}
             className="block transition-colors"
           >
-            <h3 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-1 leading-snug">
+            <h3 className="text-xs sm:text-base font-bold text-slate-900 line-clamp-2 leading-snug min-h-7 sm:min-h-11">
               {product.title}
             </h3>
           </Link>
@@ -137,16 +141,16 @@ export default function ProductCard({
 
         {/* Pricing & Responsive Ratings */}
         <div className="space-y-1 pt-0.5">
-          <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
-            <span className="font-extrabold text-xs sm:text-base text-slate-900">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+            <span className="font-extrabold text-sm sm:text-lg text-slate-900">
               {formatPrice(discountedPrice)}
             </span>
             {hasDiscount && (
               <>
-                <span className="text-[10px] sm:text-[11px] text-slate-400 line-through">
+                <span className="text-[11px] sm:text-xs text-slate-400 line-through">
                   {formatPrice(product.price)}
                 </span>
-                <span className="bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1 sm:px-1.5 py-0.2 rounded-full">
+                <span className="bg-rose-50 text-rose-600 border border-rose-200/60 text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full">
                   -{product.discount}%
                 </span>
               </>
@@ -176,31 +180,33 @@ export default function ProductCard({
           )}
         </div>
 
-        {/* MOBILE ONLY: Action Buttons at Card Bottom */}
-        <div
-          className="flex sm:hidden items-center gap-1.5 pt-1.5 mt-auto"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <AddToCartButton
-            product={product}
-            compactText
-            className="flex-1 h-7.5 bg-slate-900 text-white font-semibold text-[10px] uppercase tracking-wider rounded-md border-0 transition-colors px-1"
-          />
-          {onQuickView && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onQuickView(product);
-              }}
-              title="Quick View"
-              aria-label="Quick View Product"
-              className="w-7.5 h-7.5 shrink-0 rounded-md bg-white text-slate-700 border border-slate-200 hover:bg-slate-900 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-            >
-              <Eye className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </div>
+        {/* MOBILE ONLY: Action Buttons at Card Bottom (when enabled) */}
+        {showMobileAction && (
+          <div
+            className="flex sm:hidden items-center gap-1.5 pt-1.5 mt-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <AddToCartButton
+              product={product}
+              compactText
+              className="flex-1 h-7.5 bg-slate-900 text-white font-semibold text-[10px] uppercase tracking-wider rounded-md border-0 transition-colors px-1"
+            />
+            {onQuickView && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onQuickView(product);
+                }}
+                title="Quick View"
+                aria-label="Quick View Product"
+                className="w-7.5 h-7.5 shrink-0 rounded-md bg-white text-slate-700 border border-slate-200 hover:bg-slate-900 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <Eye className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
