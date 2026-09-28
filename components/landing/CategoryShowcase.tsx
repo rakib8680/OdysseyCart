@@ -57,26 +57,26 @@ export async function CategoryShowcase() {
               <Link
                 key={category.id}
                 href={category.href}
-                className="group relative aspect-4/3 md:aspect-3/4 rounded-3xl overflow-hidden bg-slate-900 border border-slate-200/80 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col justify-between p-6 sm:p-8"
+                className="group relative aspect-4/3 md:aspect-3/4 rounded-3xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col justify-between p-6 sm:p-8"
               >
-                {/* Background Image with Zoom on Hover */}
+                {/* Background Image: Bright, crisp, and natural */}
                 <img
                   src={displayImage}
                   alt={category.label}
                   loading="lazy"
-                  className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-80 group-hover:scale-105 group-hover:opacity-90 transition-all duration-700 ease-out"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
 
-                {/* Dark Gradient Overlay for High Readability */}
-                <div className="absolute inset-0 bg-linear-to-t from-slate-950/95 via-slate-950/40 to-slate-950/10 pointer-events-none" />
+                {/* Subtle bottom vignette specifically for text contrast — leaves top 60% of image completely bright */}
+                <div className="absolute inset-0 bg-linear-to-t from-slate-950/90 via-slate-950/30 via-45% to-transparent pointer-events-none" />
 
                 {/* Top Pill Badges */}
                 <div className="relative z-10 flex items-center justify-between">
-                  <span className="px-3.5 py-1.5 bg-white/95 backdrop-blur-md text-[11px] font-bold uppercase tracking-wider text-slate-900 rounded-full shadow-xs border border-white/40">
+                  <span className="px-3.5 py-1.5 bg-white/95 backdrop-blur-md text-[11px] font-bold uppercase tracking-wider text-slate-900 rounded-full shadow-xs border border-white/60">
                     {category.name}
                   </span>
 
-                  <span className="px-3 py-1 bg-slate-900/80 backdrop-blur-md text-[11px] font-semibold text-slate-200 rounded-full border border-slate-700/60 shadow-xs">
+                  <span className="px-3 py-1 bg-slate-900/75 backdrop-blur-md text-[11px] font-semibold text-white rounded-full border border-slate-700/40 shadow-xs">
                     {category.itemCount} {category.itemCount === 1 ? "Product" : "Products"}
                   </span>
                 </div>
