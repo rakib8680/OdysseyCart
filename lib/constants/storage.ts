@@ -9,6 +9,8 @@ export const STORAGE_KEYS = {
   CATALOG_VIEW_MODE: "odyssey_catalog_view_mode",
   /** LocalStorage key for password reset rate limit countdown */
   PASSWORD_RESET_TIMER: "password_reset_timer",
+  /** LocalStorage key for announcement bar dismissal persistence */
+  ANNOUNCEMENT_DISMISSED: "odyssey_announcement_dismissed",
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
