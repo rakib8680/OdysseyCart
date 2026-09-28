@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { HeroSectionSkeleton } from "@/components/landing/HeroSectionSkeleton";
+import { TrustStrip } from "@/components/landing/TrustStrip";
 import { CategorySection } from "@/components/landing/CategorySection";
 import { FeaturedProducts } from "@/components/landing/FeaturedProducts";
 import { ValueProps } from "@/components/landing/ValueProps";
@@ -13,6 +14,7 @@ export default function Home() {
       <Suspense fallback={<HeroSectionSkeleton />}>
         <HeroSection />
       </Suspense>
+      <TrustStrip />
       <FeaturedProducts />
       <Craftsmanship />
       <CategorySection />
@@ -21,4 +23,5 @@ export default function Home() {
     </div>
   );
 }
+
 
