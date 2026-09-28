@@ -15,6 +15,7 @@ import type {
   Review as ReviewType,
   PaginatedReviews,
   AdminReview,
+  TestimonialReview,
 } from "@/lib/types/review";
 
 // ==========================================
@@ -377,6 +378,47 @@ export async function getAllReviewsAdmin(
   } catch (error: any) {
     console.error("getAllReviewsAdmin error:", error);
     return { ...empty, error: error.message };
+  }
+}
+
+// ==========================================
+// GET TOP REVIEWS (for landing page testimonials)
+// Public — no auth required.
+// ==========================================
+
+export async function getTopReviews(
+  limit: number = 6,
+): Promise<TestimonialReview[]> {
+  try {
+    await connectDB();
+
+    const pipeline: any[] = [
+      { $match: { rating: { $gte: 4 } } },
+      { $sort: { rating: -1, createdAt: -1 } },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: "products",
+          localField: "productId",
+          foreignField: "_id",
+          as: "product",
+          pipeline: [{ $project: { title: 1, slug: 1, images: 1 } }],
+        },
+      },
+      { $unwind: { path: "$product", preserveNullAndEmptyArrays: true } },
+    ];
+
+    const results = await Review.aggregate(pipeline);
+
+    return results.map((doc: any) => ({
+      ...serializeReview(doc),
+      productTitle: doc.product?.title || "Odyssey Collection",
+      productSlug: doc.product?.slug || "",
+      productImage: doc.product?.images?.[0] || "",
+    }));
+  } catch (error: any) {
+    console.error("getTopReviews error:", error);
+    return [];
   }
 }
 

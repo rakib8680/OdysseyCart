@@ -8,9 +8,13 @@ import { revalidatePath } from "next/cache";
 import { ProductValidationSchema } from "@/lib/validations/product";
 import { SearchFiltersSchema } from "@/lib/validations/search";
 import { escapeRegex, slugify } from "@/lib/utils";
-import { PaginatedProducts } from "@/lib/types/product";
+import type { Product as ProductType, PaginatedProducts } from "@/lib/types/product";
 
-import { DB_SORT_MAP } from "@/lib/config/products";
+import {
+  DB_SORT_MAP,
+  PRODUCT_CATEGORIES,
+  type CategoryShowcaseItem,
+} from "@/lib/config/products";
 
 import { requireAdmin } from "@/app/actions/users";
 
@@ -373,3 +377,95 @@ export async function getRelatedProducts(
     return [];
   }
 }
+
+// ==========================================
+// READ HERO PRODUCT (for flagship hero section)
+// ==========================================
+export async function getHeroProduct(): Promise<ProductType | null> {
+  try {
+    await connectDB();
+
+    // 1. Prioritize active featured products with highest rating / newest drop
+    let product = await Product.findOne(
+      { isFeatured: true },
+      LISTING_PROJECTION,
+    )
+      .sort({ averageRating: -1, createdAt: -1, _id: -1 })
+      .lean();
+
+    // 2. Graceful fallback: if no featured product exists, pick the top-rated product
+    if (!product) {
+      product = await Product.findOne({}, LISTING_PROJECTION)
+        .sort({ averageRating: -1, createdAt: -1, _id: -1 })
+        .lean();
+    }
+
+    return product ? (serialize(product) as ProductType) : null;
+  } catch (error: any) {
+    console.error("Error getting hero product:", error);
+    return null;
+  }
+}
+
+// ==========================================
+// READ NEW ARRIVALS (for landing page carousel)
+// ==========================================
+export async function getNewArrivals(limit = 8): Promise<ProductType[]> {
+  try {
+    await connectDB();
+
+    const products = await Product.find({}, LISTING_PROJECTION)
+      .sort({ createdAt: -1, _id: -1 })
+      .limit(limit)
+      .lean();
+
+    return serialize(products) as ProductType[];
+  } catch (error: any) {
+    console.error("Error getting new arrivals:", error);
+    return [];
+  }
+}
+
+// ==========================================
+// READ CATEGORY SHOWCASE (for visual bento cards)
+// Sourced strictly from PRODUCT_CATEGORIES SSOT
+// ==========================================
+export async function getCategoryShowcaseData(): Promise<CategoryShowcaseItem[]> {
+  try {
+    await connectDB();
+
+    const results = await Promise.all(
+      PRODUCT_CATEGORIES.map(async (cat) => {
+        const regex = new RegExp(`^${escapeRegex(cat.name)}$`, "i");
+        const [count, sampleProduct] = await Promise.all([
+          Product.countDocuments({ category: regex }),
+          Product.findOne(
+            { category: regex },
+            { images: 1, isFeatured: 1, averageRating: 1 },
+          )
+            .sort({ isFeatured: -1, averageRating: -1, createdAt: -1, _id: -1 })
+            .lean(),
+        ]);
+
+        return {
+          ...cat,
+          itemCount: count,
+          featuredImage:
+            sampleProduct?.images && sampleProduct.images.length > 0
+              ? sampleProduct.images[0]
+              : null,
+        };
+      }),
+    );
+
+    return results;
+  } catch (error: any) {
+    console.error("Error getting category showcase data:", error);
+    return PRODUCT_CATEGORIES.map((cat) => ({
+      ...cat,
+      itemCount: 0,
+      featuredImage: null,
+    }));
+  }
+}
+

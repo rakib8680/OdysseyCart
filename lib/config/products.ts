@@ -70,6 +70,12 @@ export interface ProductCategory {
   iconColor: string;
 }
 
+export interface CategoryShowcaseItem extends ProductCategory {
+  itemCount: number;
+  featuredImage: string | null;
+}
+
+
 /**
  * Single Source of Truth (SSOT) for Product Categories across OdysseyCart.
  * Consumed by admin creation forms, landing page curated collections, and footer navigation.

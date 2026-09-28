@@ -35,3 +35,11 @@ export interface AdminReview extends Review {
   productTitle: string;
   productSlug: string;
 }
+
+// Curated review type for landing page testimonials showcase
+export interface TestimonialReview extends Review {
+  productTitle: string;
+  productSlug: string;
+  productImage: string;
+}
+
