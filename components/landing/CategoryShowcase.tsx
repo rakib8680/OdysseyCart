@@ -57,7 +57,7 @@ export async function CategoryShowcase() {
               <Link
                 key={category.id}
                 href={category.href}
-                className="group relative aspect-4/3 md:aspect-3/4 rounded-3xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col justify-between p-6 sm:p-8"
+                className="group relative aspect-4/3 md:aspect-3/4 rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col justify-between p-5 sm:p-8"
               >
                 {/* Background Image: Bright, crisp, and natural */}
                 <img
@@ -72,23 +72,23 @@ export async function CategoryShowcase() {
 
                 {/* Top Pill Badges */}
                 <div className="relative z-10 flex items-center justify-between">
-                  <span className="px-3.5 py-1.5 bg-white/95 backdrop-blur-md text-[11px] font-bold uppercase tracking-wider text-slate-900 rounded-full shadow-xs border border-white/60">
+                  <span className="px-3 sm:px-3.5 py-1 sm:py-1.5 bg-white/95 backdrop-blur-md text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-900 rounded-full shadow-xs border border-white/60">
                     {category.name}
                   </span>
 
-                  <span className="px-3 py-1 bg-slate-900/75 backdrop-blur-md text-[11px] font-semibold text-white rounded-full border border-slate-700/40 shadow-xs">
+                  <span className="px-2.5 sm:px-3 py-1 bg-slate-900/75 backdrop-blur-md text-[10px] sm:text-[11px] font-semibold text-white rounded-full border border-slate-700/40 shadow-xs">
                     {category.itemCount} {category.itemCount === 1 ? "Product" : "Products"}
                   </span>
                 </div>
 
                 {/* Bottom Story & Call to Action */}
-                <div className="relative z-10 pt-16">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight group-hover:text-emerald-300 transition-colors">
+                <div className="relative z-10 pt-6 sm:pt-16">
+                  <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight group-hover:text-emerald-300 transition-colors">
                       {category.label}
                     </h3>
-                    <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white group-hover:bg-emerald-500 group-hover:border-emerald-500 transition-all duration-300 shadow-sm shrink-0">
-                      <ArrowUpRight className="w-5 h-5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white group-hover:bg-emerald-500 group-hover:border-emerald-500 transition-all duration-300 shadow-sm shrink-0">
+                      <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                     </div>
                   </div>
 
