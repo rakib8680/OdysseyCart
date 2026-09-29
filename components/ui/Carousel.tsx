@@ -24,6 +24,7 @@ interface CarouselContextValue {
   activeIndex: number;
   totalItems: number;
   isDragging: boolean;
+  updateProgress: () => void;
   scrollByDirection: (direction: "left" | "right") => void;
 }
 
@@ -66,11 +67,6 @@ export function Carousel({
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
   const activeIndexRef = useRef(0);
-
-  // Mouse Drag to Scroll State
-  const isMouseDown = useRef(false);
-  const startX = useRef(0);
-  const startScrollLeft = useRef(0);
   const [isDragging, setIsDragging] = useState(false);
 
   // Hardware-accelerated 60/120fps progress tracking via GPU translate3d
@@ -81,10 +77,10 @@ export function Carousel({
     if (!el) return;
 
     const { scrollLeft, scrollWidth, clientWidth } = el;
-    const maxScroll = scrollWidth - clientWidth;
+    const maxScroll = Math.max(0, scrollWidth - clientWidth);
 
-    setCanScrollLeft(scrollLeft > 10);
-    setCanScrollRight(scrollLeft < maxScroll - 10);
+    setCanScrollLeft(scrollLeft > 5);
+    setCanScrollRight(scrollLeft < maxScroll - 5);
 
     if (thumb && track && maxScroll > 0) {
       const ratio = Math.min(1, Math.max(0, scrollLeft / maxScroll));
@@ -102,21 +98,35 @@ export function Carousel({
     if (firstCard && itemCount > 0) {
       const gap = window.innerWidth < 640 ? 12 : 24;
       const cardStep = firstCard.offsetWidth + gap;
-      const newIdx = Math.min(
-        Math.max(0, Math.round(scrollLeft / cardStep)),
-        itemCount - 1,
-      );
-      if (newIdx !== activeIndexRef.current) {
-        activeIndexRef.current = newIdx;
-        setActiveIndex(newIdx);
+      if (cardStep > 0) {
+        const newIdx = Math.min(
+          Math.max(0, Math.round(scrollLeft / cardStep)),
+          itemCount - 1,
+        );
+        if (newIdx !== activeIndexRef.current) {
+          activeIndexRef.current = newIdx;
+          setActiveIndex(newIdx);
+        }
       }
     }
   }, [itemCount]);
 
   useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
     updateProgress();
+
+    const handleScroll = () => {
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+      rafId.current = requestAnimationFrame(updateProgress);
+    };
+
+    el.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", updateProgress, { passive: true });
+
     return () => {
+      el.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", updateProgress);
       if (rafId.current) cancelAnimationFrame(rafId.current);
     };
@@ -130,8 +140,7 @@ export function Carousel({
 
     const isMobile = window.innerWidth < 640;
     const gap = isMobile ? 12 : 24;
-    const multiplier = isMobile ? 1 : 2;
-    const step = (firstCard.offsetWidth + gap) * multiplier;
+    const step = firstCard.offsetWidth + gap;
     const offset = direction === "left" ? -step : step;
     el.scrollBy({ left: offset, behavior: "smooth" });
   }, []);
@@ -147,6 +156,7 @@ export function Carousel({
         activeIndex,
         totalItems: itemCount,
         isDragging,
+        updateProgress,
         scrollByDirection,
       }}
     >
@@ -166,16 +176,18 @@ export function CarouselContent({
   children,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  const { scrollRef, isDragging } = useCarousel();
+  const { scrollRef, updateProgress } = useCarousel();
   const isMouseDown = useRef(false);
   const startX = useRef(0);
   const startScrollLeft = useRef(0);
+  const hasMoved = useRef(false);
   const [internalDragging, setInternalDragging] = useState(false);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     const el = scrollRef.current;
     if (!el) return;
     isMouseDown.current = true;
+    hasMoved.current = false;
     startX.current = e.pageX - el.offsetLeft;
     startScrollLeft.current = el.scrollLeft;
   };
@@ -184,18 +196,30 @@ export function CarouselContent({
     if (!isMouseDown.current) return;
     const el = scrollRef.current;
     if (!el) return;
-    e.preventDefault();
     const x = e.pageX - el.offsetLeft;
     const walk = (x - startX.current) * 1.2;
-    if (Math.abs(walk) > 5 && !internalDragging) {
-      setInternalDragging(true);
+    if (Math.abs(walk) > 5) {
+      if (!internalDragging) setInternalDragging(true);
+      hasMoved.current = true;
+      e.preventDefault();
+      el.scrollLeft = startScrollLeft.current - walk;
+      updateProgress();
     }
-    el.scrollLeft = startScrollLeft.current - walk;
   };
 
   const handleMouseUp = () => {
     isMouseDown.current = false;
-    setTimeout(() => setInternalDragging(false), 50);
+    setTimeout(() => {
+      setInternalDragging(false);
+      hasMoved.current = false;
+    }, 50);
+  };
+
+  const handleClickCapture = (e: React.MouseEvent) => {
+    if (hasMoved.current) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   };
 
   return (
@@ -205,6 +229,7 @@ export function CarouselContent({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      onClickCapture={handleClickCapture}
       className={cn(
         "flex gap-3 sm:gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4 pt-1",
         "-mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8",

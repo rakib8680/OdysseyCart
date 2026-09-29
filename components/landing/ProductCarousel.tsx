@@ -48,7 +48,7 @@ export function ProductCarousel({
         {products.map((product) => (
           <CarouselItem
             key={product._id}
-            className="w-52.5 xs:w-56.25 sm:w-67.5 md:w-75 lg:w-82.5 xl:w-87.5"
+            className="w-65 sm:w-70 lg:w-75 shrink-0"
           >
             <div
               className={`h-full bg-white ${HOMEPAGE_TOKENS.cardRadius} border border-slate-200/80 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group select-none`}
