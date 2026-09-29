@@ -7,26 +7,20 @@ import { ProductValidationSchema } from "@/lib/validations/product";
 import { slugify } from "@/lib/utils";
 import { requireAdmin } from "@/app/actions/users";
 
+import { getFilteredProducts as getFilteredProductsData } from "@/lib/data/products";
+
 // ============================================================================
-// BACKWARD COMPATIBILITY RE-EXPORTS (DATA ACCESS LAYER)
-// Pure read operations now reside in @/lib/data/products (Data Access Layer).
-// Re-exported here so existing call sites remain functional without breakage.
+// SERVER ACTIONS FOR CLIENT DATA FETCHING
 // ============================================================================
-export {
-  LISTING_PROJECTION,
-  getProductListings,
-  getNewArrivals,
-  getOnSaleProducts,
-  getFeaturedProducts,
-  getRelatedProducts,
-  getBestSellers,
-  getHeroProduct,
-  getProductBySlug,
-  getProductById,
-  getCategories,
-  getFilteredProducts,
-  getCategoryShowcaseData,
-} from "@/lib/data/products";
+
+/**
+ * Server Action for client components (e.g. admin table) to query filtered products.
+ */
+export async function getFilteredProducts(
+  params: Record<string, string | number | undefined>,
+) {
+  return getFilteredProductsData(params);
+}
 
 // ============================================================================
 // SLUG COLLISION GUARD

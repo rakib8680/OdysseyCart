@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useQueryState, parseAsInteger, parseAsString } from "nuqs";
 import Link from "next/link";
 import ManageTable from "@/components/ManageTable";
-import { getFilteredProducts } from "@/lib/data/products";
+import { getFilteredProducts } from "@/app/actions/products";
 import { Plus, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/Pagination";
