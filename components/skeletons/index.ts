@@ -19,5 +19,6 @@ export { ProfileSettingsSkeleton } from "./ProfileSettingsSkeleton";
 export { HeroSectionSkeleton } from "./HeroSectionSkeleton";
 export { CategoryShowcaseSkeleton } from "./CategoryShowcaseSkeleton";
 export { BestSellersSkeleton } from "./BestSellersSkeleton";
+export { OnSaleSkeleton } from "./OnSaleSkeleton";
 export { NewArrivalsSkeleton } from "./NewArrivalsSkeleton";
 export { TestimonialsSkeleton } from "./TestimonialsSkeleton";
