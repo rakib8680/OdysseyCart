@@ -1,17 +1,19 @@
 import { Suspense } from "react";
 import { HeroSection } from "@/components/landing/HeroSection";
-import { HeroSectionSkeleton } from "@/components/landing/HeroSectionSkeleton";
 import { TrustStrip } from "@/components/landing/TrustStrip";
 import { FeaturedProducts } from "@/components/landing/FeaturedProducts";
 import { NewArrivals } from "@/components/landing/NewArrivals";
-import { NewArrivalsSkeleton } from "@/components/landing/NewArrivalsSkeleton";
 import { CategoryShowcase } from "@/components/landing/CategoryShowcase";
-import { CategoryShowcaseSkeleton } from "@/components/landing/CategoryShowcaseSkeleton";
 import { BrandStory } from "@/components/landing/BrandStory";
 import { Testimonials } from "@/components/landing/Testimonials";
-import { TestimonialsSkeleton } from "@/components/landing/TestimonialsSkeleton";
 import { ValueProps } from "@/components/landing/ValueProps";
 import { NewsletterCTA } from "@/components/landing/NewsletterCTA";
+import {
+  HeroSectionSkeleton,
+  CategoryShowcaseSkeleton,
+  NewArrivalsSkeleton,
+  TestimonialsSkeleton,
+} from "@/components/skeletons";
 
 export default function Home() {
   return (
@@ -36,8 +38,3 @@ export default function Home() {
     </div>
   );
 }
-
-
-
-
-

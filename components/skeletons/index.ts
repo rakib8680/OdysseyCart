@@ -12,3 +12,12 @@ export { OrderListSkeleton } from "./OrderListSkeleton";
 export { ManageTableSkeleton } from "./ManageTableSkeleton";
 export { WishlistSkeleton } from "./WishlistSkeleton";
 export { ProfileSettingsSkeleton } from "./ProfileSettingsSkeleton";
+
+// ============================================================================
+// LANDING PAGE STREAMING SKELETONS (SSOT)
+// ============================================================================
+export { HeroSectionSkeleton } from "./HeroSectionSkeleton";
+export { CategoryShowcaseSkeleton } from "./CategoryShowcaseSkeleton";
+export { BestSellersSkeleton } from "./BestSellersSkeleton";
+export { NewArrivalsSkeleton } from "./NewArrivalsSkeleton";
+export { TestimonialsSkeleton } from "./TestimonialsSkeleton";

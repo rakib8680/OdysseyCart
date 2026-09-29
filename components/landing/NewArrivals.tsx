@@ -1,11 +1,12 @@
 import { getNewArrivals } from "@/lib/data/products";
-import { NewArrivalsCarousel } from "./NewArrivalsCarousel";
+import { ProductCarousel } from "@/components/landing/ProductCarousel";
+import { HOMEPAGE_TOKENS } from "@/lib/config/homepage";
 
 /**
  * NewArrivals Component (Server Component)
  *
  * Fetches recent catalog additions via getNewArrivals() and renders
- * an interactive horizontal snap-scroll runway using ProductCard.
+ * an interactive horizontal snap-scroll runway using ProductCarousel.
  */
 export async function NewArrivals() {
   const products = await getNewArrivals(8);
@@ -15,9 +16,17 @@ export async function NewArrivals() {
   }
 
   return (
-    <section className="py-12 sm:py-20 lg:py-24 bg-slate-50/60 border-b border-slate-200/60 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <NewArrivalsCarousel products={products} />
+    <section className={`bg-slate-50/60 border-b border-slate-200/60 ${HOMEPAGE_TOKENS.sectionPadding} overflow-hidden`}>
+      <div className={HOMEPAGE_TOKENS.container}>
+        <ProductCarousel
+          products={products}
+          title="New Arrivals"
+          subtitle="The latest additions to our architectural and design collection, curated for modern spaces."
+          action={{
+            label: "View All",
+            href: "/items?sort=newest",
+          }}
+        />
       </div>
     </section>
   );

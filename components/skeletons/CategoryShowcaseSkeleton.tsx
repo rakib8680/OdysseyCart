@@ -1,5 +1,10 @@
 import { HOMEPAGE_TOKENS } from "@/lib/config/homepage";
 
+/**
+ * CategoryShowcaseSkeleton Component
+ *
+ * Provides a zero-CLS Suspense streaming skeleton for CategoryShowcase.
+ */
 export function CategoryShowcaseSkeleton() {
   return (
     <section className={`bg-white border-b border-slate-200/60 ${HOMEPAGE_TOKENS.sectionPadding}`}>
