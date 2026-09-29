@@ -1,8 +1,15 @@
 import Link from "next/link";
-import { ShieldCheck, Sparkles, MessageSquare, ArrowRight, HeartHandshake } from "lucide-react";
+import {
+  ShieldCheck,
+  MessageSquare,
+  ArrowRight,
+  HeartHandshake,
+} from "lucide-react";
 import { getTopReviews } from "@/app/actions/reviews";
 import { StarRating } from "@/components/reviews/StarRating";
 import { formatDate } from "@/lib/utils/date";
+import { SectionHeader } from "@/components/landing/SectionHeader";
+import { HOMEPAGE_TOKENS } from "@/lib/config/homepage";
 
 /**
  * Testimonials Component (Server Component)
@@ -15,29 +22,23 @@ export async function Testimonials() {
   const reviews = await getTopReviews(6);
 
   return (
-    <section className="py-24 bg-white border-b border-slate-200/60 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-800 rounded-full text-xs font-semibold uppercase tracking-wider border border-emerald-200/60 mb-3 shadow-2xs">
-            <Sparkles className="w-3 h-3 text-emerald-600" />
-            <span>Verified Social Proof</span>
-          </div>
-
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
-            Loved by Discerning Creators.
-          </h2>
-
-          <p className="text-slate-500 text-sm sm:text-base mt-3">
-            Real feedback from our global community of architects, engineers, and minimalist design enthusiasts.
-          </p>
-        </div>
+    <section
+      className={`bg-white border-b border-slate-200/60 overflow-hidden ${HOMEPAGE_TOKENS.sectionPadding}`}
+    >
+      <div className={HOMEPAGE_TOKENS.container}>
+        {/* Standardized Section Header */}
+        <SectionHeader
+          title="What Our Customers Say"
+          subtitle="Real reviews from verified buyers across the globe."
+          align="center"
+        />
 
         {/* Dynamic Reviews Grid */}
         {reviews && reviews.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {reviews.map((review) => {
-              const initial = review.userName?.trim().charAt(0).toUpperCase() || "C";
+              const initial =
+                review.userName?.trim().charAt(0).toUpperCase() || "C";
 
               return (
                 <div
@@ -84,26 +85,33 @@ export async function Testimonials() {
                     </div>
 
                     {/* Linked Product Preview */}
-                    {review.productSlug && (
+                    {review.productSlug ? (
                       <Link
                         href={`/items/${review.productSlug}`}
                         className="mt-3 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500 hover:text-emerald-600 transition-colors group/prod"
                       >
-                        <span className="truncate max-w-50 font-medium text-slate-700 group-hover/prod:text-emerald-600">
+                        <span className="truncate max-w-50 sm:max-w-60 font-medium text-slate-700 group-hover/prod:text-emerald-600">
                           {review.productTitle}
                         </span>
                         <span className="text-[11px] font-bold text-emerald-600 shrink-0 flex items-center gap-0.5">
-                          View <ArrowRight className="w-3 h-3 group-hover/prod:translate-x-0.5 transition-transform" />
+                          View{" "}
+                          <ArrowRight className="w-3 h-3 group-hover/prod:translate-x-0.5 transition-transform" />
                         </span>
                       </Link>
-                    )}
+                    ) : review.productTitle ? (
+                      <div className="mt-3 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500">
+                        <span className="truncate max-w-50 sm:max-w-60 font-medium text-slate-700">
+                          {review.productTitle}
+                        </span>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               );
             })}
           </div>
         ) : (
-          /* Graceful Fallback: Customer Satisfaction Promise Cards */
+          /* Brand Trust & Satisfaction Promise (Graceful empty-reviews fallback) */
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             <div className="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between">
               <div>
@@ -111,10 +119,12 @@ export async function Testimonials() {
                   <ShieldCheck className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-2">
-                  Unconditional Guarantee
+                  Heirloom Craftsmanship
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed">
-                  Every product undergoes strict dimensional testing. If anything falters under normal use, we repair or replace it promptly.
+                  Every product in our catalog undergoes rigorous multi-stage
+                  quality control. Premium materials engineered for decade-long
+                  durability.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-slate-100 text-xs font-bold text-emerald-600 uppercase tracking-wider">
@@ -131,7 +141,8 @@ export async function Testimonials() {
                   30-Day In-Home Trial
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed">
-                  Experience our pieces in your living space. If it doesn&apos;t meet your standards of geometric harmony, return it with zero friction.
+                  Experience our pieces in your living space. If it doesn&apos;t
+                  meet your standards of harmony, return it with zero friction.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-slate-100 text-xs font-bold text-emerald-600 uppercase tracking-wider">
@@ -148,7 +159,8 @@ export async function Testimonials() {
                   Design Studio Support
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed">
-                  Have questions regarding dimensions, materials, or custom setups? Our design team responds personally within 24 hours.
+                  Have questions regarding dimensions, materials, or custom
+                  setups? Our design team responds personally within 24 hours.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-slate-100 text-xs font-bold text-emerald-600 uppercase tracking-wider">

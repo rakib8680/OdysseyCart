@@ -18,7 +18,7 @@ export function TestimonialsSkeleton() {
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
-              className={`bg-white ${HOMEPAGE_TOKENS.cardRadius} p-6 sm:p-8 border border-slate-200/80 space-y-4 animate-pulse`}
+              className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 space-y-4 animate-pulse"
             >
               <div className="flex justify-between items-center">
                 <div className="w-24 h-4 bg-slate-200 rounded-md" />
@@ -36,6 +36,10 @@ export function TestimonialsSkeleton() {
                   <div className="w-20 h-4 bg-slate-200 rounded-md" />
                   <div className="w-16 h-3 bg-slate-200 rounded-md" />
                 </div>
+              </div>
+              <div className="mt-3 pt-3 border-t border-slate-50 flex items-center justify-between">
+                <div className="w-28 h-3 bg-slate-200 rounded-md" />
+                <div className="w-12 h-3 bg-slate-200 rounded-md" />
               </div>
             </div>
           ))}

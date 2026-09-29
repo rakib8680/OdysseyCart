@@ -21,7 +21,7 @@ export async function NewArrivals() {
         <ProductCarousel
           products={products}
           title="New Arrivals"
-          subtitle="The latest additions to our architectural and design collection, curated for modern spaces."
+          subtitle="Recently added products and fresh seasonal drops."
           action={{
             label: "View All",
             href: "/items?sort=newest",

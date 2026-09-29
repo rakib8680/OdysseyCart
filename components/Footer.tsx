@@ -154,8 +154,40 @@ export function Footer() {
         </div>
 
         {/* Bottom Strip */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500">
+        <div className="pt-8 border-t border-white/10 flex flex-col lg:flex-row justify-between items-center gap-6 text-xs font-medium text-slate-500">
           <p>© 2026 OdysseyCart. All rights reserved.</p>
+
+          {/* Supported Payment Badges */}
+          <div
+            className="flex flex-wrap items-center justify-center gap-2"
+            aria-label="Accepted payment methods"
+          >
+            <span className="h-6 px-2.5 rounded bg-white/6 border border-white/10 flex items-center justify-center text-[10px] font-bold text-white tracking-wider italic">
+              VISA
+            </span>
+            <span className="h-6 px-2.5 rounded bg-white/6 border border-white/10 flex items-center justify-center gap-1.5">
+              <span className="flex -space-x-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#EB001B]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#F79E1B] opacity-90" />
+              </span>
+              <span className="text-[10px] font-medium text-slate-300">
+                Mastercard
+              </span>
+            </span>
+            <span className="h-6 px-2.5 rounded bg-white/6 border border-white/10 flex items-center justify-center text-[10px] font-bold text-sky-400 tracking-wider">
+              AMEX
+            </span>
+            <span className="h-6 px-2.5 rounded bg-white/6 border border-white/10 flex items-center justify-center text-[10px] font-bold text-slate-200">
+              Pay<span className="text-sky-400">Pal</span>
+            </span>
+            <span className="h-6 px-2.5 rounded bg-white/6 border border-white/10 flex items-center justify-center text-[10px] font-medium text-slate-200">
+              Apple Pay
+            </span>
+            <span className="h-6 px-2.5 rounded bg-white/6 border border-white/10 flex items-center justify-center text-[10px] font-medium text-slate-200">
+              <span className="text-sky-400 font-bold">G</span> Pay
+            </span>
+          </div>
+
           <div className="flex items-center gap-6">
             <button className="flex items-center hover:text-white transition-colors">
               <Globe className="w-4 h-4 mr-2" />
