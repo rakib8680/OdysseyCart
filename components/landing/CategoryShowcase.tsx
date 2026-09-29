@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { ArrowUpRight, Sparkles } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { getCategoryShowcaseData } from "@/lib/data/products";
+import { SectionHeader } from "@/components/landing/SectionHeader";
 import { FALLBACK_PRODUCT_IMAGE } from "@/lib/constants/images";
+import { HOMEPAGE_TOKENS } from "@/lib/config/homepage";
 
 const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
   tech: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800&q=80",
@@ -12,41 +14,27 @@ const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
 /**
  * CategoryShowcase Component (Server Component)
  *
- * Upgrades category navigation from flat icon boxes into full-bleed
- * photographic editorial cards with live item counts and smooth hover states.
+ * Upgrades category navigation into full-bleed photographic cards
+ * with live item counts and smooth hover states. Uses standardized SectionHeader.
  */
 export async function CategoryShowcase() {
   const categories = await getCategoryShowcaseData();
 
   return (
-    <section className="py-24 bg-white border-b border-slate-200/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-800 rounded-full text-xs font-semibold uppercase tracking-wider border border-emerald-200/60 mb-3 shadow-2xs">
-              <Sparkles className="w-3 h-3 text-emerald-600" />
-              <span>Curated Domains</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
-              Curated Collections
-            </h2>
-            <p className="text-slate-500 text-sm sm:text-base mt-2 max-w-xl">
-              Explore our selection of meticulously crafted products designed for the modern architectural home and workspace.
-            </p>
-          </div>
-
-          <Link
-            href="/items"
-            className="group hidden md:inline-flex items-center text-sm font-bold uppercase tracking-wider text-slate-900 hover:text-emerald-600 transition-colors"
-          >
-            <span>View All Categories</span>
-            <ArrowUpRight className="ml-2 w-4 h-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </Link>
-        </div>
+    <section className={`bg-white border-b border-slate-200/60 ${HOMEPAGE_TOKENS.sectionPadding}`}>
+      <div className={HOMEPAGE_TOKENS.container}>
+        {/* Standardized Section Header */}
+        <SectionHeader
+          title="Shop by Category"
+          subtitle="Browse our carefully engineered selection across tech, ergonomic furniture, and everyday accessories."
+          action={{
+            label: "View All",
+            href: "/items",
+          }}
+        />
 
         {/* 3-Column Photographic Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {categories.map((category) => {
             const displayImage =
               category.featuredImage ||
@@ -57,7 +45,7 @@ export async function CategoryShowcase() {
               <Link
                 key={category.id}
                 href={category.href}
-                className="group relative aspect-4/3 md:aspect-3/4 rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col justify-between p-5 sm:p-8"
+                className={`group relative aspect-4/3 md:aspect-3/4 ${HOMEPAGE_TOKENS.cardRadius} overflow-hidden bg-slate-100 border border-slate-200/80 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col justify-between p-5 sm:p-8`}
               >
                 {/* Background Image: Bright, crisp, and natural */}
                 <img
@@ -67,7 +55,7 @@ export async function CategoryShowcase() {
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
 
-                {/* Subtle bottom vignette specifically for text contrast — leaves top 60% of image completely bright */}
+                {/* Subtle bottom vignette specifically for text contrast */}
                 <div className="absolute inset-0 bg-linear-to-t from-slate-950/90 via-slate-950/30 via-45% to-transparent pointer-events-none" />
 
                 {/* Top Pill Badges */}
@@ -97,24 +85,13 @@ export async function CategoryShowcase() {
                   </p>
 
                   <div className="mt-4 pt-4 border-t border-white/10 flex items-center text-xs font-bold text-emerald-400 uppercase tracking-wider">
-                    <span>Explore Lineup</span>
+                    <span>Shop Now</span>
                     <span className="ml-2 transform group-hover:translate-x-1 transition-transform">→</span>
                   </div>
                 </div>
               </Link>
             );
           })}
-        </div>
-
-        {/* Mobile View All Link */}
-        <div className="mt-10 md:hidden text-center">
-          <Link
-            href="/items"
-            className="inline-flex items-center text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors"
-          >
-            <span>View All Categories</span>
-            <ArrowUpRight className="ml-1.5 w-4 h-4" />
-          </Link>
         </div>
       </div>
     </section>
