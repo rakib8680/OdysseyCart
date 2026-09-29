@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { EditorialCard } from "./EditorialCard";
-import { getFeaturedProducts } from "@/app/actions/products";
+import { getFeaturedProducts } from "@/lib/data/products";
 
 export async function FeaturedProducts() {
   const featured = await getFeaturedProducts(3);

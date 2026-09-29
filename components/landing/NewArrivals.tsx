@@ -1,4 +1,4 @@
-import { getNewArrivals } from "@/app/actions/products";
+import { getNewArrivals } from "@/lib/data/products";
 import { NewArrivalsCarousel } from "./NewArrivalsCarousel";
 
 /**

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight, Sparkles } from "lucide-react";
-import { getCategoryShowcaseData } from "@/app/actions/products";
+import { getCategoryShowcaseData } from "@/lib/data/products";
 import { FALLBACK_PRODUCT_IMAGE } from "@/lib/constants/images";
 
 const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {

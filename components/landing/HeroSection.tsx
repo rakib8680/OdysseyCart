@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Star, Truck, ShieldCheck, Sparkles } from "lucide-react";
-import { getHeroProduct } from "@/app/actions/products";
+import { getHeroProduct } from "@/lib/data/products";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/utils/pricing";
 import { getProductImageUrl } from "@/lib/utils/productImages";
 

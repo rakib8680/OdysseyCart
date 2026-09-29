@@ -1,4 +1,4 @@
-import { getFilteredProducts, getCategories } from "@/app/actions/products";
+import { getFilteredProducts, getCategories } from "@/lib/data/products";
 import { ItemsFilter } from "./ItemsFilter";
 
 // ==========================================

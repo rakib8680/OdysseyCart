@@ -6,7 +6,7 @@ import {
   getProductBySlug,
   getProductById,
   getRelatedProducts,
-} from "@/app/actions/products";
+} from "@/lib/data/products";
 import ProductDetailClient from "@/components/product-details/ProductDetailClient";
 import RelatedProducts from "@/components/product-details/RelatedProducts";
 import { ProductBreadcrumbs } from "@/components/product-details/ProductBreadcrumbs";

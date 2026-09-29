@@ -1,26 +1,36 @@
 "use server";
 
-import { cache } from "react";
-import mongoose from "mongoose";
-import { connectDB, serialize } from "@/lib/db/mongoose";
+import { connectDB } from "@/lib/db/mongoose";
 import Product from "@/lib/models/Product";
 import { revalidatePath } from "next/cache";
 import { ProductValidationSchema } from "@/lib/validations/product";
-import { SearchFiltersSchema } from "@/lib/validations/search";
-import { escapeRegex, slugify } from "@/lib/utils";
-import type { Product as ProductType, PaginatedProducts } from "@/lib/types/product";
-
-import {
-  DB_SORT_MAP,
-  PRODUCT_CATEGORIES,
-  type CategoryShowcaseItem,
-} from "@/lib/config/products";
-
+import { slugify } from "@/lib/utils";
 import { requireAdmin } from "@/app/actions/users";
 
-// ==========================================
+// ============================================================================
+// BACKWARD COMPATIBILITY RE-EXPORTS (DATA ACCESS LAYER)
+// Pure read operations now reside in @/lib/data/products (Data Access Layer).
+// Re-exported here so existing call sites remain functional without breakage.
+// ============================================================================
+export {
+  LISTING_PROJECTION,
+  getProductListings,
+  getNewArrivals,
+  getOnSaleProducts,
+  getFeaturedProducts,
+  getRelatedProducts,
+  getBestSellers,
+  getHeroProduct,
+  getProductBySlug,
+  getProductById,
+  getCategories,
+  getFilteredProducts,
+  getCategoryShowcaseData,
+} from "@/lib/data/products";
+
+// ============================================================================
 // SLUG COLLISION GUARD
-// ==========================================
+// ============================================================================
 /**
  * Generates a unique slug for a product, appending an incremental suffix
  * (e.g. "-2", "-3") if a collision exists. Excludes `currentId` during updates
@@ -48,9 +58,14 @@ async function generateUniqueSlug(
   return slug;
 }
 
-// ==========================================
-// CREATE
-// ==========================================
+// ============================================================================
+// MUTATIONS (SERVER ACTIONS)
+// ============================================================================
+
+/**
+ * Creates a new product in the database.
+ * Requires admin authentication. Revalidates catalog and management paths.
+ */
 export async function createProduct(data: Record<string, any>) {
   try {
     // 1. Validate data structure with Zod
@@ -61,7 +76,7 @@ export async function createProduct(data: Record<string, any>) {
     // 2. Check RBAC using the validated UID
     await requireAdmin(validatedData.createdBy);
 
-    // check if product title already exists
+    // 3. Check if product title already exists
     const existingProduct = await Product.findOne({
       title: validatedData.title,
     });
@@ -72,7 +87,7 @@ export async function createProduct(data: Record<string, any>) {
       };
     }
 
-    // 3. Create using the clean, validated data
+    // 4. Create using the clean, validated data
     await Product.create(validatedData);
 
     revalidatePath("/items");
@@ -85,9 +100,10 @@ export async function createProduct(data: Record<string, any>) {
   }
 }
 
-// ==========================================
-// UPDATE
-// ==========================================
+/**
+ * Updates an existing product and regenerates unique slug if title changed.
+ * Requires admin authentication. Revalidates catalog, management, and item paths.
+ */
 export async function updateProduct(id: string, data: Record<string, any>) {
   try {
     // 1. Validate data structure with Zod
@@ -98,13 +114,13 @@ export async function updateProduct(id: string, data: Record<string, any>) {
     // 2. Check RBAC using the validated UID
     await requireAdmin(validatedData.createdBy);
 
-    // check if product exists
+    // 3. Check if product exists
     const existingProduct = await Product.findById(id);
     if (!existingProduct) {
       return { success: false, error: "Product not found" };
     }
 
-    // check if title is taken by ANOTHER product
+    // 4. Check if title is taken by ANOTHER product
     const titleConflict = await Product.findOne({
       title: validatedData.title,
       _id: { $ne: id },
@@ -117,7 +133,7 @@ export async function updateProduct(id: string, data: Record<string, any>) {
       };
     }
 
-    // 3. Generate collision-safe slug & update using the clean, validated data
+    // 5. Generate collision-safe slug & update using the clean, validated data
     const newSlug = await generateUniqueSlug(validatedData.title, id);
 
     await Product.findByIdAndUpdate(id, {
@@ -137,187 +153,24 @@ export async function updateProduct(id: string, data: Record<string, any>) {
   }
 }
 
-// ==========================================
-// READ ALL
-// ==========================================
-export async function getProducts() {
-  try {
-    await connectDB();
-
-    const products = await Product.find({})
-      .sort({ createdAt: -1, _id: -1 })
-      .lean();
-
-    return serialize(products);
-  } catch (error: any) {
-    console.error("Error getting products:", error);
-    return [];
-  }
-}
-
-// ==========================================
-// READ FILTERED + PAGINATED (for items page)
-// ==========================================
-
-// Only fetch fields that the ProductCard and AddToCartButton need
-const LISTING_PROJECTION = {
-  _id: 1,
-  title: 1,
-  slug: 1,
-  shortDescription: 1,
-  price: 1,
-  category: 1,
-  images: 1,
-  stockQuantity: 1,
-  discount: 1,
-  brand: 1,
-  averageRating: 1,
-  numReviews: 1,
-  createdAt: 1,
-  options: 1,
-  variants: 1,
-};
-
-export async function getFilteredProducts(
-  params: Record<string, string | number | undefined>,
-): Promise<PaginatedProducts> {
-  try {
-    await connectDB();
-
-    // 1. Validate & sanitize input
-    const { search, category, minPrice, maxPrice, sort, page, limit } =
-      SearchFiltersSchema.parse(params);
-
-    // 2. Build MongoDB filter dynamically
-    const filter: Record<string, any> = {};
-
-    if (search) {
-      const escaped = escapeRegex(search);
-      filter.$or = [
-        { title: { $regex: escaped, $options: "i" } },
-        { shortDescription: { $regex: escaped, $options: "i" } },
-      ];
-    }
-
-    if (category) {
-      const categories = await getCategories();
-      const canonical = categories.find(
-        (c) => c.toLowerCase() === category.toLowerCase(),
-      );
-      filter.category = canonical || category;
-    }
-
-    if (minPrice !== undefined || maxPrice !== undefined) {
-      filter.price = {};
-      if (minPrice !== undefined) filter.price.$gte = minPrice;
-      if (maxPrice !== undefined) filter.price.$lte = maxPrice;
-    }
-
-    // 3. Determine sort order
-    const sortOrder = DB_SORT_MAP[sort] || DB_SORT_MAP.newest;
-
-    // 4. Count matching documents first for bounds checking & early exit
-    const totalCount = await Product.countDocuments(filter);
-    const totalPages = Math.ceil(totalCount / limit);
-
-    // If no matching products exist, short-circuit immediately (avoids empty find query)
-    if (totalCount === 0) {
-      return {
-        products: [],
-        totalCount: 0,
-        totalPages: 0,
-        currentPage: 1,
-      };
-    }
-
-    // 5. Clamp page strictly within bounds [1, totalPages]
-    const safePage = Math.max(1, Math.min(page, totalPages));
-    const skip = (safePage - 1) * limit;
-
-    // 6. Execute deterministic paginated query
-    const products = await Product.find(filter, LISTING_PROJECTION)
-      .sort(sortOrder)
-      .skip(skip)
-      .limit(limit)
-      .lean();
-
-    return {
-      products: serialize(products),
-      totalCount,
-      totalPages,
-      currentPage: safePage,
-    };
-  } catch (error: any) {
-    console.error("getFilteredProducts error:", error);
-    return { products: [], totalCount: 0, totalPages: 0, currentPage: 1 };
-  }
-}
-
-// ==========================================
-// READ CATEGORIES (for filter dropdown)
-// Wrapped with React cache() to deduplicate identical calls within a request
-// ==========================================
-export const getCategories = cache(async (): Promise<string[]> => {
-  try {
-    await connectDB();
-    const categories: string[] = await Product.distinct("category");
-    return categories.sort();
-  } catch (error: any) {
-    console.error("getCategories error:", error);
-    return [];
-  }
-});
-
-// ==========================================
-// READ SINGLE (by slug or id)
-// ==========================================
-export async function getProductBySlug(slug: string) {
-  try {
-    await connectDB();
-
-    const product = await Product.findOne({ slug }).lean();
-    if (!product) return null;
-
-    return serialize(product);
-  } catch (error: any) {
-    console.error("getProductBySlug error:", error);
-    return null;
-  }
-}
-
-export async function getProductById(id: string) {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(id)) return null;
-
-    await connectDB();
-
-    const product = await Product.findById(id).lean();
-    if (!product) return null;
-
-    return serialize(product);
-  } catch (error: any) {
-    console.error("getProductById error:", error);
-    return null;
-  }
-}
-
-// ==========================================
-// DELETE
-// ==========================================
+/**
+ * Deletes a product by ID.
+ * Requires admin authentication. Revalidates catalog and management paths.
+ */
 export async function deleteProduct(id: string, uid: string) {
   try {
     await connectDB();
 
-    // Check RBAC
+    // 1. Check RBAC
     await requireAdmin(uid);
 
-    // Check if the product exists
+    // 2. Check if the product exists
     const product = await Product.findById(id);
     if (!product) {
       return { success: false, error: "Product not found" };
     }
 
-    // Delete the product
+    // 3. Delete the product
     await Product.findByIdAndDelete(id);
 
     revalidatePath("/items");
@@ -329,143 +182,3 @@ export async function deleteProduct(id: string, uid: string) {
     return { success: false, error: error.message };
   }
 }
-
-// ==========================================
-// READ FEATURED (for landing page)
-// ==========================================
-export async function getFeaturedProducts(limit = 3) {
-  try {
-    await connectDB();
-
-    const products = await Product.find(
-      { isFeatured: true },
-      LISTING_PROJECTION,
-    )
-      .sort({ createdAt: -1, _id: -1 })
-      .limit(limit)
-      .lean();
-
-    return serialize(products);
-  } catch (error: any) {
-    console.error("Error getting featured products:", error);
-    return [];
-  }
-}
-
-// ==========================================
-// READ RELATED (for product detail page)
-// ==========================================
-export async function getRelatedProducts(
-  category: string,
-  excludeId: string,
-  limit = 3,
-) {
-  try {
-    await connectDB();
-
-    const products = await Product.find(
-      { category, _id: { $ne: excludeId } },
-      LISTING_PROJECTION,
-    )
-      .sort({ createdAt: -1, _id: -1 })
-      .limit(limit)
-      .lean();
-
-    return serialize(products);
-  } catch (error: any) {
-    console.error("Error getting related products:", error);
-    return [];
-  }
-}
-
-// ==========================================
-// READ HERO PRODUCT (for flagship hero section)
-// ==========================================
-export async function getHeroProduct(): Promise<ProductType | null> {
-  try {
-    await connectDB();
-
-    // 1. Prioritize active featured products with highest rating / newest drop
-    let product = await Product.findOne(
-      { isFeatured: true },
-      LISTING_PROJECTION,
-    )
-      .sort({ averageRating: -1, createdAt: -1, _id: -1 })
-      .lean();
-
-    // 2. Graceful fallback: if no featured product exists, pick the top-rated product
-    if (!product) {
-      product = await Product.findOne({}, LISTING_PROJECTION)
-        .sort({ averageRating: -1, createdAt: -1, _id: -1 })
-        .lean();
-    }
-
-    return product ? (serialize(product) as ProductType) : null;
-  } catch (error: any) {
-    console.error("Error getting hero product:", error);
-    return null;
-  }
-}
-
-// ==========================================
-// READ NEW ARRIVALS (for landing page carousel)
-// ==========================================
-export async function getNewArrivals(limit = 8): Promise<ProductType[]> {
-  try {
-    await connectDB();
-
-    const products = await Product.find({}, LISTING_PROJECTION)
-      .sort({ createdAt: -1, _id: -1 })
-      .limit(limit)
-      .lean();
-
-    return serialize(products) as ProductType[];
-  } catch (error: any) {
-    console.error("Error getting new arrivals:", error);
-    return [];
-  }
-}
-
-// ==========================================
-// READ CATEGORY SHOWCASE (for visual bento cards)
-// Sourced strictly from PRODUCT_CATEGORIES SSOT
-// ==========================================
-export async function getCategoryShowcaseData(): Promise<CategoryShowcaseItem[]> {
-  try {
-    await connectDB();
-
-    const results = await Promise.all(
-      PRODUCT_CATEGORIES.map(async (cat) => {
-        const regex = new RegExp(`^${escapeRegex(cat.name)}$`, "i");
-        const [count, sampleProduct] = await Promise.all([
-          Product.countDocuments({ category: regex }),
-          Product.findOne(
-            { category: regex },
-            { images: 1, isFeatured: 1, averageRating: 1 },
-          )
-            .sort({ isFeatured: -1, averageRating: -1, createdAt: -1, _id: -1 })
-            .lean(),
-        ]);
-
-        return {
-          ...cat,
-          itemCount: count,
-          featuredImage:
-            sampleProduct?.images && sampleProduct.images.length > 0
-              ? sampleProduct.images[0]
-              : null,
-        };
-      }),
-    );
-
-    return results;
-  } catch (error: any) {
-    console.error("Error getting category showcase data:", error);
-    return PRODUCT_CATEGORIES.map((cat) => ({
-      ...cat,
-      itemCount: 0,
-      featuredImage: null,
-    }));
-  }
-}
-

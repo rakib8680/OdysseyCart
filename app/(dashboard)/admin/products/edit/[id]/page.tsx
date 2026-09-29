@@ -1,5 +1,5 @@
 import AddProductForm from "@/components/AddProductForm";
-import { getProductById } from "@/app/actions/products";
+import { getProductById } from "@/lib/data/products";
 import { redirect } from "next/navigation";
 
 export default async function AdminEditProductPage({
