@@ -27,7 +27,7 @@ export function NewsletterCTA() {
     <section className="relative w-full pt-60">
       {/* Background Split: Top half white, bottom half slate-950  */}
       <div className="absolute inset-0 flex flex-col">
-        <div className="h-1/2 w-full bg-slate-50" />
+        <div className="h-1/2 w-full bg-white" />
         <div className="h-1/2 w-full bg-slate-950" />
       </div>
 

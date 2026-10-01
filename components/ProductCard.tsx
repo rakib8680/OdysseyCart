@@ -126,11 +126,9 @@ export default function ProductCard({
       <div className="p-2.5 sm:p-4 flex flex-col justify-between flex-1 space-y-1 sm:space-y-2 bg-white">
         {/* Brand, Title & Swatches */}
         <div>
-          {product.brand && (
-            <p className="text-[10px] sm:text-xs text-slate-400 font-medium mb-0.5 truncate sm:uppercase sm:tracking-wider">
-              {product.brand}
-            </p>
-          )}
+          <p className="text-[10px] sm:text-xs text-slate-400 font-medium mb-0.5 truncate sm:uppercase sm:tracking-wider min-h-3.5 sm:min-h-4">
+            {product.brand || "\u00A0"}
+          </p>
           <Link
             href={`/items/${product.slug}`}
             className="block transition-colors"

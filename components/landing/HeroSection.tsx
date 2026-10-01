@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Star, Truck, ShieldCheck, RotateCcw } from "lucide-react";
+import { ArrowRight, Star, Users, CheckCircle2 } from "lucide-react";
 import { getFeaturedProducts, getNewArrivals } from "@/lib/data/products";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/utils/pricing";
 import { getProductImageUrl } from "@/lib/utils/productImages";
@@ -74,19 +74,19 @@ export async function HeroSection() {
               </Link>
             </div>
 
-            {/* Trust Signals Strip */}
+            {/* Social Proof & Conversion Signals */}
             <div className="pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-5 sm:gap-6 text-xs text-slate-500 font-medium">
               <div className="flex items-center gap-1.5">
-                <Truck className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Free Express over $100</span>
+                <Star className="w-4 h-4 text-amber-500 fill-amber-400 shrink-0" />
+                <span className="font-semibold text-slate-800">4.9 / 5 Rating</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <RotateCcw className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>30-Day Free Returns</span>
+                <Users className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>1,200+ Verified Buyers</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Lifetime Guarantee</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Quality Tested</span>
               </div>
             </div>
           </div>

@@ -330,7 +330,7 @@ export interface CarouselProgressProps
 
 export function CarouselProgress({
   dragText = "Drag or use arrows to browse",
-  swipeText = "Swipe to explore",
+  swipeText = "Swipe",
   className,
   ...props
 }: CarouselProgressProps) {
