@@ -68,8 +68,8 @@ export default function ProductCard({
         className
       )}
     >
-      {/* 1. Product Image Wrapper (Aspect 4:3 Mobile, Square Desktop) */}
-      <div className="w-full aspect-4/3 sm:aspect-square bg-slate-50 overflow-hidden relative border-b border-slate-100/60">
+      {/* 1. Product Image Wrapper (Aspect Square) */}
+      <div className="w-full aspect-square bg-slate-50 overflow-hidden relative border-b border-slate-100/60">
         {/* Dynamic Status Badges (Scaled down on mobile) */}
         <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 z-10 scale-75 sm:scale-90 origin-top-left">
           <ProductStatusBadges product={product} />
@@ -127,7 +127,7 @@ export default function ProductCard({
         {/* Brand, Title & Swatches */}
         <div>
           {product.brand && (
-            <p className="text-[10px] sm:text-xs text-slate-400 font-medium mb-0.5 truncate uppercase tracking-wider">
+            <p className="text-[10px] sm:text-xs text-slate-400 font-medium mb-0.5 truncate sm:uppercase sm:tracking-wider">
               {product.brand}
             </p>
           )}
@@ -135,7 +135,7 @@ export default function ProductCard({
             href={`/items/${product.slug}`}
             className="block transition-colors"
           >
-            <h3 className="text-xs sm:text-base font-bold text-slate-900 line-clamp-2 leading-snug min-h-7 sm:min-h-11">
+            <h3 className="text-xs sm:text-base font-bold text-slate-900 line-clamp-1 sm:line-clamp-2 leading-snug sm:min-h-11">
               {product.title}
             </h3>
           </Link>
@@ -151,15 +151,15 @@ export default function ProductCard({
         {/* Pricing & Responsive Ratings */}
         <div className="space-y-1 pt-0.5">
           <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-            <span className="font-extrabold text-sm sm:text-lg text-slate-900">
+            <span className="font-extrabold text-xs sm:text-lg text-slate-900">
               {formatPrice(discountedPrice)}
             </span>
             {hasDiscount && (
               <>
-                <span className="text-[11px] sm:text-xs text-slate-400 line-through">
+                <span className="text-[10px] sm:text-xs text-slate-400 line-through">
                   {formatPrice(product.price)}
                 </span>
-                <span className="bg-rose-50 text-rose-600 border border-rose-200/60 text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full">
+                <span className="bg-red-500 text-white sm:bg-rose-50 sm:text-rose-600 sm:border sm:border-rose-200/60 text-[9px] sm:text-xs font-bold px-1 sm:px-1.5 py-0.2 sm:py-0.5 rounded-full">
                   -{product.discount}%
                 </span>
               </>
