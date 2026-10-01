@@ -13,7 +13,14 @@ export default function MainLayout({
     <>
       <AnnouncementBar />
       <Navbar />
-      <main className="flex-1 w-full">{children}</main>
+      <div className="relative isolate flex-1 flex flex-col">
+        {/* Ambient Brand Top-Wash — signature emerald gradient across all routes */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-120 bg-ambient-top -z-10"
+        />
+        <main className="flex-1 w-full">{children}</main>
+      </div>
       <Footer />
       <Suspense>
         <CartDrawer />

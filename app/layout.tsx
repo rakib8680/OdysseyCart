@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <body
-        className={`${inter.className} bg-slate-50 text-slate-900 font-sans flex flex-col min-h-screen`}
+        className={`${inter.className} bg-white text-slate-900 font-sans flex flex-col min-h-screen`}
       >
         <Providers>{children}</Providers>
       </body>

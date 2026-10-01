@@ -8,7 +8,7 @@ import { HOMEPAGE_TOKENS } from "@/lib/config/homepage";
  */
 export function HeroSectionSkeleton() {
   return (
-    <section className="relative w-full overflow-hidden bg-linear-to-b from-emerald-50/70 via-slate-50/40 via-45% to-white border-b border-slate-200/60 py-12 sm:py-16 lg:py-20">
+    <section className="relative w-full overflow-hidden bg-ambient-top border-b border-slate-200/60 py-12 sm:py-16 lg:py-20">
       <div className={HOMEPAGE_TOKENS.container}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center animate-pulse">
           {/* Left Column Skeleton */}

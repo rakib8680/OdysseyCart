@@ -45,9 +45,9 @@ const values = [
 
 export default function AboutPage() {
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen">
       {/* Hero */}
-      <section className="bg-slate-50 border-b border-slate-100">
+      <section className="border-b border-slate-200/60">
         <div className="app-container py-24 md:py-32">
           <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase text-emerald-600 mb-6">
             About OdysseyCart
