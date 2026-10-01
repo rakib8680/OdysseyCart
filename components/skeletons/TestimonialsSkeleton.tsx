@@ -14,32 +14,37 @@ export function TestimonialsSkeleton() {
           <div className="w-80 sm:w-96 h-4 bg-slate-200 rounded-md mx-auto" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {[...Array(3)].map((_, i) => (
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-8">
+          {[...Array(6)].map((_, i) => (
             <div
               key={i}
-              className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 space-y-4 animate-pulse"
+              className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border border-slate-200/80 flex flex-col justify-between animate-pulse"
             >
-              <div className="flex justify-between items-center">
-                <div className="w-24 h-4 bg-slate-200 rounded-md" />
-                <div className="w-20 h-5 bg-slate-200 rounded-full" />
-              </div>
-              <div className="w-3/4 h-5 bg-slate-200 rounded-md" />
-              <div className="space-y-2">
-                <div className="w-full h-3.5 bg-slate-200 rounded-md" />
-                <div className="w-5/6 h-3.5 bg-slate-200 rounded-md" />
-                <div className="w-2/3 h-3.5 bg-slate-200 rounded-md" />
-              </div>
-              <div className="pt-4 border-t border-slate-100 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-slate-200" />
-                <div className="space-y-1">
-                  <div className="w-20 h-4 bg-slate-200 rounded-md" />
-                  <div className="w-16 h-3 bg-slate-200 rounded-md" />
+              <div>
+                <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1.5 sm:gap-2">
+                  <div className="w-16 sm:w-24 h-3 sm:h-4 bg-slate-200 rounded-md" />
+                  <div className="w-12 xs:w-16 sm:w-20 h-4 sm:h-5 bg-slate-200 rounded-full" />
+                </div>
+                <div className="w-3/4 h-3.5 sm:h-5 bg-slate-200 rounded-md mt-2 sm:mt-4 mb-2" />
+                <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-6">
+                  <div className="w-full h-2.5 sm:h-3.5 bg-slate-200 rounded-md" />
+                  <div className="w-5/6 h-2.5 sm:h-3.5 bg-slate-200 rounded-md" />
+                  <div className="w-2/3 h-2.5 sm:h-3.5 bg-slate-200 rounded-md" />
                 </div>
               </div>
-              <div className="mt-3 pt-3 border-t border-slate-50 flex items-center justify-between">
-                <div className="w-28 h-3 bg-slate-200 rounded-md" />
-                <div className="w-12 h-3 bg-slate-200 rounded-md" />
+
+              <div>
+                <div className="pt-2.5 sm:pt-4 border-t border-slate-100 flex items-center gap-2 sm:gap-3">
+                  <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-slate-200 shrink-0" />
+                  <div className="space-y-1 min-w-0">
+                    <div className="w-14 sm:w-20 h-3 sm:h-4 bg-slate-200 rounded-md" />
+                    <div className="w-10 sm:w-16 h-2 sm:h-3 bg-slate-200 rounded-md" />
+                  </div>
+                </div>
+                <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-slate-50 flex items-center justify-between">
+                  <div className="w-16 sm:w-28 h-2.5 sm:h-3 bg-slate-200 rounded-md" />
+                  <div className="w-6 sm:w-12 h-2.5 sm:h-3 bg-slate-200 rounded-md" />
+                </div>
               </div>
             </div>
           ))}

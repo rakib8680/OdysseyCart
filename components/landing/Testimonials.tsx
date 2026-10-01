@@ -35,7 +35,7 @@ export async function Testimonials() {
 
         {/* Dynamic Reviews Grid */}
         {reviews && reviews.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-8">
             {reviews.map((review) => {
               const initial =
                 review.userName?.trim().charAt(0).toUpperCase() || "C";
@@ -43,41 +43,44 @@ export async function Testimonials() {
               return (
                 <div
                   key={review._id}
-                  className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-0.5"
+                  className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border border-slate-200/80 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-0.5"
                 >
                   <div>
                     {/* Top Row: Stars + Verified Badge */}
-                    <div className="flex items-center justify-between gap-2">
-                      <StarRating rating={review.rating} size="sm" />
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
-                        <ShieldCheck className="w-3 h-3 text-emerald-600 shrink-0" />
-                        <span>Verified Buyer</span>
+                    <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1.5 sm:gap-2">
+                      <div className="scale-90 sm:scale-100 origin-left">
+                        <StarRating rating={review.rating} size="sm" />
+                      </div>
+                      <span className="inline-flex items-center gap-1 text-[9px] sm:text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 sm:px-2.5 py-0.5 rounded-full border border-emerald-100 w-fit">
+                        <ShieldCheck className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-600 shrink-0" />
+                        <span className="hidden xs:inline">Verified Buyer</span>
+                        <span className="xs:hidden">Verified</span>
                       </span>
                     </div>
 
                     {/* Review Title */}
-                    <h3 className="font-bold text-slate-900 text-base sm:text-lg mt-4 mb-2 truncate group-hover:text-emerald-700 transition-colors">
+                    <h3 className="font-bold text-slate-900 text-xs sm:text-base lg:text-lg mt-2 sm:mt-4 mb-1 sm:mb-2 truncate group-hover:text-emerald-700 transition-colors">
                       {review.title}
                     </h3>
 
                     {/* Review Excerpt */}
-                    <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 italic mb-6">
+                    <p className="text-slate-600 text-xs sm:text-sm leading-snug sm:leading-relaxed line-clamp-3 italic mb-3 sm:mb-6">
                       &ldquo;{review.body}&rdquo;
                     </p>
                   </div>
 
                   {/* Reviewer Details + Product Tag */}
-                  <div className="pt-4 border-t border-slate-100">
+                  <div className="pt-2.5 sm:pt-4 border-t border-slate-100">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-xs text-slate-700 uppercase shrink-0">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                        <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-[10px] sm:text-xs text-slate-700 uppercase shrink-0">
                           {initial}
                         </div>
-                        <div>
-                          <p className="font-semibold text-xs sm:text-sm text-slate-900">
+                        <div className="min-w-0">
+                          <p className="font-semibold text-xs sm:text-sm text-slate-900 truncate">
                             {review.userName}
                           </p>
-                          <p className="text-[11px] text-slate-400">
+                          <p className="text-[10px] sm:text-[11px] text-slate-400">
                             {formatDate(review.createdAt, "short")}
                           </p>
                         </div>
@@ -88,19 +91,19 @@ export async function Testimonials() {
                     {review.productSlug ? (
                       <Link
                         href={`/items/${review.productSlug}`}
-                        className="mt-3 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500 hover:text-emerald-600 transition-colors group/prod"
+                        className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-slate-50 flex items-center justify-between text-[11px] sm:text-xs text-slate-500 hover:text-emerald-600 transition-colors group/prod"
                       >
-                        <span className="truncate max-w-50 sm:max-w-60 font-medium text-slate-700 group-hover/prod:text-emerald-600">
+                        <span className="truncate max-w-21.25 xs:max-w-28 sm:max-w-50 font-medium text-slate-700 group-hover/prod:text-emerald-600">
                           {review.productTitle}
                         </span>
-                        <span className="text-[11px] font-bold text-emerald-600 shrink-0 flex items-center gap-0.5">
+                        <span className="text-[10px] sm:text-[11px] font-bold text-emerald-600 shrink-0 flex items-center gap-0.5">
                           View{" "}
-                          <ArrowRight className="w-3 h-3 group-hover/prod:translate-x-0.5 transition-transform" />
+                          <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover/prod:translate-x-0.5 transition-transform" />
                         </span>
                       </Link>
                     ) : review.productTitle ? (
-                      <div className="mt-3 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500">
-                        <span className="truncate max-w-50 sm:max-w-60 font-medium text-slate-700">
+                      <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-slate-50 flex items-center justify-between text-[11px] sm:text-xs text-slate-500">
+                        <span className="truncate max-w-21.25 xs:max-w-28 sm:max-w-50 font-medium text-slate-700">
                           {review.productTitle}
                         </span>
                       </div>
