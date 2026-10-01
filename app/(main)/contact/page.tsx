@@ -16,7 +16,7 @@ export const metadata: Metadata = constructMetadata({
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950 py-12 px-4 sm:px-6 lg:px-8 transition-colors">
-      <div className="max-w-7xl mx-auto space-y-12">
+      <div className="app-container space-y-12">
         {/* ── Editorial Header Banner ── */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100/80 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-semibold uppercase tracking-wider">

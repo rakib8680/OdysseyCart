@@ -31,7 +31,7 @@ export function NewsletterCTA() {
         <div className="h-1/2 w-full bg-slate-950" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bottom-32">
+      <div className="relative z-10 app-container bottom-32">
         {/* The Floating Dark Island */}
         <div className="relative bg-slate-900 rounded-[3rem] p-10 md:p-20 shadow-2xl overflow-hidden isolation-auto">
           {/* Decorative Glowing Spheres */}

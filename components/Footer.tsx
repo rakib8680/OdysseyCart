@@ -11,8 +11,8 @@ import { PRODUCT_CATEGORIES } from "@/lib/config/products";
 
 export function Footer() {
   return (
-    <footer className="w-full bg-slate-950 text-slate-400 pt-20 pb-8 px-4 sm:px-6 lg:px-8 border-t border-slate-900">
-      <div className="max-w-7xl mx-auto">
+    <footer className="w-full bg-slate-950 text-slate-400 pt-20 pb-8 border-t border-slate-900">
+      <div className="app-container">
         {/* Main Grid: 6 Columns */}
         <div className="grid grid-cols-2 md:grid-cols-6 gap-x-8 gap-y-16 mb-16">
           {/* Brand & Socials (Spans 2 columns) */}

@@ -47,7 +47,7 @@ export function StickyBuyBar({
             className,
           )}
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-3 sm:gap-6">
+          <div className="app-container py-2.5 sm:py-3 flex items-center justify-between gap-3 sm:gap-6">
             {/* Left: Thumbnail & Title Info */}
             <div className="flex items-center gap-3 min-w-0 flex-1 sm:flex-initial">
               <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg overflow-hidden bg-slate-50 border border-slate-200/80 shrink-0 flex items-center justify-center">

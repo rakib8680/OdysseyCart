@@ -12,9 +12,9 @@ export const HOMEPAGE_TOKENS = {
   sectionPadding: "py-16 sm:py-20 lg:py-24",
 
   /**
-   * Standardized horizontal constraint container.
+   * Standardized horizontal constraint container (backed by --app-container-max CSS token).
    */
-  container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+  container: "app-container",
 
   /**
    * Standardized card border radius across all cards (product, category, review).

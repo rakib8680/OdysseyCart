@@ -45,7 +45,7 @@ export default async function ItemsPage({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen">
-      <div className="container max-w-7xl mx-auto px-4 md:px-8 pt-8 pb-36">
+      <div className="app-container pt-8 pb-36">
         {/* Static Shell: Hero banner (Breadcrumbs, Title, Subtitle) renders instantly in 0ms */}
         <CollectionHero
           activeCategory={(params.category as string) || undefined}

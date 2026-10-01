@@ -48,7 +48,7 @@ export default function AboutPage() {
     <div className="bg-white min-h-screen">
       {/* Hero */}
       <section className="bg-slate-50 border-b border-slate-100">
-        <div className="max-w-5xl mx-auto px-6 md:px-8 py-24 md:py-32">
+        <div className="app-container py-24 md:py-32">
           <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase text-emerald-600 mb-6">
             About OdysseyCart
           </span>
@@ -68,7 +68,7 @@ export default function AboutPage() {
 
       {/* Stats */}
       <section className="border-b border-slate-100">
-        <div className="max-w-5xl mx-auto px-6 md:px-8 py-16">
+        <div className="app-container py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
@@ -86,7 +86,7 @@ export default function AboutPage() {
 
       {/* Mission */}
       <section className="border-b border-slate-100">
-        <div className="max-w-5xl mx-auto px-6 md:px-8 py-20">
+        <div className="app-container py-20">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
               <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase text-emerald-600 mb-4">
@@ -121,7 +121,7 @@ export default function AboutPage() {
 
       {/* Values */}
       <section className="bg-slate-50">
-        <div className="max-w-5xl mx-auto px-6 md:px-8 py-20">
+        <div className="app-container py-20">
           <div className="text-center mb-14">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase text-emerald-600 mb-4">
               Our Values

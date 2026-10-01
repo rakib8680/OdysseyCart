@@ -21,7 +21,7 @@ export function TrustStrip({
       aria-label="Customer Guarantees and Services"
       className={`relative w-full bg-white border-b border-slate-200/80 shadow-xs ${className}`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="app-container py-6 sm:py-8">
         <ul
           role="list"
           className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x md:divide-slate-100"

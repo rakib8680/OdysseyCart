@@ -104,7 +104,7 @@ export function AnnouncementBar() {
         isHoveredRef.current = false;
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between text-xs font-medium">
+      <div className="app-container py-2 flex items-center justify-between text-xs font-medium">
         {/* Previous button (desktop) */}
         <button
           type="button"
