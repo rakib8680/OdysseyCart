@@ -50,11 +50,11 @@ export function ProductCarousel({
             key={product._id}
             className="w-65 sm:w-70 lg:w-75 shrink-0"
           >
-            <div
-              className={`h-full bg-white ${HOMEPAGE_TOKENS.cardRadius} border border-slate-200/80 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group select-none`}
-            >
-              <ProductCard product={product} showMobileAction={false} />
-            </div>
+            <ProductCard
+              product={product}
+              showMobileAction={false}
+              className={`h-full select-none ${HOMEPAGE_TOKENS.cardRadius} border border-slate-200/80 shadow-xs hover:shadow-xl`}
+            />
           </CarouselItem>
         ))}
       </CarouselContent>

@@ -33,12 +33,11 @@ export async function OnSale() {
         {/* 4-Column Responsive Deals Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
           {products.map((product) => (
-            <div
+            <ProductCard
               key={product._id}
-              className={`bg-white ${HOMEPAGE_TOKENS.cardRadius} border border-slate-200/80 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col`}
-            >
-              <ProductCard product={product} />
-            </div>
+              product={product}
+              className={`${HOMEPAGE_TOKENS.cardRadius} border border-slate-200/80 shadow-xs hover:shadow-xl`}
+            />
           ))}
         </div>
       </div>

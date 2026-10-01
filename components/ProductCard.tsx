@@ -13,6 +13,7 @@ import { Product } from "@/lib/types/product";
 import { getProductImageUrl } from "@/lib/utils/productImages";
 import { useImageFallback } from "@/hooks/useImageFallback";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/utils/pricing";
+import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
   product: Product;
@@ -20,6 +21,7 @@ interface ProductCardProps {
   onQuickView?: (product: Product) => void;
   showMobileAction?: boolean;
   aspectRatio?: "square" | "4/3";
+  className?: string;
 }
 
 /**
@@ -33,6 +35,7 @@ export default function ProductCard({
   onQuickView,
   showMobileAction = true,
   aspectRatio = "square",
+  className,
 }: ProductCardProps) {
   const router = useRouter();
   const [hoverImage, setHoverImage] = useState<string | null>(null);
@@ -57,7 +60,10 @@ export default function ProductCard({
   return (
     <div
       onClick={handleCardClick}
-      className="group h-full transition-all duration-300 rounded-[inherit] overflow-hidden flex flex-col bg-white cursor-pointer"
+      className={cn(
+        "group h-full transition-all duration-300 rounded-xl overflow-hidden flex flex-col bg-white cursor-pointer",
+        className
+      )}
     >
       {/* 1. Product Image Wrapper (Aspect 4:3 Mobile, Square Desktop) */}
       <div className="w-full aspect-4/3 sm:aspect-square bg-slate-50 overflow-hidden relative border-b border-slate-100/60">
