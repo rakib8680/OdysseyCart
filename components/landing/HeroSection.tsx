@@ -130,7 +130,7 @@ export async function HeroSection() {
                       <div className="flex items-center gap-1.5 text-xs text-amber-500">
                         <Star className="w-3.5 h-3.5 fill-current" />
                         <span className="font-semibold text-slate-800">
-                          {primaryProduct.averageRating.toFixed(1)}
+                          {(primaryProduct.averageRating ?? 0).toFixed(1)}
                         </span>
                         <span className="text-slate-400">
                           ({primaryProduct.numReviews} reviews)

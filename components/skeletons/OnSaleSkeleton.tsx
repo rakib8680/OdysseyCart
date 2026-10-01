@@ -22,7 +22,7 @@ export function OnSaleSkeleton() {
 
         {/* 4-Column Grid Skeletons */}
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
-          {[...Array(4)].map((_, i) => (
+          {[...Array(8)].map((_, i) => (
             <div
               key={i}
               className="bg-white rounded-xl p-3 sm:p-4 space-y-3 sm:space-y-4 animate-pulse"
