@@ -22,7 +22,9 @@ export async function HeroSection() {
   const primaryProduct = products[0] || null;
   const companionProducts = products.slice(1, 4);
 
-  const primaryDiscount = Boolean(primaryProduct && primaryProduct.discount > 0);
+  const primaryDiscount = Boolean(
+    primaryProduct && primaryProduct.discount > 0,
+  );
   const primaryPrice = primaryProduct
     ? primaryDiscount
       ? calculateDiscountedPrice(primaryProduct.price, primaryProduct.discount)
@@ -78,7 +80,9 @@ export async function HeroSection() {
             <div className="pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-5 sm:gap-6 text-xs text-slate-500 font-medium">
               <div className="flex items-center gap-1.5">
                 <Star className="w-4 h-4 text-amber-500 fill-amber-400 shrink-0" />
-                <span className="font-semibold text-slate-800">4.9 / 5 Rating</span>
+                <span className="font-semibold text-slate-800">
+                  4.9 / 5 Rating
+                </span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Users className="w-4 h-4 text-emerald-600 shrink-0" />
