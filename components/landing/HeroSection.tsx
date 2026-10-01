@@ -1,6 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, Star, Users, CheckCircle2 } from "lucide-react";
-import { getFeaturedProducts, getNewArrivals } from "@/lib/data/products";
+import { ArrowRight, Star, Users, CheckCircle2, Sparkles } from "lucide-react";
+import {
+  getProductListings,
+  getFeaturedProducts,
+  getNewArrivals,
+} from "@/lib/data/products";
+import { PRODUCT_CATEGORIES } from "@/lib/config/products";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/utils/pricing";
 import { getProductImageUrl } from "@/lib/utils/productImages";
 import { HOMEPAGE_TOKENS } from "@/lib/config/homepage";
@@ -8,19 +13,41 @@ import { HOMEPAGE_TOKENS } from "@/lib/config/homepage";
 /**
  * HeroSection Component (Server Component)
  *
- * High-converting e-commerce promotional campaign hero.
- * Features modern typography, clear commercial CTAs, and a multi-product
- * preview stage showcasing the flagship item alongside companion trending products.
+ * Premier Multi-Department Commercial Retail Storefront Hero.
+ * Welcomes shoppers with an inclusive lifestyle narrative, department gateway
+ * quick-jump pills, and a balanced multi-department visual showcase (Furniture + Tech).
  */
 export async function HeroSection() {
-  // Fetch flagship collection items (fallback to new arrivals if featured is empty)
-  let products = await getFeaturedProducts(4);
-  if (!products || products.length === 0) {
-    products = await getNewArrivals(4);
+  // Query representative items across distinct departments for visual balance
+  const [furnitureProducts, techProducts] = await Promise.all([
+    getProductListings({
+      filter: { category: "Furniture" },
+      sort: { isFeatured: -1, averageRating: -1, createdAt: -1 },
+      limit: 1,
+    }),
+    getProductListings({
+      filter: { category: "Tech" },
+      sort: { isFeatured: -1, averageRating: -1, createdAt: -1 },
+      limit: 1,
+    }),
+  ]);
+
+  let primaryProduct = furnitureProducts[0] || null;
+  let secondaryProduct = techProducts[0] || null;
+
+  // Graceful fallback to featured products if a category has no inventory
+  if (!primaryProduct || !secondaryProduct) {
+    const featured = await getFeaturedProducts(2);
+    if (!primaryProduct) primaryProduct = featured[0] || null;
+    if (!secondaryProduct) secondaryProduct = featured[1] || null;
   }
 
-  const primaryProduct = products[0] || null;
-  const companionProducts = products.slice(1, 4);
+  // Secondary fallback to newest catalog arrivals
+  if (!primaryProduct) {
+    const arrivals = await getNewArrivals(2);
+    primaryProduct = arrivals[0] || null;
+    secondaryProduct = arrivals[1] || null;
+  }
 
   const primaryDiscount = Boolean(
     primaryProduct && primaryProduct.discount > 0,
@@ -31,53 +58,85 @@ export async function HeroSection() {
       : primaryProduct.price
     : 0;
 
+  const secondaryDiscount = Boolean(
+    secondaryProduct && secondaryProduct.discount > 0,
+  );
+  const secondaryPrice = secondaryProduct
+    ? secondaryDiscount
+      ? calculateDiscountedPrice(
+          secondaryProduct.price,
+          secondaryProduct.discount,
+        )
+      : secondaryProduct.price
+    : 0;
+
   return (
-    <section className="relative w-full overflow-hidden bg-linear-to-b from-slate-50/80 via-white to-slate-50/50 border-b border-slate-200/60 py-12 sm:py-16 lg:py-20">
+    <section className="relative w-full overflow-hidden bg-linear-to-b from-emerald-50/70 via-slate-50/40 via-45% to-white border-b border-slate-200/60 py-12 sm:py-16 lg:py-20">
       <div className={HOMEPAGE_TOKENS.container}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* =============================================================== */}
-          {/* LEFT COLUMN: CAMPAIGN HEADLINE, VALUE PROPS & CTAs             */}
+          {/* LEFT COLUMN: RETAIL BRAND INVITATION & DEPARTMENT GATEWAYS      */}
           {/* =============================================================== */}
           <div className="lg:col-span-6 space-y-6 sm:space-y-7 text-center lg:text-left">
-            {/* Campaign Kicker Pill */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-800 rounded-full text-xs font-semibold uppercase tracking-wider border border-emerald-200/60 shadow-2xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
-              <span>Curated 2026 Edition • Free Express Shipping</span>
+            {/* Seasonal Collection Kicker Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-linear-to-r from-emerald-50 via-teal-50/60 to-emerald-50/40 text-emerald-900 rounded-full text-xs font-semibold uppercase tracking-wider border border-emerald-200/70 shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span>Spring 2026 Collection • Free Shipping Over $100</span>
             </div>
 
-            {/* Headline */}
+            {/* Inclusive Multi-Category Headline */}
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.1] sm:leading-[1.08]">
-              Modern Design for <br className="hidden sm:inline" />
-              <span className="text-emerald-600">Everyday Living.</span>
+              Thoughtfully Curated for <br className="hidden sm:inline" />
+              <span className="bg-linear-to-r from-emerald-800 via-emerald-600 to-teal-800 bg-clip-text text-transparent">
+                Home, Work & Life.
+              </span>
             </h1>
 
-            {/* Subtitle */}
+            {/* Lifestyle Subtitle */}
             <p className="text-slate-600 text-sm sm:text-base lg:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
-              Explore our curated collection of architectural desk essentials,
-              ergonomic living furniture, and precision-engineered audio gear.
-              Free express delivery on all orders over $100.
+              Discover timeless furniture, ambient lighting, precision audio,
+              and daily essentials designed to elevate your everyday spaces.
             </p>
 
-            {/* Action CTAs */}
+            {/* Commercial Action CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-1">
               <Link
                 href="/items"
-                className="w-full sm:w-auto px-7 py-3.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-all duration-200 flex items-center justify-center gap-2 group shadow-md shadow-slate-900/10 active:scale-95"
+                className="w-full sm:w-auto px-7 py-3.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all duration-200 flex items-center justify-center gap-2 group shadow-md shadow-slate-900/10 active:scale-95"
               >
-                <span>Shop Collection</span>
+                <span>Shop All Departments</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
 
               <Link
-                href="/items?sort=newest"
+                href="/items?sort=discount"
                 className="w-full sm:w-auto px-7 py-3.5 bg-white text-slate-900 border border-slate-200 hover:border-slate-400 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center active:scale-95 shadow-2xs"
               >
-                <span>New Arrivals</span>
+                <span>Explore Deals</span>
               </Link>
             </div>
 
+            {/* Department Quick-Jump Gateways (DRY from PRODUCT_CATEGORIES) */}
+            <div className="pt-1 sm:pt-2">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Browse by Department:
+              </p>
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
+                {PRODUCT_CATEGORIES.map((cat) => (
+                  <Link
+                    key={cat.id}
+                    href={cat.href}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100/80 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200/60 hover:border-emerald-200 text-xs font-semibold transition-all group"
+                  >
+                    <span>{cat.name}</span>
+                    <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-emerald-600 transition-colors" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+
             {/* Social Proof & Conversion Signals */}
-            <div className="pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-5 sm:gap-6 text-xs text-slate-500 font-medium">
+            <div className="pt-1 flex flex-wrap items-center justify-center lg:justify-start gap-5 sm:gap-6 text-xs text-slate-500 font-medium">
               <div className="flex items-center gap-1.5">
                 <Star className="w-4 h-4 text-amber-500 fill-amber-400 shrink-0" />
                 <span className="font-semibold text-slate-800">
@@ -90,36 +149,23 @@ export async function HeroSection() {
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Quality Tested</span>
+                <span>Satisfaction Guaranteed</span>
               </div>
             </div>
           </div>
 
           {/* =============================================================== */}
-          {/* RIGHT COLUMN: MULTI-PRODUCT CAMPAIGN SHOWCASE                  */}
+          {/* RIGHT COLUMN: MULTI-DEPARTMENT BALANCED SHOWCASE               */}
           {/* =============================================================== */}
           <div className="lg:col-span-6 flex flex-col gap-4">
             {primaryProduct ? (
               <>
-                {/* 1. Primary Spotlight Card */}
+                {/* 1. Primary Department Spotlight (Home & Living) */}
                 <Link
                   href={`/items/${primaryProduct.slug}`}
-                  className="group relative bg-white border border-slate-200/80 rounded-2xl shadow-md hover:shadow-xl hover:border-emerald-300 transition-all duration-300 overflow-hidden flex flex-col sm:flex-row"
+                  className="group relative bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-4 sm:gap-6 shadow-xs hover:shadow-xl hover:border-emerald-300 transition-all duration-300"
                 >
-                  {/* Category & Discount Badges */}
-                  <div className="absolute top-3 left-3 z-10 flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 bg-white/95 backdrop-blur-md text-[10px] font-bold uppercase tracking-wider text-slate-900 rounded-full shadow-2xs border border-slate-200/60">
-                      {primaryProduct.category}
-                    </span>
-                    {primaryDiscount && (
-                      <span className="px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-wider rounded-full shadow-2xs">
-                        -{primaryProduct.discount}%
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Primary Image Stage */}
-                  <div className="w-full sm:w-1/2 aspect-4/3 sm:aspect-square bg-slate-50 flex items-center justify-center p-6 overflow-hidden">
+                  <div className="w-28 sm:w-36 h-28 sm:h-36 rounded-xl bg-linear-to-b from-slate-50/90 via-slate-50 to-slate-100/70 flex items-center justify-center p-3 shrink-0 overflow-hidden border border-slate-200/60 shadow-2xs">
                     <img
                       src={getProductImageUrl(primaryProduct.images)}
                       alt={primaryProduct.title}
@@ -128,31 +174,31 @@ export async function HeroSection() {
                     />
                   </div>
 
-                  {/* Primary Product Info */}
-                  <div className="w-full sm:w-1/2 p-5 sm:p-6 flex flex-col justify-between border-t sm:border-t-0 sm:border-l border-slate-100 bg-white group-hover:bg-slate-50/50 transition-colors">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-1.5 text-xs text-amber-500">
-                        <Star className="w-3.5 h-3.5 fill-current" />
-                        <span className="font-semibold text-slate-800">
-                          {(primaryProduct.averageRating ?? 0).toFixed(1)}
+                  <div className="min-w-0 flex-1 flex flex-col justify-between h-full py-0.5">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="px-2.5 py-0.5 bg-amber-50 text-amber-800 border border-amber-200/60 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                          {primaryProduct.category}
                         </span>
-                        <span className="text-slate-400">
-                          ({primaryProduct.numReviews} reviews)
-                        </span>
+                        {primaryDiscount && (
+                          <span className="px-2 py-0.5 bg-emerald-600 text-white rounded-full text-[10px] font-bold uppercase tracking-wider shadow-2xs">
+                            -{primaryProduct.discount}%
+                          </span>
+                        )}
                       </div>
 
-                      <h2 className="text-base sm:text-lg font-bold text-slate-900 group-hover:text-emerald-700 transition-colors line-clamp-2">
+                      <h3 className="font-bold text-slate-900 text-sm sm:text-base group-hover:text-emerald-700 transition-colors line-clamp-1">
                         {primaryProduct.title}
-                      </h2>
+                      </h3>
 
-                      <p className="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
                         {primaryProduct.shortDescription}
                       </p>
                     </div>
 
-                    <div className="pt-4 flex items-center justify-between border-t border-slate-100">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-lg font-extrabold text-slate-900">
+                    <div className="pt-2 sm:pt-3 flex items-center justify-between border-t border-slate-100 mt-2">
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="font-extrabold text-sm sm:text-base text-slate-900">
                           {formatPrice(primaryPrice)}
                         </span>
                         {primaryDiscount && (
@@ -163,55 +209,71 @@ export async function HeroSection() {
                       </div>
 
                       <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
-                        <span>View</span>
-                        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                        <span>Explore</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                       </span>
                     </div>
                   </div>
                 </Link>
 
-                {/* 2. Companion Thumbnail Picks (Multi-Product Proof) */}
-                {companionProducts.length > 0 && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {companionProducts.map((item) => {
-                      const itemDiscount = item.discount > 0;
-                      const itemPrice = itemDiscount
-                        ? calculateDiscountedPrice(item.price, item.discount)
-                        : item.price;
+                {/* 2. Secondary Department Spotlight (Workspace & Tech / Accessories) */}
+                {secondaryProduct && (
+                  <Link
+                    href={`/items/${secondaryProduct.slug}`}
+                    className="group relative bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-4 sm:gap-6 shadow-xs hover:shadow-xl hover:border-emerald-300 transition-all duration-300"
+                  >
+                    <div className="w-28 sm:w-36 h-28 sm:h-36 rounded-xl bg-linear-to-b from-slate-50/90 via-slate-50 to-slate-100/70 flex items-center justify-center p-3 shrink-0 overflow-hidden border border-slate-200/60 shadow-2xs">
+                      <img
+                        src={getProductImageUrl(secondaryProduct.images)}
+                        alt={secondaryProduct.title}
+                        className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 ease-out"
+                      />
+                    </div>
 
-                      return (
-                        <Link
-                          key={item._id}
-                          href={`/items/${item.slug}`}
-                          className="group bg-white border border-slate-200/80 rounded-xl p-2.5 sm:p-3 flex items-center gap-3 hover:border-emerald-300 hover:shadow-sm transition-all"
-                        >
-                          <div className="w-12 h-12 rounded-lg bg-slate-50 p-1 shrink-0 overflow-hidden border border-slate-100">
-                            <img
-                              src={getProductImageUrl(item.images)}
-                              alt={item.title}
-                              className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform"
-                            />
-                          </div>
+                    <div className="min-w-0 flex-1 flex flex-col justify-between h-full py-0.5">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="px-2.5 py-0.5 bg-blue-50 text-blue-800 border border-blue-200/60 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                            {secondaryProduct.category}
+                          </span>
+                          {secondaryDiscount && (
+                            <span className="px-2 py-0.5 bg-emerald-600 text-white rounded-full text-[10px] font-bold uppercase tracking-wider shadow-2xs">
+                              -{secondaryProduct.discount}%
+                            </span>
+                          )}
+                        </div>
 
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider truncate">
-                              {item.category}
-                            </p>
-                            <h3 className="text-xs font-semibold text-slate-900 truncate group-hover:text-emerald-700 transition-colors">
-                              {item.title}
-                            </h3>
-                            <p className="text-xs font-bold text-slate-900 mt-0.5">
-                              {formatPrice(itemPrice)}
-                            </p>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
+                        <h3 className="font-bold text-slate-900 text-sm sm:text-base group-hover:text-emerald-700 transition-colors line-clamp-1">
+                          {secondaryProduct.title}
+                        </h3>
+
+                        <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
+                          {secondaryProduct.shortDescription}
+                        </p>
+                      </div>
+
+                      <div className="pt-2 sm:pt-3 flex items-center justify-between border-t border-slate-100 mt-2">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="font-extrabold text-sm sm:text-base text-slate-900">
+                            {formatPrice(secondaryPrice)}
+                          </span>
+                          {secondaryDiscount && (
+                            <span className="text-xs text-slate-400 line-through">
+                              {formatPrice(secondaryProduct.price)}
+                            </span>
+                          )}
+                        </div>
+
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
+                          <span>Explore</span>
+                          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
                 )}
               </>
             ) : (
-              /* Fallback if catalog is completely empty */
               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-12 text-center text-slate-400">
                 <p>New collections arriving soon.</p>
               </div>
