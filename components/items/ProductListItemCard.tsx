@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Product } from "@/lib/types/product";
 import { getProductImageUrl } from "@/lib/utils/productImages";
 import { useImageFallback } from "@/hooks/useImageFallback";
+import { useWishlistIds } from "@/hooks/useWishlistIds";
 
 import {
   formatPrice,
@@ -32,9 +33,11 @@ interface ProductListItemCardProps {
  */
 export function ProductListItemCard({
   product,
-  wishlistIds = [],
+  wishlistIds,
   onQuickView,
 }: ProductListItemCardProps) {
+  const hookWishlistIds = useWishlistIds();
+  const activeWishlistIds = wishlistIds ?? hookWishlistIds;
   const [hoverImage, setHoverImage] = useState<string | null>(null);
   const imageUrl = getProductImageUrl(product.images);
   const displayImage = hoverImage || imageUrl;
@@ -54,19 +57,19 @@ export function ProductListItemCard({
   const isOutOfStock = product.stockQuantity <= 0;
 
   return (
-    <div className="group border border-slate-200/80 hover:border-slate-300 hover:shadow-md transition-all duration-200 rounded-xl bg-white overflow-hidden flex flex-row items-stretch h-36 sm:h-52">
+    <div className="group border border-slate-200/80 hover:border-slate-300 hover:shadow-md transition-all duration-200 rounded-xl bg-white overflow-hidden flex flex-row items-stretch h-40 sm:h-52">
       {/* 1. Left Image Container */}
       <div className="relative w-28 sm:w-56 shrink-0 h-full bg-slate-50 border-r border-slate-100 overflow-hidden">
         {/* Dynamic Badges */}
-        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 scale-85 sm:scale-100 origin-top-left">
           <ProductStatusBadges product={product} />
         </div>
 
         {/* Action Overlay: Wishlist + Quick View */}
-        <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 flex flex-col gap-1.5">
+        <div className="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 z-10 flex flex-col gap-1.5 scale-75 sm:scale-100 origin-top-right">
           <HeartButton
             productId={product._id}
-            initialWishlisted={wishlistIds.includes(product._id)}
+            initialWishlisted={activeWishlistIds.includes(product._id)}
           />
           {onQuickView && (
             <button
@@ -91,7 +94,7 @@ export function ProductListItemCard({
       </div>
 
       {/* 2. Right Body Container */}
-      <div className="flex-1 min-w-0 p-3 sm:p-5 flex flex-col sm:flex-row justify-between gap-2 sm:gap-4 overflow-hidden">
+      <div className="flex-1 min-w-0 p-2.5 sm:p-5 flex flex-col sm:flex-row justify-between gap-1.5 sm:gap-4 overflow-hidden">
         {/* Product Info (Title, Category, Rating, Description) */}
         <div className="flex-1 min-w-0 flex flex-col justify-between space-y-1 sm:space-y-0">
           <div className="space-y-1">
@@ -183,15 +186,15 @@ export function ProductListItemCard({
               href={`/items/${product.slug}`}
               aria-label="View Details"
               title="View Details"
-              className="flex h-8 sm:h-9 w-8 sm:w-full bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors rounded-lg items-center justify-center text-xs font-semibold shrink-0"
+              className="flex h-7.5 sm:h-9 w-7.5 sm:w-full bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors rounded-lg items-center justify-center text-xs font-semibold shrink-0"
             >
               <span className="hidden sm:inline">View Details</span>
-              <Eye className="w-4 h-4 sm:hidden shrink-0 text-slate-600" />
+              <Eye className="w-3.5 h-3.5 sm:hidden shrink-0 text-slate-600" />
             </Link>
             <AddToCartButton
               product={product}
               compactText
-              className="h-8 sm:h-9 px-2.5 sm:px-3 sm:w-full rounded-lg text-xs font-semibold shrink-0"
+              className="h-7.5 sm:h-9 px-2.5 sm:px-3 sm:w-full rounded-lg text-xs font-semibold shrink-0"
             />
           </div>
         </div>

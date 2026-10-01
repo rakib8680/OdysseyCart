@@ -58,14 +58,14 @@ export function ProductCardSkeleton() {
  */
 export function ProductListItemSkeleton() {
   return (
-    <div className="border border-slate-200/80 rounded-xl bg-white overflow-hidden flex flex-row items-stretch h-36 sm:h-52 shadow-2xs">
+    <div className="border border-slate-200/80 rounded-xl bg-white overflow-hidden flex flex-row items-stretch h-40 sm:h-52 shadow-2xs">
       {/* Left Image Placeholder */}
       <div className="w-28 sm:w-56 shrink-0 h-full bg-slate-50 border-r border-slate-100 p-2.5">
         <Skeleton className="w-full h-full rounded-lg" />
       </div>
 
       {/* Right Body Content */}
-      <div className="flex-1 min-w-0 p-3 sm:p-5 flex flex-col sm:flex-row justify-between gap-2 sm:gap-4 overflow-hidden">
+      <div className="flex-1 min-w-0 p-2.5 sm:p-5 flex flex-col sm:flex-row justify-between gap-1.5 sm:gap-4 overflow-hidden">
         {/* Info Column */}
         <div className="flex-1 min-w-0 flex flex-col justify-between space-y-1 sm:space-y-0">
           <div className="space-y-1.5">
@@ -103,8 +103,8 @@ export function ProductListItemSkeleton() {
           </div>
 
           <div className="flex items-center gap-1.5 sm:flex-col sm:space-y-2 w-full sm:w-auto">
-            <Skeleton className="h-8 sm:h-9 w-8 sm:w-full rounded-lg" />
-            <Skeleton className="h-8 sm:h-9 flex-1 sm:w-full rounded-lg" />
+            <Skeleton className="h-7.5 sm:h-9 w-7.5 sm:w-full rounded-lg" />
+            <Skeleton className="h-7.5 sm:h-9 flex-1 sm:w-full rounded-lg" />
           </div>
         </div>
       </div>
