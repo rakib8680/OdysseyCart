@@ -25,7 +25,7 @@ export function OnSaleSkeleton() {
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
-              className={`bg-white ${HOMEPAGE_TOKENS.cardRadius} border border-slate-200/80 p-3 sm:p-4 space-y-3 sm:space-y-4 animate-pulse`}
+              className="bg-white rounded-xl p-3 sm:p-4 space-y-3 sm:space-y-4 animate-pulse"
             >
               <div className="w-full aspect-square bg-slate-100 rounded-xl" />
               <div className="space-y-2">

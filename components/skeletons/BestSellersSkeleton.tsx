@@ -24,7 +24,7 @@ export function BestSellersSkeleton() {
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
-              className={`w-52.5 xs:w-56.25 sm:w-67.5 md:w-75 lg:w-82.5 xl:w-87.5 shrink-0 bg-white ${HOMEPAGE_TOKENS.cardRadius} border border-slate-200/80 p-4 space-y-4 animate-pulse`}
+              className="w-52.5 xs:w-56.25 sm:w-67.5 md:w-75 lg:w-82.5 xl:w-87.5 shrink-0 bg-white rounded-xl p-4 space-y-4 animate-pulse"
             >
               <div className="w-full aspect-square bg-slate-100 rounded-xl" />
               <div className="space-y-2">

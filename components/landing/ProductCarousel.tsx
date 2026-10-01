@@ -11,7 +11,6 @@ import {
   CarouselProgress,
 } from "@/components/ui/Carousel";
 import type { Product } from "@/lib/types/product";
-import { HOMEPAGE_TOKENS } from "@/lib/config/homepage";
 
 export interface ProductCarouselProps {
   products: Product[];
@@ -53,7 +52,7 @@ export function ProductCarousel({
             <ProductCard
               product={product}
               showMobileAction={false}
-              className={`h-full select-none ${HOMEPAGE_TOKENS.cardRadius} border border-slate-200/80 shadow-xs hover:shadow-xl`}
+              className="h-full select-none"
             />
           </CarouselItem>
         ))}

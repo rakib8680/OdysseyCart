@@ -12,6 +12,7 @@ import { Eye } from "lucide-react";
 import { Product } from "@/lib/types/product";
 import { getProductImageUrl } from "@/lib/utils/productImages";
 import { useImageFallback } from "@/hooks/useImageFallback";
+import { useWishlistIds } from "@/hooks/useWishlistIds";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/utils/pricing";
 import { cn } from "@/lib/utils";
 
@@ -31,13 +32,15 @@ interface ProductCardProps {
  */
 export default function ProductCard({
   product,
-  wishlistIds = [],
+  wishlistIds,
   onQuickView,
   showMobileAction = true,
   aspectRatio = "square",
   className,
 }: ProductCardProps) {
   const router = useRouter();
+  const hookWishlistIds = useWishlistIds();
+  const activeWishlistIds = wishlistIds ?? hookWishlistIds;
   const [hoverImage, setHoverImage] = useState<string | null>(null);
   const imageUrl = getProductImageUrl(product.images);
   const displayImage = hoverImage || imageUrl;
@@ -79,7 +82,7 @@ export default function ProductCard({
         >
           <HeartButton
             productId={product._id}
-            initialWishlisted={wishlistIds.includes(product._id)}
+            initialWishlisted={activeWishlistIds.includes(product._id)}
           />
         </div>
 

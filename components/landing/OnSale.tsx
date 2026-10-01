@@ -36,7 +36,7 @@ export async function OnSale() {
             <ProductCard
               key={product._id}
               product={product}
-              className={`${HOMEPAGE_TOKENS.cardRadius} border border-slate-200/80 shadow-xs hover:shadow-xl`}
+              showMobileAction={false}
             />
           ))}
         </div>
