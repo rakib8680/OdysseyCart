@@ -79,14 +79,17 @@ export async function HeroSection() {
           {/* =============================================================== */}
           <div className="lg:col-span-6 space-y-6 sm:space-y-7 text-center lg:text-left">
             {/* Seasonal Collection Kicker Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-linear-to-r from-emerald-50 via-teal-50/60 to-emerald-50/40 text-emerald-900 rounded-full text-xs font-semibold uppercase tracking-wider border border-emerald-200/70 shadow-2xs">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              <span>Spring 2026 Collection • Free Shipping Over $100</span>
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 bg-linear-to-r from-emerald-50 via-teal-50/60 to-emerald-50/40 text-emerald-900 rounded-full text-[10.5px] sm:text-xs font-semibold uppercase tracking-normal sm:tracking-wider border border-emerald-200/70 shadow-2xs whitespace-nowrap max-w-full">
+              <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-600 shrink-0" />
+              <span>
+                Spring 2026 <span className="hidden sm:inline">Collection </span>• Free Shipping Over $100
+              </span>
             </div>
 
             {/* Inclusive Multi-Category Headline */}
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.1] sm:leading-[1.08]">
-              Thoughtfully Curated for <br className="hidden sm:inline" />
+              Thoughtfully <br className="hidden sm:inline" /> Curated for{" "}
+              <br className="hidden sm:inline" />
               <span className="bg-linear-to-r from-emerald-800 via-emerald-600 to-teal-800 bg-clip-text text-transparent">
                 Home, Work & Life.
               </span>

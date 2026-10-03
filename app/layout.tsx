@@ -1,14 +1,23 @@
 import type { Metadata } from "next";
-import { Inter, Geist } from "next/font/google";
+import { Urbanist, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
-const inter = Inter({ subsets: ["latin"] });
-
 import { constructMetadata } from "@/lib/utils/seo";
+
+const urbanist = Urbanist({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  display: "swap",
+  weight: ["500", "600", "700", "800", "900"],
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
 
 export const metadata: Metadata = constructMetadata();
 
@@ -18,10 +27,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body
-        className={`${inter.className} bg-white text-slate-900 font-sans flex flex-col min-h-screen`}
-      >
+    <html
+      lang="en"
+      className={cn(
+        "font-sans antialiased",
+        plusJakartaSans.variable,
+        urbanist.variable
+      )}
+    >
+      <body className="bg-white text-slate-900 font-sans flex flex-col min-h-screen">
         <Providers>{children}</Providers>
       </body>
     </html>
