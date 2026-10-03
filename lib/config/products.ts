@@ -75,38 +75,81 @@ export interface CategoryShowcaseItem extends ProductCategory {
   featuredImage: string | null;
 }
 
+export interface CategoryDirectoryItem extends CategoryShowcaseItem {
+  minPrice: number | null;
+}
+
+/**
+ * Curated high-resolution lifestyle fallback photography per department.
+ * Centralized SSOT for CategoryShowcase, CategoryDirectory, and image fallback pipeline.
+ */
+export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
+  furniture: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=1200&q=80",
+  audio: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=1200&q=80",
+  tech: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=1200&q=80",
+  living: "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=1200&q=80",
+  carry: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&q=80",
+  footwear: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1200&q=80",
+};
 
 /**
  * Single Source of Truth (SSOT) for Product Categories across OdysseyCart.
- * Consumed by admin creation forms, landing page curated collections, and footer navigation.
+ * Consumed by admin creation forms, landing page curated collections, all-categories directory, and footer navigation.
  */
 export const PRODUCT_CATEGORIES: ProductCategory[] = [
   {
+    id: "furniture",
+    name: "Furniture",
+    label: "Modern Furniture",
+    description: "Minimalist desks, ergonomic seating, and architectural workspace stands.",
+    href: "/items?category=Furniture",
+    bgColor: "bg-amber-50/50",
+    iconColor: "text-amber-500",
+  },
+  {
+    id: "audio",
+    name: "Audio",
+    label: "Precision Audio",
+    description: "Studio-grade ANC headphones, spatial wireless earbuds, and acoustic desk speakers.",
+    href: "/items?category=Audio",
+    bgColor: "bg-indigo-50/50",
+    iconColor: "text-indigo-500",
+  },
+  {
     id: "tech",
     name: "Tech",
-    label: "Tech Essentials",
-    description: "Premium gadgets and gear to elevate your productivity.",
+    label: "Workspace Tech",
+    description: "Custom mechanical keyboards, high-speed docking hubs, and smart tech gear.",
     href: "/items?category=Tech",
     bgColor: "bg-blue-50/50",
     iconColor: "text-blue-500",
   },
   {
-    id: "furniture",
-    name: "Furniture",
-    label: "Modern Furniture",
-    description: "Minimalist pieces designed for comfort and aesthetics.",
-    href: "/items?category=Furniture",
+    id: "living",
+    name: "Living",
+    label: "Lighting & Living",
+    description: "Ambient temperature-adjustable lamps, ceramic drinkware, and desktop organizers.",
+    href: "/items?category=Living",
     bgColor: "bg-orange-50/50",
     iconColor: "text-orange-500",
   },
   {
-    id: "accessories",
-    name: "Accessories",
-    label: "Daily Accessories",
-    description: "Sleek add-ons to complete your everyday carry.",
-    href: "/items?category=Accessories",
-    bgColor: "bg-emerald-50/50",
-    iconColor: "text-emerald-500",
+    id: "carry",
+    name: "Carry",
+    label: "Bags & Travel",
+    description: "Weatherproof commuter packs, alpine trail backpacks, and RFID travel organizers.",
+    href: "/items?category=Carry",
+    bgColor: "bg-teal-50/50",
+    iconColor: "text-teal-500",
+  },
+  {
+    id: "footwear",
+    name: "Footwear",
+    label: "Contemporary Footwear",
+    description: "Handcrafted full-grain leather sneakers and engineered daily footwear.",
+    href: "/items?category=Footwear",
+    bgColor: "bg-rose-50/50",
+    iconColor: "text-rose-500",
   },
 ];
 

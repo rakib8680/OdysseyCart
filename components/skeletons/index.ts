@@ -22,3 +22,4 @@ export { BestSellersSkeleton } from "./BestSellersSkeleton";
 export { OnSaleSkeleton } from "./OnSaleSkeleton";
 export { NewArrivalsSkeleton } from "./NewArrivalsSkeleton";
 export { TestimonialsSkeleton } from "./TestimonialsSkeleton";
+export { CategoriesDirectorySkeleton } from "./CategoriesDirectorySkeleton";

@@ -64,6 +64,12 @@ export function Footer() {
           <div className="flex flex-col space-y-4 text-sm">
             <h4 className="text-white font-semibold mb-2">Shop</h4>
             <Link
+              href="/categories"
+              className="text-emerald-400 font-medium hover:text-emerald-300 transition-colors"
+            >
+              All Departments
+            </Link>
+            <Link
               href="/items"
               className="hover:text-emerald-400 transition-colors"
             >

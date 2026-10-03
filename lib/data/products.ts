@@ -3,12 +3,15 @@ import mongoose from "mongoose";
 import { connectDB, serialize } from "@/lib/db/mongoose";
 import Product from "@/lib/models/Product";
 import { SearchFiltersSchema } from "@/lib/validations/search";
-import { escapeRegex } from "@/lib/utils";
+import { escapeRegex, slugify } from "@/lib/utils";
 import type { Product as ProductType, PaginatedProducts } from "@/lib/types/product";
 import {
   DB_SORT_MAP,
   PRODUCT_CATEGORIES,
+  CATEGORY_FALLBACK_IMAGES,
   type CategoryShowcaseItem,
+  type CategoryDirectoryItem,
+  type ProductCategory,
 } from "@/lib/config/products";
 
 /**
@@ -318,14 +321,17 @@ export async function getFilteredProducts(
 }
 
 /**
- * Reads category showcase card data, strictly sourced from PRODUCT_CATEGORIES SSOT.
+ * Reads category showcase card data for homepage.
+ * Returns the top departments with live counts and images.
  */
-export async function getCategoryShowcaseData(): Promise<CategoryShowcaseItem[]> {
+export async function getCategoryShowcaseData(limit = 3): Promise<CategoryShowcaseItem[]> {
   try {
     await connectDB();
 
+    const targetCategories = PRODUCT_CATEGORIES.slice(0, limit);
+
     const results = await Promise.all(
-      PRODUCT_CATEGORIES.map(async (cat) => {
+      targetCategories.map(async (cat) => {
         const regex = new RegExp(`^${escapeRegex(cat.name)}$`, "i");
         const [count, sampleProduct] = await Promise.all([
           Product.countDocuments({ category: regex }),
@@ -343,7 +349,7 @@ export async function getCategoryShowcaseData(): Promise<CategoryShowcaseItem[]>
           featuredImage:
             sampleProduct?.images && sampleProduct.images.length > 0
               ? sampleProduct.images[0]
-              : null,
+              : CATEGORY_FALLBACK_IMAGES[cat.id] || null,
         };
       }),
     );
@@ -351,10 +357,92 @@ export async function getCategoryShowcaseData(): Promise<CategoryShowcaseItem[]>
     return results;
   } catch (error) {
     console.error("Error getting category showcase data:", error);
+    return PRODUCT_CATEGORIES.slice(0, limit).map((cat) => ({
+      ...cat,
+      itemCount: 0,
+      featuredImage: CATEGORY_FALLBACK_IMAGES[cat.id] || null,
+    }));
+  }
+}
+
+/**
+ * Reads all departments directory data with live counts, minimum starting price,
+ * and primary photography. Merges static SSOT with any newly discovered MongoDB categories.
+ */
+export async function getCategoryDirectoryData(): Promise<CategoryDirectoryItem[]> {
+  try {
+    await connectDB();
+
+    // Query distinct categories from DB to ensure complete taxonomy coverage
+    const dbCategories: string[] = await Product.distinct("category");
+
+    // Seed with SSOT categories
+    const categoryMap = new Map<string, ProductCategory>();
+    for (const cat of PRODUCT_CATEGORIES) {
+      categoryMap.set(cat.name.toLowerCase(), cat);
+    }
+
+    // Include dynamically discovered categories from DB
+    for (const rawCat of dbCategories) {
+      if (!rawCat || typeof rawCat !== "string") continue;
+      const lower = rawCat.toLowerCase();
+      if (!categoryMap.has(lower)) {
+        categoryMap.set(lower, {
+          id: slugify(rawCat),
+          name: rawCat,
+          label: `${rawCat} Collection`,
+          description: `Explore our curated selection of ${rawCat} products.`,
+          href: `/items?category=${encodeURIComponent(rawCat)}`,
+          bgColor: "bg-slate-50/50",
+          iconColor: "text-slate-600",
+        });
+      }
+    }
+
+    const allCategories = Array.from(categoryMap.values());
+
+    const results = await Promise.all(
+      allCategories.map(async (cat) => {
+        const regex = new RegExp(`^${escapeRegex(cat.name)}$`, "i");
+        const [count, sampleProduct, minPriceDoc] = await Promise.all([
+          Product.countDocuments({ category: regex }),
+          Product.findOne(
+            { category: regex },
+            { images: 1, isFeatured: 1, averageRating: 1 },
+          )
+            .sort({ isFeatured: -1, averageRating: -1, createdAt: -1, _id: -1 })
+            .lean(),
+          Product.findOne({ category: regex }, { price: 1 })
+            .sort({ price: 1 })
+            .lean(),
+        ]);
+
+        const minPrice =
+          minPriceDoc && typeof (minPriceDoc as any).price === "number"
+            ? (minPriceDoc as any).price
+            : null;
+
+        return {
+          ...cat,
+          itemCount: count,
+          minPrice,
+          featuredImage:
+            sampleProduct?.images && sampleProduct.images.length > 0
+              ? sampleProduct.images[0]
+              : CATEGORY_FALLBACK_IMAGES[cat.id] || null,
+        };
+      }),
+    );
+
+    // Sort by item count descending so populated categories appear first
+    return results.sort((a, b) => b.itemCount - a.itemCount);
+  } catch (error) {
+    console.error("Error getting category directory data:", error);
     return PRODUCT_CATEGORIES.map((cat) => ({
       ...cat,
       itemCount: 0,
-      featuredImage: null,
+      minPrice: null,
+      featuredImage: CATEGORY_FALLBACK_IMAGES[cat.id] || null,
     }));
   }
 }

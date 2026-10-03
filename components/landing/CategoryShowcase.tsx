@@ -3,13 +3,8 @@ import { ArrowUpRight } from "lucide-react";
 import { getCategoryShowcaseData } from "@/lib/data/products";
 import { SectionHeader } from "@/components/landing/SectionHeader";
 import { FALLBACK_PRODUCT_IMAGE } from "@/lib/constants/images";
+import { CATEGORY_FALLBACK_IMAGES } from "@/lib/config/products";
 import { HOMEPAGE_TOKENS } from "@/lib/config/homepage";
-
-const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
-  tech: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800&q=80",
-  furniture: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&q=80",
-  accessories: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80",
-};
 
 /**
  * CategoryShowcase Component (Server Component)
@@ -29,7 +24,7 @@ export async function CategoryShowcase() {
           subtitle="Browse our carefully engineered selection across tech, ergonomic furniture, and everyday accessories."
           action={{
             label: "View All",
-            href: "/items",
+            href: "/categories",
           }}
         />
 

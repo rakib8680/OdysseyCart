@@ -11,6 +11,7 @@ import { UserAvatar } from "@/components/ui/UserAvatar";
 
 const NAV_LINKS = [
   { name: "Home", href: "/" },
+  { name: "Categories", href: "/categories" },
   { name: "Items", href: "/items" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
