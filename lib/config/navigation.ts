@@ -162,7 +162,22 @@ export const PRODUCT_OF_THE_WEEK: ProductOfTheWeek = {
 };
 
 /**
+ * Popular search term suggestions for the Search Overlay drawer.
+ * NOTE: Acts as the high-availability static baseline & zero-CLS fallback.
+ * Dynamic aggregation via `/api/search/trending` is scheduled for Phase 26 in TODO.md.
+ */
+export const POPULAR_SEARCH_TERMS = [
+  "Ergonomic Chair",
+  "Mechanical Keyboard",
+  "Noise-Cancelling",
+  "Desk Lamp",
+  "Leather Backpack",
+  "Solid Walnut",
+] as const;
+
+/**
  * Re-export department categories so mega menu components can import from navigation SSOT.
  */
 export { PRODUCT_CATEGORIES };
 export type { ProductCategory };
+
