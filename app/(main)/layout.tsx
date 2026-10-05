@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 

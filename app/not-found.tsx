@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense } from "react";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import {
@@ -72,12 +72,12 @@ export default function NotFound() {
       {/* <Navbar /> */}
       <main className="flex-1 w-full flex flex-col items-center justify-center bg-slate-50 relative overflow-hidden py-16 lg:py-24">
         {/* Geometric Background Elements matching Site Hero */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[600px] h-[600px] rounded-full border border-emerald-100  lg:block pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[400px] h-[400px] rounded-full border border-slate-200  lg:block pointer-events-none"></div>
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-150 h-37.5 rounded-full border border-emerald-100  lg:block pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-150 h-37.5 rounded-full border border-slate-200  lg:block pointer-events-none"></div>
 
         <div className="max-w-3xl w-full px-4 text-center z-10 flex flex-col items-center">
           {/* Animated Vector Compass Illustration */}
-          <div className="relative mb-8 flex justify-center w-full max-w-[280px] aspect-square">
+          <div className="relative mb-8 flex justify-center w-full max-w-70 aspect-square">
             {/* Soft Pulsing Backdrop Glow */}
             <div className="absolute inset-0 bg-emerald-50 rounded-full blur-xl animate-pulse-subtle"></div>
             <div className="absolute inset-4 bg-slate-100 rounded-full blur-lg"></div>
