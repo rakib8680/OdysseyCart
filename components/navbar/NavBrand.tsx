@@ -4,17 +4,19 @@ import { cn } from "@/lib/utils";
 interface NavBrandProps {
   className?: string;
   onClick?: () => void;
+  onMouseEnter?: () => void;
 }
 
 /**
  * Editorial typographic brand mark for OdysseyCart.
  * Uses Urbanist display typeface at 800 weight with tight letter-spacing.
  */
-export function NavBrand({ className, onClick }: NavBrandProps) {
+export function NavBrand({ className, onClick, onMouseEnter }: NavBrandProps) {
   return (
     <Link
       href="/"
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
       className={cn(
         "group flex items-center gap-2 shrink-0 py-1 transition-opacity duration-200 hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/20 rounded-md",
         className

@@ -46,8 +46,12 @@ export function NavLinks({
             key={link.name}
             className="relative flex items-center h-16"
             onMouseEnter={() => {
-              if (link.hasMegaMenu && link.menuKey && onHoverLink) {
-                onHoverLink(link.menuKey);
+              if (onHoverLink) {
+                if (link.hasMegaMenu && link.menuKey) {
+                  onHoverLink(link.menuKey);
+                } else {
+                  onHoverLink(null);
+                }
               }
             }}
           >

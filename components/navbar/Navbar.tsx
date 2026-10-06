@@ -104,7 +104,15 @@ export function Navbar({ className }: NavbarProps) {
         leaveTimeoutRef.current = null;
       }
 
-      if (!key) return;
+      if (!key) {
+        // When hovering a non-mega item (Home, About, Contact, Brand, Utility Bar), dismiss mega menu immediately
+        if (enterTimeoutRef.current) {
+          clearTimeout(enterTimeoutRef.current);
+          enterTimeoutRef.current = null;
+        }
+        setActiveMegaMenu(null);
+        return;
+      }
 
       // If a menu is ALREADY open, glide immediately with 0ms delay
       if (activeMegaMenu) {
@@ -181,7 +189,10 @@ export function Navbar({ className }: NavbarProps) {
         <div className="app-container">
           <div className="flex items-center justify-between h-16">
             {/* Left: Typographic Brand Mark */}
-            <NavBrand onClick={handleCloseMegaMenu} />
+            <NavBrand
+              onClick={handleCloseMegaMenu}
+              onMouseEnter={() => handleHoverLink(null)}
+            />
 
             {/* Center: Desktop Navigation Links with animated hover underlines */}
             <NavLinks
@@ -201,6 +212,7 @@ export function Navbar({ className }: NavbarProps) {
                 handleCloseMegaMenu();
                 setIsMobileOpen((prev) => !prev);
               }}
+              onMouseEnter={() => handleHoverLink(null)}
             />
           </div>
         </div>

@@ -12,6 +12,7 @@ export interface NavUtilityBarProps {
   onOpenSearch: () => void;
   isMobileMenuOpen: boolean;
   onToggleMobileMenu: () => void;
+  onMouseEnter?: () => void;
   className?: string;
 }
 
@@ -23,6 +24,7 @@ export function NavUtilityBar({
   onOpenSearch,
   isMobileMenuOpen,
   onToggleMobileMenu,
+  onMouseEnter,
   className,
 }: NavUtilityBarProps) {
   const { user, loading: authLoading } = useAuth();
@@ -31,7 +33,10 @@ export function NavUtilityBar({
   const wishlistCount = wishlistIds.length;
 
   return (
-    <div className={cn("flex items-center gap-1 sm:gap-2", className)}>
+    <div
+      className={cn("flex items-center gap-1 sm:gap-2", className)}
+      onMouseEnter={onMouseEnter}
+    >
       {/* 1. Search Trigger Button */}
       <button
         onClick={onOpenSearch}
