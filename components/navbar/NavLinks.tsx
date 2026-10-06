@@ -63,6 +63,7 @@ export function NavLinks({
                   : "text-slate-500 font-medium hover:text-slate-900"
               )}
               aria-expanded={link.hasMegaMenu ? isMenuOpen : undefined}
+              aria-controls={link.hasMegaMenu && isMenuOpen ? "mega-menu-panel" : undefined}
               aria-haspopup={link.hasMegaMenu ? "menu" : undefined}
             >
               <span>{link.name}</span>

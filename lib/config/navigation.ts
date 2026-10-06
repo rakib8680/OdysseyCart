@@ -1,4 +1,8 @@
-import { PRODUCT_CATEGORIES, ProductCategory } from "@/lib/config/products";
+import {
+  PRODUCT_CATEGORIES,
+  ProductCategory,
+  CATEGORY_FALLBACK_IMAGES,
+} from "@/lib/config/products";
 
 export type MegaMenuKey = "categories" | "items";
 
@@ -14,12 +18,35 @@ export interface NavLink {
 // EDITORIAL MEGA MENU CONFIGURATION (SSOT)
 // ==========================================
 
+export type NavBadgeVariant = "emerald" | "amber" | "slate" | "rose";
+export type MerchBadgeVariant = "emerald" | "amber" | "dark";
+
+/**
+ * Single Source of Truth for navigation link badge styling tokens.
+ * Shared across desktop MegaMenuColumn and MobileNavOverlay for 100% visual parity.
+ */
+export const NAV_BADGE_STYLES: Record<NavBadgeVariant, string> = {
+  emerald: "bg-emerald-50 text-emerald-700 border-emerald-200/60",
+  amber: "bg-amber-50 text-amber-700 border-amber-200/60",
+  rose: "bg-rose-50 text-rose-700 border-rose-200/60",
+  slate: "bg-slate-100 text-slate-700 border-slate-200/60",
+};
+
+/**
+ * Single Source of Truth for visual merchandising card overlay badge tokens.
+ */
+export const MERCH_BADGE_STYLES: Record<MerchBadgeVariant, string> = {
+  emerald: "bg-emerald-600 text-white",
+  amber: "bg-amber-500 text-white",
+  dark: "bg-slate-900/90 text-white",
+};
+
 export interface MegaMenuLinkItem {
   id: string;
   name: string;
   href: string;
   badge?: string | null;
-  badgeVariant?: "emerald" | "amber" | "slate" | "rose";
+  badgeVariant?: NavBadgeVariant;
   isMuted?: boolean;
 }
 
@@ -42,7 +69,7 @@ export interface MegaMenuMerchandiseItem {
   compareAtPrice?: number;
   image: string;
   badge: string;
-  badgeVariant?: "emerald" | "amber" | "dark";
+  badgeVariant?: MerchBadgeVariant;
   href: string;
 }
 
@@ -61,34 +88,6 @@ export interface MegaMenuConfig {
 
 export interface CuratedCollection extends MegaMenuLinkItem {
   description: string;
-}
-
-export interface QuickShopFilter {
-  id: string;
-  label: string;
-  href: string;
-  badge?: string | null;
-  badgeVariant?: "emerald" | "amber" | "slate" | "rose";
-}
-
-export interface FeaturedSpotlight {
-  eyebrow: string;
-  title: string;
-  subtitle: string;
-  image: string;
-  ctaText: string;
-  ctaHref: string;
-}
-
-export interface ProductOfTheWeek {
-  eyebrow: string;
-  title: string;
-  category: string;
-  price: number;
-  image: string;
-  badge: string;
-  ctaText: string;
-  ctaHref: string;
 }
 
 /**
@@ -115,7 +114,7 @@ export const NAV_LINKS: NavLink[] = [
 
 /**
  * Curated shopping collections.
- * Consumed by MobileNavOverlay drawer and derived in ITEMS_MEGA_MENU_CONFIG.
+ * Consumed by MobileNavOverlay drawer and directly reused in ITEMS_MEGA_MENU_CONFIG.
  */
 export const CURATED_COLLECTIONS: CuratedCollection[] = [
   {
@@ -152,29 +151,29 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
 
 /**
  * Quick price and deal filters.
- * Consumed by legacy filter panels and derived in ITEMS_MEGA_MENU_CONFIG.
+ * Reused directly as MegaMenuLinkItem[] in ITEMS_MEGA_MENU_CONFIG.
  */
-export const QUICK_SHOP_FILTERS: QuickShopFilter[] = [
+export const QUICK_SHOP_FILTERS: MegaMenuLinkItem[] = [
   {
-    id: "sale",
-    label: "On Sale & Special Offers",
+    id: "filter-sale",
+    name: "On Sale & Special Offers",
     href: "/items",
     badge: "Sale",
     badgeVariant: "rose",
   },
   {
-    id: "under-50",
-    label: "Under $50 — Everyday Essentials",
+    id: "filter-under-50",
+    name: "Under $50 — Everyday Essentials",
     href: "/items?maxPrice=50",
   },
   {
-    id: "under-100",
-    label: "Under $100 — Accessible Design",
+    id: "filter-under-100",
+    name: "Under $100 — Accessible Design",
     href: "/items?maxPrice=100",
   },
   {
-    id: "luxury-tier",
-    label: "Luxury Tier ($200+) — Flagship Gear",
+    id: "filter-luxury-tier",
+    name: "Luxury Tier ($200+) — Flagship Gear",
     href: "/items?minPrice=200",
     badge: "Studio",
     badgeVariant: "slate",
@@ -198,7 +197,7 @@ const toDepartmentLink = (catId: string): MegaMenuLinkItem => {
 /**
  * Editorial Mega Menu Configuration for "Categories".
  * High-speed 3-column link stack + 2-card visual merchandising showcase.
- * Departments are strictly derived from PRODUCT_CATEGORIES SSOT.
+ * Departments and photography are strictly derived from SSOT.
  */
 export const CATEGORIES_MEGA_MENU_CONFIG: MegaMenuConfig = {
   columns: [
@@ -243,7 +242,7 @@ export const CATEGORIES_MEGA_MENU_CONFIG: MegaMenuConfig = {
       subtitle: "Acoustic precision with memory-foam ear cushions",
       category: "Audio",
       price: 299,
-      image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&q=80",
+      image: CATEGORY_FALLBACK_IMAGES.audio,
       badge: "TOP RATED",
       badgeVariant: "emerald",
       href: "/items?category=Audio",
@@ -268,29 +267,17 @@ export const CATEGORIES_MEGA_MENU_CONFIG: MegaMenuConfig = {
 /**
  * Editorial Mega Menu Configuration for "Items".
  * High-speed 3-column link stack + 2-card visual merchandising showcase.
- * Derived directly from CURATED_COLLECTIONS, QUICK_SHOP_FILTERS, and PRODUCT_CATEGORIES.
+ * Reuses CURATED_COLLECTIONS, QUICK_SHOP_FILTERS, and PRODUCT_CATEGORIES with zero duplication.
  */
 export const ITEMS_MEGA_MENU_CONFIG: MegaMenuConfig = {
   columns: [
     {
       kicker: "Curated Collections",
-      items: CURATED_COLLECTIONS.map(({ id, name, href, badge, badgeVariant }) => ({
-        id: `item-${id}`,
-        name,
-        href,
-        badge,
-        badgeVariant,
-      })),
+      items: CURATED_COLLECTIONS,
     },
     {
       kicker: "Price & Value Tiers",
-      items: QUICK_SHOP_FILTERS.map((filter) => ({
-        id: `item-${filter.id}`,
-        name: filter.label,
-        href: filter.href,
-        badge: filter.badge,
-        badgeVariant: filter.badgeVariant || (filter.id === "sale" ? "rose" : "slate"),
-      })),
+      items: QUICK_SHOP_FILTERS,
     },
     {
       kicker: "Browse By Department",
@@ -309,7 +296,7 @@ export const ITEMS_MEGA_MENU_CONFIG: MegaMenuConfig = {
       category: "Tech",
       price: 89,
       compareAtPrice: 110,
-      image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800&q=80",
+      image: CATEGORY_FALLBACK_IMAGES.tech,
       badge: "STAFF PICK",
       badgeVariant: "dark",
       href: "/items?category=Tech",
@@ -320,7 +307,7 @@ export const ITEMS_MEGA_MENU_CONFIG: MegaMenuConfig = {
       subtitle: "3000K warm diffused architectural illumination",
       category: "Living",
       price: 149,
-      image: "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=800&q=80",
+      image: CATEGORY_FALLBACK_IMAGES.living,
       badge: "POPULAR",
       badgeVariant: "amber",
       href: "/items?category=Living",
@@ -340,35 +327,6 @@ export const ITEMS_MEGA_MENU_CONFIG: MegaMenuConfig = {
       icon: "grid",
     },
   ],
-};
-
-/**
- * Curated spotlight feature inside the legacy "Categories" Mega Menu.
- */
-export const CATEGORIES_SPOTLIGHT: FeaturedSpotlight = {
-  eyebrow: "SEASON HIGHLIGHT",
-  title: "The Minimalist Workspace",
-  subtitle:
-    "Engineered for deep focus. Handcrafted solid walnut, matte alloy, and acoustic warmth.",
-  image:
-    "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&q=80",
-  ctaText: "Explore Workspace Drops →",
-  ctaHref: "/items?category=Furniture",
-};
-
-/**
- * Featured product showcase card inside legacy "Items" Mega Menu.
- * Derived directly from CATEGORIES_MEGA_MENU_CONFIG merchandise to maintain DRY SSOT.
- */
-export const PRODUCT_OF_THE_WEEK: ProductOfTheWeek = {
-  eyebrow: "PRODUCT OF THE WEEK",
-  title: CATEGORIES_MEGA_MENU_CONFIG.merchandise[0].title,
-  category: CATEGORIES_MEGA_MENU_CONFIG.merchandise[0].category,
-  price: CATEGORIES_MEGA_MENU_CONFIG.merchandise[0].price,
-  image: CATEGORIES_MEGA_MENU_CONFIG.merchandise[0].image,
-  badge: "Staff Favorite",
-  ctaText: "View Product →",
-  ctaHref: CATEGORIES_MEGA_MENU_CONFIG.merchandise[0].href,
 };
 
 /**

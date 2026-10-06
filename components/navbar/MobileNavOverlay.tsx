@@ -31,6 +31,7 @@ import {
   NAV_LINKS,
   PRODUCT_CATEGORIES,
   CURATED_COLLECTIONS,
+  NAV_BADGE_STYLES,
 } from "@/lib/config/navigation";
 import { cn } from "@/lib/utils";
 
@@ -322,7 +323,12 @@ export function MobileNavOverlay({
                             {col.name}
                           </span>
                           {col.badge && (
-                            <span className="px-1.5 py-0.2 text-[10px] font-bold uppercase tracking-wider rounded-full bg-slate-100 text-slate-700">
+                            <span
+                              className={cn(
+                                "px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider rounded-full border shrink-0",
+                                NAV_BADGE_STYLES[col.badgeVariant || "slate"]
+                              )}
+                            >
                               {col.badge}
                             </span>
                           )}
