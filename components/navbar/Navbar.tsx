@@ -94,7 +94,7 @@ export function Navbar({ className }: NavbarProps) {
   }, [isSearchOpen]);
 
   // ---------------------------------------------------------------------------
-  // Mega Menu Hover Handlers (150ms enter, 120ms exit, 0ms cross-panel glide)
+  // Mega Menu Hover Handlers (25ms instant enter, 120ms exit, 0ms cross-panel glide)
   // ---------------------------------------------------------------------------
   const handleHoverLink = useCallback(
     (key: MegaMenuKey | null) => {
@@ -116,13 +116,13 @@ export function Navbar({ className }: NavbarProps) {
         return;
       }
 
-      // If opening from closed state, debounce with 150ms
+      // If opening from closed state, snappy micro-debounce with 25ms to prevent cursor swipe flicker
       if (enterTimeoutRef.current) {
         clearTimeout(enterTimeoutRef.current);
       }
       enterTimeoutRef.current = setTimeout(() => {
         setActiveMegaMenu(key);
-      }, 150);
+      }, 25);
     },
     [activeMegaMenu],
   );
