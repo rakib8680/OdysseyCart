@@ -172,6 +172,20 @@ export function Navbar({ className }: NavbarProps) {
     setActiveMegaMenu(null);
   }, []);
 
+  const handleCloseMobile = useCallback(() => {
+    setIsMobileOpen(false);
+  }, []);
+
+  const handleToggleMobile = useCallback(() => {
+    handleCloseMegaMenu();
+    setIsMobileOpen((prev) => !prev);
+  }, [handleCloseMegaMenu]);
+
+  const handleOpenSearchFromMobile = useCallback(() => {
+    setIsMobileOpen(false);
+    setIsSearchOpen(true);
+  }, []);
+
   return (
     <>
       {/* 1. Main Sticky Header Shell */}
@@ -208,10 +222,7 @@ export function Navbar({ className }: NavbarProps) {
                 setIsSearchOpen(true);
               }}
               isMobileMenuOpen={isMobileOpen}
-              onToggleMobileMenu={() => {
-                handleCloseMegaMenu();
-                setIsMobileOpen((prev) => !prev);
-              }}
+              onToggleMobileMenu={handleToggleMobile}
               onMouseEnter={() => handleHoverLink(null)}
             />
           </div>
@@ -235,11 +246,8 @@ export function Navbar({ className }: NavbarProps) {
       {/* 4. Cinematic Full-Screen Mobile Navigation Overlay */}
       <MobileNavOverlay
         isOpen={isMobileOpen}
-        onClose={() => setIsMobileOpen(false)}
-        onOpenSearch={() => {
-          setIsMobileOpen(false);
-          setIsSearchOpen(true);
-        }}
+        onClose={handleCloseMobile}
+        onOpenSearch={handleOpenSearchFromMobile}
       />
     </>
   );

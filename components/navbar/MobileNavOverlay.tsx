@@ -9,6 +9,7 @@ import {
   ShoppingBag,
   Heart,
   ChevronDown,
+  ChevronRight,
   User,
   Shield,
   LogOut,
@@ -77,10 +78,6 @@ export function MobileNavOverlay({
   const [categoriesExpanded, setCategoriesExpanded] = useState(false);
   const [itemsExpanded, setItemsExpanded] = useState(false);
 
-  // Close mobile drawer on route change
-  useEffect(() => {
-    onClose();
-  }, [pathname, onClose]);
 
   // Lock body scroll and register Escape dismissal
   useEffect(() => {
@@ -178,7 +175,7 @@ export function MobileNavOverlay({
       </div>
 
       {/* 2. Scrollable Body */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-7">
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {/* Navigation Routes */}
         <nav className="flex flex-col space-y-1">
           {NAV_LINKS.map((link, idx) => {
@@ -189,7 +186,7 @@ export function MobileNavOverlay({
               return (
                 <div
                   key={link.name}
-                  className="border-b border-slate-100/70 pb-2"
+                  className="border-b border-slate-100/70"
                 >
                   <div className="flex items-center justify-between py-2.5">
                     <Link
@@ -205,29 +202,30 @@ export function MobileNavOverlay({
                       {link.name}
                     </Link>
 
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-mono text-slate-400">
-                        {indexNumber}
-                      </span>
+                    <div className="flex items-center gap-2">
                       <button
                         type="button"
                         onClick={() => setCategoriesExpanded(!categoriesExpanded)}
                         className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                         aria-label="Toggle categories accordion"
+                        aria-expanded={categoriesExpanded}
                       >
                         <ChevronDown
                           className={cn(
-                            "w-4.5 h-4.5 transition-transform duration-200",
+                            "w-4 h-4 transition-transform duration-200",
                             categoriesExpanded && "rotate-180",
                           )}
                         />
                       </button>
+                      <span className="text-xs font-mono text-slate-400 tabular-nums">
+                        {indexNumber}
+                      </span>
                     </div>
                   </div>
 
                   {/* Expandable 6 Department Subgrid */}
                   {categoriesExpanded && (
-                    <div className="grid grid-cols-2 gap-2 pt-2 pb-3 animate-in fade-in duration-200">
+                    <div className="grid grid-cols-2 gap-2 pt-1 pb-3 animate-in fade-in duration-200">
                       {PRODUCT_CATEGORIES.map((cat) => {
                         const IconComponent =
                           CATEGORY_ICON_MAP[cat.id] || Sparkles;
@@ -273,7 +271,7 @@ export function MobileNavOverlay({
               return (
                 <div
                   key={link.name}
-                  className="border-b border-slate-100/70 pb-2"
+                  className="border-b border-slate-100/70"
                 >
                   <div className="flex items-center justify-between py-2.5">
                     <Link
@@ -289,29 +287,30 @@ export function MobileNavOverlay({
                       {link.name}
                     </Link>
 
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-mono text-slate-400">
-                        {indexNumber}
-                      </span>
+                    <div className="flex items-center gap-2">
                       <button
                         type="button"
                         onClick={() => setItemsExpanded(!itemsExpanded)}
                         className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                         aria-label="Toggle items collections accordion"
+                        aria-expanded={itemsExpanded}
                       >
                         <ChevronDown
                           className={cn(
-                            "w-4.5 h-4.5 transition-transform duration-200",
+                            "w-4 h-4 transition-transform duration-200",
                             itemsExpanded && "rotate-180",
                           )}
                         />
                       </button>
+                      <span className="text-xs font-mono text-slate-400 tabular-nums">
+                        {indexNumber}
+                      </span>
                     </div>
                   </div>
 
                   {/* Expandable Curated Collections */}
                   {itemsExpanded && (
-                    <div className="flex flex-col gap-1.5 pt-2 pb-3 animate-in fade-in duration-200">
+                    <div className="flex flex-col gap-1.5 pt-1 pb-3 animate-in fade-in duration-200">
                       {CURATED_COLLECTIONS.map((col) => (
                         <Link
                           key={col.id}
@@ -367,7 +366,7 @@ export function MobileNavOverlay({
                   {link.name}
                 </Link>
 
-                <span className="text-xs font-mono text-slate-400">
+                <span className="text-xs font-mono text-slate-400 tabular-nums">
                   {indexNumber}
                 </span>
               </div>
@@ -375,103 +374,146 @@ export function MobileNavOverlay({
           })}
         </nav>
 
-        {/* Wishlist Link */}
-        <div>
-          <Link
-            href="/account/wishlist"
-            onClick={onClose}
-            className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100/80 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <Heart className="w-4.5 h-4.5 text-slate-600" />
-              <span className="text-sm font-semibold text-slate-900">
-                My Saved Wishlist
-              </span>
-            </div>
-            {wishlistCount > 0 ? (
-              <span className="px-2 py-0.5 text-xs font-bold text-white bg-emerald-600 rounded-full">
-                {wishlistCount}
-              </span>
-            ) : (
-              <span className="text-xs font-medium text-slate-400">
-                0 saved
-              </span>
-            )}
-          </Link>
-        </div>
-
-        {/* Authentication & Account Section */}
-        <div className="pt-4 border-t border-slate-100">
+        {/* 3. Unified Account & Utilities Section */}
+        <div className="pt-3 border-t border-slate-100/80">
           {authLoading ? (
-            <div className="h-14 rounded-xl bg-slate-100 animate-pulse" />
+            <div className="h-40 rounded-2xl bg-slate-50 border border-slate-100 animate-pulse" />
           ) : user ? (
-            /* Logged-In User Profile Card & Actions */
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+            /* Logged-In User: Unified Member Hub Card */
+            <div className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-3.5 space-y-3">
+              {/* Profile Header */}
+              <div className="flex items-center gap-3">
                 <UserAvatar
                   photoURL={user.photoURL}
                   displayName={user.displayName}
                   email={user.email}
                   size="md"
+                  className="border border-slate-200/80 shadow-2xs shrink-0"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold text-slate-900 truncate">
-                    {user.displayName || "Valued Customer"}
-                  </p>
-                  <p className="text-[11px] text-slate-500 truncate">
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs font-bold text-slate-900 truncate">
+                      {user.displayName || user.email?.split("@")[0] || "Valued Customer"}
+                    </p>
+                    {dbUser?.role === "admin" && (
+                      <span className="px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded-full">
+                        Admin
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">
                     {user.email}
                   </p>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1">
+              {/* Account Actions List */}
+              <div className="border-t border-slate-200/60 pt-2 space-y-0.5">
                 <Link
                   href="/account"
                   onClick={onClose}
-                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
+                  className="flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-950 hover:bg-white transition-all group"
                 >
-                  <User className="w-4 h-4 text-slate-400" />
-                  <span>My Account & Orders</span>
+                  <div className="flex items-center gap-2.5">
+                    <User className="w-4 h-4 text-slate-400 group-hover:text-emerald-600 transition-colors" />
+                    <span>My Account & Orders</span>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                <Link
+                  href="/account/wishlist"
+                  onClick={onClose}
+                  className="flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-950 hover:bg-white transition-all group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Heart className="w-4 h-4 text-slate-400 group-hover:text-rose-500 transition-colors" />
+                    <span>Saved Wishlist</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {wishlistCount > 0 ? (
+                      <span className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 rounded-full">
+                        {wishlistCount}
+                      </span>
+                    ) : (
+                      <span className="text-[11px] font-medium text-slate-400">0</span>
+                    )}
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 group-hover:translate-x-0.5 transition-all" />
+                  </div>
                 </Link>
 
                 {dbUser?.role === "admin" && (
                   <Link
                     href="/admin"
                     onClick={onClose}
-                    className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
+                    className="flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-950 hover:bg-white transition-all group"
                   >
-                    <Shield className="w-4 h-4 text-emerald-600" />
-                    <span>Admin Dashboard</span>
+                    <div className="flex items-center gap-2.5">
+                      <Shield className="w-4 h-4 text-emerald-600" />
+                      <span>Admin Dashboard</span>
+                    </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 group-hover:translate-x-0.5 transition-all" />
                   </Link>
                 )}
+              </div>
 
+              {/* Sign Out Action */}
+              <div className="border-t border-slate-200/60 pt-1.5">
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer w-full text-left"
+                  className="flex items-center gap-2 px-2.5 py-1.5 w-full text-xs font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50/60 rounded-xl transition-colors cursor-pointer group"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-600 transition-colors" />
                   <span>Sign Out</span>
                 </button>
               </div>
             </div>
           ) : (
-            /* Logged-Out Guest Actions */
-            <div className="flex flex-col gap-2.5">
+            /* Logged-Out Guest: Saved Wishlist + Dual Auth CTAs */
+            <div className="space-y-3">
               <Link
-                href="/login"
+                href="/account/wishlist"
                 onClick={onClose}
-                className="w-full py-2.5 px-4 text-center rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 hover:bg-slate-50 transition-colors"
+                className="flex items-center justify-between p-3 rounded-2xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-100/80 transition-colors group"
               >
-                Sign In
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center text-slate-600 border border-slate-200/60 shadow-2xs group-hover:text-rose-500 transition-colors">
+                    <Heart className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-900">Saved Wishlist</p>
+                    <p className="text-[11px] text-slate-500">View your favorite products</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {wishlistCount > 0 ? (
+                    <span className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 rounded-full">
+                      {wishlistCount}
+                    </span>
+                  ) : (
+                    <span className="text-[11px] font-medium text-slate-400">0</span>
+                  )}
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 group-hover:translate-x-0.5 transition-all" />
+                </div>
               </Link>
-              <Link
-                href="/register"
-                onClick={onClose}
-                className="w-full py-2.5 px-4 text-center rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-emerald-600 transition-colors shadow-xs"
-              >
-                Create Account
-              </Link>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <Link
+                  href="/login"
+                  onClick={onClose}
+                  className="flex items-center justify-center py-2.5 px-4 text-center rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 hover:bg-slate-50 transition-colors shadow-2xs"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={onClose}
+                  className="flex items-center justify-center py-2.5 px-4 text-center rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-emerald-600 transition-colors shadow-2xs"
+                >
+                  Create Account
+                </Link>
+              </div>
             </div>
           )}
         </div>
