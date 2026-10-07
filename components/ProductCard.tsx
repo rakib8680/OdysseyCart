@@ -123,17 +123,19 @@ export default function ProductCard({
       </div>
 
       {/* 2. Product Details Section */}
-      <div className="p-2.5 sm:p-4 flex flex-col justify-between flex-1 space-y-1 sm:space-y-2 bg-white">
+      <div className="p-2.5 sm:p-4 flex flex-col justify-between flex-1 gap-2 bg-white">
         {/* Brand, Title & Swatches */}
         <div>
-          <p className="text-[10px] sm:text-xs text-slate-400 font-medium mb-0.5 truncate sm:uppercase sm:tracking-wider min-h-3.5 sm:min-h-4">
-            {product.brand || "\u00A0"}
-          </p>
+          {product.brand && (
+            <p className="text-[10px] sm:text-xs text-slate-400 font-medium mb-0.5 truncate sm:uppercase sm:tracking-wider">
+              {product.brand}
+            </p>
+          )}
           <Link
             href={`/items/${product.slug}`}
             className="block transition-colors"
           >
-            <h3 className="text-xs sm:text-base font-bold text-slate-900 line-clamp-1 sm:line-clamp-2 leading-snug sm:min-h-11">
+            <h3 className="text-xs sm:text-base font-bold text-slate-900 line-clamp-1 sm:line-clamp-2 leading-snug hover:text-emerald-600 transition-colors">
               {product.title}
             </h3>
           </Link>
@@ -147,7 +149,7 @@ export default function ProductCard({
         </div>
 
         {/* Pricing & Responsive Ratings */}
-        <div className="space-y-1 pt-0.5">
+        <div className="space-y-1 pt-0.5 mt-auto">
           <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
             <span className="font-extrabold text-xs sm:text-lg text-slate-900">
               {formatPrice(discountedPrice)}

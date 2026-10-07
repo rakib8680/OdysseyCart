@@ -43,7 +43,7 @@ export async function Testimonials() {
               return (
                 <div
                   key={review._id}
-                  className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border border-slate-200/80 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-0.5"
+                  className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border border-slate-200/80 shadow-2xs hover:shadow-sm hover:border-slate-300 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-0.5"
                 >
                   <div>
                     {/* Top Row: Stars + Verified Badge */}
@@ -116,7 +116,7 @@ export async function Testimonials() {
         ) : (
           /* Brand Trust & Satisfaction Promise (Graceful empty-reviews fallback) */
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <div className="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div className="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-2xs flex flex-col justify-between">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 mb-6">
                   <ShieldCheck className="w-6 h-6" />
@@ -135,7 +135,7 @@ export async function Testimonials() {
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div className="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-2xs flex flex-col justify-between">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 mb-6">
                   <HeartHandshake className="w-6 h-6" />
