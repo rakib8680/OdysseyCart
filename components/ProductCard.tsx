@@ -65,19 +65,19 @@ export default function ProductCard({
       onClick={handleCardClick}
       className={cn(
         "group h-full transition-all duration-300 rounded-xl overflow-hidden flex flex-col bg-white cursor-pointer",
-        className
+        className,
       )}
     >
       {/* 1. Product Image Wrapper (Aspect Square) */}
       <div className="w-full aspect-square bg-slate-50 overflow-hidden relative border-b border-slate-100/60">
         {/* Dynamic Status Badges (Scaled down on mobile) */}
-        <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 z-10 scale-75 sm:scale-90 origin-top-left">
+        <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 z-20 scale-75 sm:scale-90 origin-top-left">
           <ProductStatusBadges product={product} />
         </div>
 
         {/* Floating Wishlist Button */}
         <div
-          className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 z-10 scale-80 sm:scale-100 origin-top-right"
+          className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 z-20 scale-80 sm:scale-100 origin-top-right"
           onClick={(e) => e.stopPropagation()}
         >
           <HeartButton
@@ -93,6 +93,12 @@ export default function ProductCard({
           alt={product.title}
           onError={onImageError}
           className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
+        />
+
+        {/* White Hover Fade Gradient */}
+        <div
+          className="absolute inset-0 bg-linear-to-t from-white/90 via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10"
+          aria-hidden="true"
         />
 
         {/* DESKTOP ONLY: Hover Action Overlay on Image */}
