@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { handleImageError } from "@/hooks/useImageFallback";
 
@@ -23,6 +24,11 @@ export function GalleryLightbox({
   onClose,
 }: GalleryLightboxProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const goNext = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % images.length);
@@ -49,12 +55,14 @@ export function GalleryLightbox({
     };
   }, [onClose, goNext, goPrev]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-label="Image gallery fullscreen view"
-      className="fixed inset-0 z-50 bg-black/92 backdrop-blur-md flex items-center justify-center animate-in fade-in-0 duration-200 select-none"
+      className="fixed inset-0 z-100 bg-black/95 backdrop-blur-md flex items-center justify-center animate-in fade-in-0 duration-200 select-none"
       onClick={onClose}
     >
       {/* Close Button */}
@@ -139,6 +147,7 @@ export function GalleryLightbox({
           ))}
         </div>
       )}
-    </div>
+    </div>,
+    document.body,
   );
 }
