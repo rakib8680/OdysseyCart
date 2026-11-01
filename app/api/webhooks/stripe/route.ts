@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
       // For base items: uses the existing product-level stockQuantity.
       const bulkOps = order.items.map((item: any) => {
         if (item.variantSku) {
-          // Variant-level atomic decrement using positional operator
+          // Variant-level atomic decrement using positional operator + popularity increment
           return {
             updateOne: {
               filter: {
@@ -85,20 +85,28 @@ export async function POST(req: NextRequest) {
                 "variants.stockQuantity": { $gte: item.quantity },
               },
               update: {
-                $inc: { "variants.$.stockQuantity": -item.quantity },
+                $inc: {
+                  "variants.$.stockQuantity": -item.quantity,
+                  totalSold: item.quantity,
+                },
               },
             },
           };
         }
 
-        // Base product stock decrement (non-variant)
+        // Base product stock decrement (non-variant) + popularity increment
         return {
           updateOne: {
             filter: {
               _id: item.productId,
               stockQuantity: { $gte: item.quantity },
             },
-            update: { $inc: { stockQuantity: -item.quantity } },
+            update: {
+              $inc: {
+                stockQuantity: -item.quantity,
+                totalSold: item.quantity,
+              },
+            },
           },
         };
       });

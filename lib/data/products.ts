@@ -33,6 +33,7 @@ export const LISTING_PROJECTION = {
   averageRating: 1,
   numReviews: 1,
   createdAt: 1,
+  totalSold: 1,
   options: 1,
   variants: 1,
 } as const;

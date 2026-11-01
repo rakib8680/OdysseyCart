@@ -47,6 +47,7 @@ export interface TProduct extends Document {
   };
   options: TVariantOption[];
   variants: TVariant[];
+  totalSold: number;
 
   createdAt: Date;
   updatedAt: Date;
@@ -119,6 +120,7 @@ const ProductSchema = new Schema<TProduct>(
     },
     options: { type: [VariantOptionSchema], default: [] },
     variants: { type: [VariantSchema], default: [] },
+    totalSold: { type: Number, default: 0, min: 0 },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },
@@ -143,6 +145,10 @@ ProductSchema.index({ createdAt: -1, _id: -1 });
 ProductSchema.index({ price: 1, _id: 1 });
 ProductSchema.index({ category: 1, createdAt: -1, _id: -1 });
 ProductSchema.index({ category: 1, price: 1, _id: 1 });
+ProductSchema.index({ averageRating: -1, numReviews: -1, _id: -1 });
+ProductSchema.index({ category: 1, averageRating: -1, numReviews: -1, _id: -1 });
+ProductSchema.index({ totalSold: -1, averageRating: -1, numReviews: -1, _id: -1 });
+ProductSchema.index({ category: 1, totalSold: -1, _id: -1 });
 
 // 5. Create and export the model safely for Next.js
 const Product: Model<TProduct> =
