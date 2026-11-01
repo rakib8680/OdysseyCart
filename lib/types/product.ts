@@ -52,6 +52,7 @@ export interface Product {
   options: VariantOption[];
   variants: Variant[];
   totalSold?: number;
+  ratingScore?: number;
   createdAt: string;
   updatedAt: string;
 }

@@ -10,6 +10,7 @@ import { ReviewValidationSchema } from "@/lib/validations/review";
 import { revalidatePath } from "next/cache";
 import { escapeRegex } from "@/lib/utils";
 import { REVIEW_DB_SORT_MAP } from "@/lib/config/reviews";
+import { calculateBayesianRating } from "@/lib/config/products";
 import { serializeReview } from "@/lib/db/serialize";
 import type {
   Review as ReviewType,
@@ -64,11 +65,14 @@ async function recalculateProductRating(productId: string): Promise<void> {
   });
 
   const { averageRating = 0, numReviews = 0 } = statsResult[0] || {};
+  const roundedRating = Math.round(averageRating * 10) / 10; // 1 decimal place
+  const ratingScore = calculateBayesianRating(roundedRating, numReviews);
 
-  // Atomic update — all three fields at once
+  // Atomic update — all rating fields at once
   await Product.findByIdAndUpdate(productId, {
-    averageRating: Math.round(averageRating * 10) / 10, // 1 decimal place
+    averageRating: roundedRating,
     numReviews,
+    ratingScore,
     ratingDistribution: distribution,
   });
 }

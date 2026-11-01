@@ -129,9 +129,17 @@ export const CURATED_COLLECTIONS: CuratedCollection[] = [
     id: "best-sellers",
     name: "Best Sellers",
     description: "Most coveted pieces chosen by our community",
-    href: "/items?sort=price-high",
+    href: "/items?sort=popular",
     badge: "Hot",
     badgeVariant: "amber",
+  },
+  {
+    id: "top-rated",
+    name: "Top Rated",
+    description: "Highest-rated customer favorites backed by verified reviews",
+    href: "/items?sort=top-rated",
+    badge: "★ 4.9",
+    badgeVariant: "emerald",
   },
   {
     id: "staff-picks",
@@ -205,8 +213,9 @@ export const CATEGORIES_MEGA_MENU_CONFIG: MegaMenuConfig = {
       kicker: "Curated Intent",
       items: [
         { id: "cat-all", name: "Shop All Products", href: "/items" },
-        { id: "cat-bestsellers", name: "Best Sellers", href: "/items?sort=price-high", badge: "Hot", badgeVariant: "amber" },
-        { id: "cat-new", name: "New Arrivals", href: "/items?sort=newest", badge: "New", badgeVariant: "emerald" },
+        { id: "cat-bestsellers", name: "Best Sellers", href: "/items?sort=popular", badge: "Hot", badgeVariant: "amber" },
+        { id: "cat-toprated", name: "Top Rated", href: "/items?sort=top-rated", badge: "★ 4.9", badgeVariant: "emerald" },
+        { id: "cat-new", name: "New Arrivals", href: "/items?sort=newest", badge: "New", badgeVariant: "slate" },
         { id: "cat-deals", name: "Special Offers & Deals", href: "/items", badge: "Sale", badgeVariant: "rose" },
       ],
     },
@@ -234,7 +243,7 @@ export const CATEGORIES_MEGA_MENU_CONFIG: MegaMenuConfig = {
       image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&q=80",
       badge: "BESTSELLER",
       badgeVariant: "dark",
-      href: "/items?category=Furniture",
+      href: "/items?category=Furniture&sort=popular",
     },
     {
       id: "merch-apex-headphones",
@@ -245,7 +254,7 @@ export const CATEGORIES_MEGA_MENU_CONFIG: MegaMenuConfig = {
       image: CATEGORY_FALLBACK_IMAGES.audio,
       badge: "TOP RATED",
       badgeVariant: "emerald",
-      href: "/items?category=Audio",
+      href: "/items?category=Audio&sort=top-rated",
     },
   ],
   actions: [
@@ -310,7 +319,7 @@ export const ITEMS_MEGA_MENU_CONFIG: MegaMenuConfig = {
       image: CATEGORY_FALLBACK_IMAGES.living,
       badge: "POPULAR",
       badgeVariant: "amber",
-      href: "/items?category=Living",
+      href: "/items?category=Living&sort=popular",
     },
   ],
   actions: [

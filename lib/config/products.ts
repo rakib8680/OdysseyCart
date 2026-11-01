@@ -37,13 +37,31 @@ export const PRICE_PRESETS: PricePreset[] = [
   { label: "$200+", min: "200", max: "" },
 ];
 
+/*
+ Bayesian rating confidence constants.
+ */
+export const RATING_CONFIDENCE_THRESHOLD = 5;
+export const RATING_PRIOR_BENCHMARK = 4.0;
+
+/**
+ * Calculates a weighted Bayesian rating score.
+ * Prevents 1-review 5-star products from unfairly ranking above proven products with dozens of 4.8/4.9-star reviews.
+ */
+export function calculateBayesianRating(averageRating: number, numReviews: number): number {
+  if (!numReviews || numReviews <= 0) return 0;
+  const m = RATING_CONFIDENCE_THRESHOLD;
+  const C = RATING_PRIOR_BENCHMARK;
+  const score = (averageRating * numReviews + C * m) / (numReviews + m);
+  return Math.round(score * 1000) / 1000;
+}
+
 /**
  * MongoDB sorting mappings for each SortOption.
  * Includes deterministic unique tie-breakers (_id) to guarantee cursor stability.
  */
 export const DB_SORT_MAP: Record<SortOption, Record<string, 1 | -1>> = {
   popular: { totalSold: -1, averageRating: -1, numReviews: -1, _id: -1 },
-  "top-rated": { averageRating: -1, numReviews: -1, _id: -1 },
+  "top-rated": { ratingScore: -1, numReviews: -1, averageRating: -1, _id: -1 },
   newest: { createdAt: -1, _id: -1 },
   oldest: { createdAt: 1, _id: 1 },
   "price-low": { price: 1, _id: 1 },
