@@ -51,6 +51,7 @@ export interface Product {
   };
   options: VariantOption[];
   variants: Variant[];
+  totalSold?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -58,6 +59,8 @@ export interface Product {
 export type ViewMode = "grid" | "list";
 
 export type SortOption =
+  | "popular"
+  | "top-rated"
   | "newest"
   | "oldest"
   | "price-low"

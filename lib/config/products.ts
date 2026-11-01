@@ -16,12 +16,14 @@ export interface PricePreset {
  * Used by client filter UI & toolbar.
  */
 export const SORT_CONFIG: SortConfig[] = [
+  { value: "popular", label: "Most Popular" },
+  { value: "top-rated", label: "Top Rated" },
   { value: "newest", label: "Newest First" },
-  { value: "oldest", label: "Oldest First" },
   { value: "price-low", label: "Price: Low → High" },
   { value: "price-high", label: "Price: High → Low" },
   { value: "name-az", label: "Name: A → Z" },
   { value: "name-za", label: "Name: Z → A" },
+  { value: "oldest", label: "Oldest First" },
 ];
 
 /**
@@ -40,6 +42,8 @@ export const PRICE_PRESETS: PricePreset[] = [
  * Includes deterministic unique tie-breakers (_id) to guarantee cursor stability.
  */
 export const DB_SORT_MAP: Record<SortOption, Record<string, 1 | -1>> = {
+  popular: { totalSold: -1, averageRating: -1, numReviews: -1, _id: -1 },
+  "top-rated": { averageRating: -1, numReviews: -1, _id: -1 },
   newest: { createdAt: -1, _id: -1 },
   oldest: { createdAt: 1, _id: 1 },
   "price-low": { price: 1, _id: 1 },

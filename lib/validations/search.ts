@@ -16,7 +16,16 @@ export const SearchFiltersSchema = z.object({
     z.number().min(0).optional(),
   ),
   sort: z
-    .enum(["newest", "oldest", "price-low", "price-high", "name-az", "name-za"])
+    .enum([
+      "popular",
+      "top-rated",
+      "newest",
+      "oldest",
+      "price-low",
+      "price-high",
+      "name-az",
+      "name-za",
+    ])
     .default("newest"),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(12),
